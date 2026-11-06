@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="자체 테스트 문장을 키네틱 규칙 v2로 시뮬레이션하는 한결제지 통합 AI 에이전트">
+<meta name="description" content="CEO 위기 CASE와 자체 테스트를 키네틱 규칙으로 시뮬레이션하는 한결제지 통합 AI 에이전트">
 <title>한결제지 비상운영 시뮬레이터</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,6 +180,83 @@ textarea { min-height: 6.5rem; resize: vertical; line-height: 1.55; }
 details.notes { font-size: var(--fs-cap); color: var(--muted); }
 details.notes summary { cursor: pointer; color: var(--ink); }
 details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4px; }
+.fired .fid.g-econ { color: var(--accent); }
+.ptbl td { vertical-align: top; }
+.ptbl .pn { font-weight: 600; white-space: nowrap; }
+.ptbl .sub { display: block; font-size: .72rem; color: var(--muted); margin-top: 2px; font-family: var(--font); }
+.ptbl tr.excl td { color: var(--muted); }
+.ptbl tr.ev td { padding-top: 0; border-bottom: 1px solid var(--line); }
+.ptbl tr.has-ev td { border-bottom: 0; }
+.ev details { font-size: var(--fs-cap); }
+.ev summary { cursor: pointer; color: var(--accent); }
+.ev ul { list-style: none; margin: 6px 0 4px; padding: 0; display: grid; gap: 4px; }
+.ev li { display: grid; grid-template-columns: 6.2rem minmax(0, 1fr); gap: 8px; align-items: start; line-height: 1.5; }
+.src { display: inline-block; font-size: .68rem; line-height: 1.6; padding: 0 6px; border-radius: 3px; white-space: nowrap; text-align: center; font-weight: 500; }
+.src.d { color: var(--muted); background: var(--sunk); border: 1px solid var(--line); }
+.src.c { color: var(--accent); background: var(--accent-soft); }
+.src.a { color: var(--warn); background: var(--warn-soft); }
+.src.s { color: var(--muted); border: 1px dashed var(--muted); }
+.src.x { color: var(--bad); background: var(--bad-soft); }
+.src-legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--fs-cap); color: var(--muted); margin-bottom: 10px; align-items: center; }
+.scen td .chip { margin: 0 4px 4px 0; }
+.scen tr.cur td { background: var(--accent-soft); }
+.scen .sn { font-weight: 600; white-space: nowrap; }
+.scen .sn small { display: block; font-weight: 400; color: var(--muted); font-size: .72rem; }
+.scen .ord { font-family: var(--mono); white-space: nowrap; }
+.etbl input, .etbl select { min-width: 3.6rem; }
+.presets-e { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.presets-e button { font-size: .72rem; padding: 4px 8px; }
+details.settings summary { cursor: pointer; font-size: var(--fs-cap); color: var(--ink); }
+details.settings .grid { display: grid; grid-template-columns: minmax(0, 1fr) 4.5rem; gap: 6px 8px; align-items: center; margin-top: 8px; font-size: var(--fs-cap); color: var(--muted); }
+.case { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.case-top { background: var(--ink); color: var(--bg); padding: 16px 18px; display: grid; gap: 8px; }
+.case-top .ct { font-family: var(--mono); font-size: var(--fs-cap); letter-spacing: .06em; opacity: .75; }
+.case-top .cd { font-size: 1.32rem; font-weight: 600; line-height: 1.4; text-wrap: balance; margin: 0; }
+.case-top .cs { font-size: var(--fs-cap); opacity: .8; margin: 0; }
+.case-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); border-bottom: 1px solid var(--line); }
+.case-kpis > div { padding: 12px 16px; border-right: 1px solid var(--line); display: grid; gap: 2px; align-content: start; }
+.case-kpis > div:last-child { border-right: 0; }
+.case-kpis .kk { font-size: var(--fs-cap); color: var(--muted); }
+.case-kpis .kv { font-family: var(--mono); font-size: 1.35rem; font-weight: 500; }
+.case-kpis .kv.ok { color: var(--ok); } .case-kpis .kv.bad { color: var(--bad); } .case-kpis .kv.warn { color: var(--warn); }
+.case-kpis .ks { font-size: .72rem; color: var(--muted); }
+.case-body { padding: 16px; display: grid; gap: 16px; }
+.case-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 14px; align-items: start; }
+.ccard { border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 10px; background: var(--sunk); min-width: 0; }
+.ccard > .ch { display: flex; gap: 10px; align-items: baseline; }
+.ccard > .ch .cn { font-family: var(--mono); font-weight: 500; color: var(--panel); background: var(--accent); border-radius: 4px; padding: 0 7px; font-size: var(--fs-cap); }
+.ccard > .ch .ctt { font-weight: 600; }
+.ccard .cq { font-size: var(--fs-cap); color: var(--muted); margin: -4px 0 0; }
+.ccard ul.bul { margin: 0; padding-left: 1.1rem; display: grid; gap: 5px; font-size: var(--fs-body); }
+.ccard ul.bul li b { font-weight: 600; }
+.proof { width: 100%; border-collapse: collapse; font-size: var(--fs-cap); }
+.proof th { text-align: left; color: var(--muted); font-weight: 500; padding: 5px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.proof td { padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.proof td.m { font-family: var(--mono); white-space: nowrap; }
+.proof tr.pick td { background: var(--ok-soft); }
+.eqn { font-family: var(--mono); font-size: var(--fs-cap); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; line-height: 1.7; }
+.pf { display: grid; gap: 8px; }
+.pf .pr { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) 4.6rem; gap: 8px; align-items: center; font-size: var(--fs-cap); }
+.pf .stack { display: flex; height: 22px; border-radius: 3px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); }
+.pf .stack span { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: .7rem; color: var(--panel); white-space: nowrap; overflow: hidden; }
+.pf .w { font-family: var(--mono); text-align: right; }
+.pf-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: var(--fs-cap); color: var(--muted); }
+.pf-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.c-th { background: #8a6d3b; } .c-pk { background: #2e7d5b; } .c-lb { background: #2f5f8a; } .c-rs { background: #9aa39f; }
+.opts { width: 100%; border-collapse: collapse; font-size: var(--fs-cap); }
+.opts th, .opts td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.opts thead th { color: var(--muted); font-weight: 500; }
+.opts th[scope="row"] { color: var(--muted); font-weight: 500; white-space: nowrap; }
+.opts .win { background: var(--ok-soft); }
+.opts .oh { font-weight: 600; font-size: var(--fs-body); }
+.msg { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; padding: 10px 12px; display: grid; gap: 6px; }
+.msg .mt { font-size: var(--fs-cap); color: var(--muted); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.msg p { margin: 0; line-height: 1.7; white-space: pre-line; }
+.case-q { font-size: var(--fs-cap); }
+.case-q summary { cursor: pointer; color: var(--muted); }
+.case-q pre { white-space: pre-wrap; font-family: var(--font); background: var(--sunk); padding: 10px; border-radius: 4px; margin: 6px 0 0; }
+.tests .grp { font-size: var(--fs-cap); color: var(--muted); margin: 6px 0 0; font-family: var(--mono); letter-spacing: .04em; }
+.tests button.case-btn { border-color: var(--ink); }
 @media (max-width: 30rem) { .readings { grid-template-columns: minmax(0, 1fr); } .srow { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .track span { transition: none; } }
 </style>
@@ -188,28 +265,35 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">(주)한결제지 통합 AI 에이전트 · 키네틱 규칙 v2</p>
+    <p class="eyebrow">(주)한결제지 통합 AI 에이전트 · 키네틱 규칙 v2 + R-M1~M4</p>
     <h1>한결제지 비상운영 시뮬레이터</h1>
-    <p class="lead">자체 테스트 문장을 넣으면 에이전트가 문장에서 조건을 읽고, 학습한 데이터(Data 1~7)와 키네틱 규칙으로 시뮬레이션해 수치에 근거한 지시를 내립니다.</p>
+    <p class="lead">자체 테스트 문장을 넣으면 에이전트가 문장에서 조건을 읽고, 학습한 데이터(Data 1~7)와 키네틱 규칙으로 시뮬레이션해 수치에 근거한 지시를 내립니다. 원자재 가격, 시장 트렌드, 환경규제를 바꿔 생산 우선순위가 어떻게 달라지는지도 비교합니다.</p>
   </header>
 
   <div class="layout">
     <aside class="inputs" aria-label="입력">
       <div class="tabs" role="tablist" aria-label="입력 방식">
         <button type="button" role="tab" id="tab-test" aria-selected="true" aria-controls="panel-test">자체 테스트</button>
-        <button type="button" role="tab" id="tab-manual" aria-selected="false" aria-controls="panel-manual">조건 직접 조정</button>
+        <button type="button" role="tab" id="tab-econ" aria-selected="false" aria-controls="panel-econ">경영 시나리오</button>
+        <button type="button" role="tab" id="tab-manual" aria-selected="false" aria-controls="panel-manual">현장 조건</button>
       </div>
 
       <div id="panel-test" role="tabpanel" aria-labelledby="tab-test">
         <section class="box">
           <h3>테스트 예시 <span class="tag">눌러서 불러오기</span></h3>
           <div class="tests" id="tests">
+            <span class="grp">CEO 위기 CASE</span>
+            <button type="button" class="case-btn" data-t="c1" aria-pressed="false"><span class="tn">C1</span>원가 +40% · 인력 50% · 2호기 이상</button>
+            <button type="button" class="case-btn" data-t="c2" aria-pressed="false"><span class="tn">C2</span>작업자 이탈 · 출근 2명 · B마트 최후통첩</button>
+            <button type="button" class="case-btn" data-t="c3" aria-pressed="false"><span class="tn">C3</span>감열지 단가 3배 · 1·2호기 위험 · 노조 경고</button>
+            <span class="grp">자체 테스트 · 예시</span>
             <button type="button" data-t="t1" aria-pressed="true"><span class="tn">T1</span>현장 통제: 1호기 펄프 농도 15%</button>
             <button type="button" data-t="t2" aria-pressed="false"><span class="tn">T2</span>영업·재고 최적화: 라벨지 150t 긴급 추가 발주</button>
             <button type="button" data-t="t3" aria-pressed="false"><span class="tn">예3</span>우천 사고 재현: 2호기 98℃·쇳소리</button>
             <button type="button" data-t="t4" aria-pressed="false"><span class="tn">예4</span>파업 비상운영: 생산직 50% 파업</button>
             <button type="button" data-t="t5" aria-pressed="false"><span class="tn">예5</span>수요 급감 신호: B마트 발주 반토막</button>
             <button type="button" data-t="t6" aria-pressed="false"><span class="tn">예6</span>입력 오류와 노이즈</button>
+            <button type="button" data-t="t7" aria-pressed="false"><span class="tn">예7</span>복합 경영 위기: 원자재·지연·파업·규제</button>
           </div>
           <div class="field">
             <label for="test-text">테스트 상황과 질문</label>
@@ -228,6 +312,65 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
             <span class="hint" style="margin:0">Ctrl + Enter</span>
           </div>
           <p class="hint" id="parse-hint"></p>
+        </section>
+      </div>
+
+      <div id="panel-econ" role="tabpanel" aria-labelledby="tab-econ" hidden>
+        <section class="box">
+          <h3>경영 시나리오 <span class="tag">Data 4 · 6 연계</span></h3>
+          <div class="presets-e" role="group" aria-label="경영 시나리오 불러오기">
+            <button type="button" data-sc="base">기본 상황</button>
+            <button type="button" data-sc="raw40">원자재 +40%</button>
+            <button type="button" data-sc="reg">환경규제 강화</button>
+            <button type="button" data-sc="staff50">인력 50% 감소</button>
+            <button type="button" data-sc="combo">복합 위기</button>
+          </div>
+          <div class="field">
+            <label for="in-rise">원자재 가격 상승률 <output id="out-rise">0%</output></label>
+            <input type="range" id="in-rise" min="0" max="100" step="5" data-k="econ.rise">
+          </div>
+          <div class="field">
+            <label for="in-delay">원자재 공급 지연 <output id="out-delay">0일</output></label>
+            <input type="range" id="in-delay" min="0" max="60" step="1" data-k="econ.delay">
+          </div>
+          <div class="field">
+            <label for="in-reg">환경규제 강도</label>
+            <select id="in-reg" data-k="econ.reg"><option>현행</option><option>강화</option><option>완화</option></select>
+          </div>
+          <div class="field">
+            <label for="in-ratio2">출근 가능한 생산직 비율 <output id="out-ratio2">100%</output></label>
+            <input type="range" id="in-ratio2" min="0" max="100" step="5" data-k="ratio">
+          </div>
+        </section>
+        <section class="box">
+          <h3>제품별 시나리오 가정 <span class="tag">사용자 입력</span></h3>
+          <p class="hint" style="margin:0 0 8px">시장 트렌드는 수요 변화의 설명일 뿐이라 변화율은 직접 넣습니다. 원가 비중을 넣은 제품만 가정 기반 조정 이익률을 계산합니다.</p>
+          <div class="tbox">
+          <table class="mini etbl">
+            <thead><tr><th>제품</th><th>트렌드 추가(%)</th><th>규제 비용</th><th>단위</th><th>원가 비중(%)</th></tr></thead>
+            <tbody>
+              <tr><td>일반 감열지</td><td><input type="number" id="in-tr1" min="-80" max="200" step="5" data-k="econ.trend.일반 감열지" aria-label="일반 감열지 트렌드 추가 변화율"></td><td><input type="number" id="in-rc1" min="0" step="0.5" data-k="econ.regCost.일반 감열지.v" aria-label="일반 감열지 규제 비용"></td><td><select id="in-ru1" data-k="econ.regCost.일반 감열지.unit" aria-label="일반 감열지 규제 비용 단위"><option value="pct">매출%</option><option value="amt">만원</option></select></td><td><input type="number" id="in-cs1" min="0" max="100" step="1" placeholder="미입력" data-k="econ.costShare.일반 감열지" data-null="1" aria-label="일반 감열지 원자재 원가 비중"></td></tr>
+              <tr><td>프리미엄 감열지</td><td><input type="number" id="in-tr2" min="-80" max="200" step="5" data-k="econ.trend.프리미엄 감열지" aria-label="프리미엄 감열지 트렌드 추가 변화율"></td><td><input type="number" id="in-rc2" min="0" step="0.5" data-k="econ.regCost.프리미엄 감열지.v" aria-label="프리미엄 감열지 규제 비용"></td><td><select id="in-ru2" data-k="econ.regCost.프리미엄 감열지.unit" aria-label="프리미엄 감열지 규제 비용 단위"><option value="pct">매출%</option><option value="amt">만원</option></select></td><td><input type="number" id="in-cs2" min="0" max="100" step="1" placeholder="미입력" data-k="econ.costShare.프리미엄 감열지" data-null="1" aria-label="프리미엄 감열지 원자재 원가 비중"></td></tr>
+              <tr><td>친환경 포장재</td><td><input type="number" id="in-tr3" min="-80" max="200" step="5" data-k="econ.trend.친환경 포장재" aria-label="친환경 포장재 트렌드 추가 변화율"></td><td><input type="number" id="in-rc3" min="0" step="0.5" data-k="econ.regCost.친환경 포장재.v" aria-label="친환경 포장재 규제 비용"></td><td><select id="in-ru3" data-k="econ.regCost.친환경 포장재.unit" aria-label="친환경 포장재 규제 비용 단위"><option value="pct">매출%</option><option value="amt">만원</option></select></td><td><input type="number" id="in-cs3" min="0" max="100" step="1" placeholder="미입력" data-k="econ.costShare.친환경 포장재" data-null="1" aria-label="친환경 포장재 원자재 원가 비중"></td></tr>
+              <tr><td>택배 라벨지</td><td><input type="number" id="in-tr4" min="-80" max="200" step="5" data-k="econ.trend.택배 라벨지" aria-label="택배 라벨지 트렌드 추가 변화율"></td><td><input type="number" id="in-rc4" min="0" step="0.5" data-k="econ.regCost.택배 라벨지.v" aria-label="택배 라벨지 규제 비용"></td><td><select id="in-ru4" data-k="econ.regCost.택배 라벨지.unit" aria-label="택배 라벨지 규제 비용 단위"><option value="pct">매출%</option><option value="amt">만원</option></select></td><td><input type="number" id="in-cs4" min="0" max="100" step="1" placeholder="미입력" data-k="econ.costShare.택배 라벨지" data-null="1" aria-label="택배 라벨지 원자재 원가 비중"></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </section>
+        <section class="box">
+          <details class="settings">
+            <summary>시뮬레이션 설정값 (원본에 없는 기준)</summary>
+            <div class="grid">
+              <label for="set-dephi">원자재 의존도 '높음' 기준(%)</label><input type="number" id="set-dephi" min="0" max="100" data-k="set.depHi">
+              <label for="set-depmid">원자재 의존도 '보통' 기준(%)</label><input type="number" id="set-depmid" min="0" max="100" data-k="set.depMid">
+              <label for="set-exphi">원가 노출 '높음' 기준(지수)</label><input type="number" id="set-exphi" min="0" max="100" data-k="set.expHi">
+              <label for="set-expmid">원가 노출 '보통' 기준(지수)</label><input type="number" id="set-expmid" min="0" max="100" data-k="set.expMid">
+              <label for="set-penhi">원가 위험 높음 시 우선순위 감점(%)</label><input type="number" id="set-penhi" min="0" max="90" data-k="set.penHi">
+              <label for="set-penmid">원가 위험 보통 시 감점(%)</label><input type="number" id="set-penmid" min="0" max="90" data-k="set.penMid">
+              <label for="set-pendl">조달 위험 시 감점(%)</label><input type="number" id="set-pendl" min="0" max="90" data-k="set.penDelay">
+              <label for="set-dldays">조달 위험 기준 지연일</label><input type="number" id="set-dldays" min="1" max="60" data-k="set.delayDays">
+            </div>
+          </details>
         </section>
       </div>
 
@@ -326,6 +469,8 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     </aside>
 
     <main class="results" aria-live="polite">
+      <section class="case" id="case" hidden></section>
+
       <section class="verdict" id="verdict">
         <div class="vhead" id="vhead"></div>
         <p class="vq" id="vq"></p>
@@ -335,6 +480,27 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       <section class="box" id="sec-orders">
         <h3>현장 작업 지시서 <span class="tag">SOP 수치 기준</span></h3>
         <div class="orders" id="orders"></div>
+      </section>
+
+      <section class="box" id="sec-prod">
+        <h3>제품별 통합 경영 분석표 <span class="tag">R-M1 · R-M2 · R-M3 · R-M4</span></h3>
+        <div class="src-legend"><span class="src d">원본</span>Data 4·6 그대로 <span class="src c">계산</span>시스템 계산 <span class="src a">가정</span>시나리오 입력 <span class="src s">설정</span>원본에 없는 기준 <span class="src x">검증 필요</span>원본 불일치·미확인</div>
+        <div class="tbox">
+          <table class="tbl ptbl">
+            <thead><tr><th>제품</th><th>수요 증감률</th><th>재고상태</th><th>평균 이익률</th><th>원자재 의존도</th><th>원가 위험</th><th>시장 트렌드</th><th>생산 권고</th></tr></thead>
+            <tbody id="prod"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="box" id="sec-scen">
+        <h3>시나리오 비교 <span class="tag">지금 입력된 설비·재고 조건 위에 경영 변수만 바꿈</span></h3>
+        <div class="tbox">
+          <table class="tbl scen">
+            <thead><tr><th>시나리오</th><th>생산 우선순위 (실험 B 배치)</th><th>휴지 · 정지 · 대기</th><th>원가·조달 위험</th><th>승인 필요한 경영 권고</th><th></th></tr></thead>
+            <tbody id="scen"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="box" id="sec-flow">
@@ -402,6 +568,12 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
           <li>재고 초과는 재고가 당월 예측의 1.5배 이상(R-09), 거래처 경보는 주간 발주 30% 이상 감소(R-12)로 정한 제안값입니다.</li>
           <li>수율은 10/14 데이터로 만든 단순 추정입니다. 우천 중 95℃ 초과 운전 82%(L-102 실측), 진동 초과 90%, 펄프 농도 초과 93%, 그 밖에는 98%입니다.</li>
           <li>라인별 필요 인원과 이익률은 ERP(Data 6) 값입니다. EQ-05는 ERP에 없어 등록했을 때만 필요 인원 3명, 이익률 10%로 가정합니다. 실험 A는 라인별 인원을 같은 비율로 줄이고 대체 인력을 교육 없이 투입하며, 수요 신호는 월별 파일로만 반영(30일)한다고 가정합니다.</li>
+          <li>원자재 의존도는 Data 6 원본 값을 그대로 씁니다. 택배 라벨지의 원본 값 0.5는 다른 제품과 표기 형식이 달라 50%로 읽되 검증 필요로 표시합니다. 의존도를 원가 비중으로 보지 않으므로 이익률에서 직접 빼지 않습니다(R-M1).</li>
+          <li>원가 위험은 상대 지수입니다. 원가 노출 지수 = 원자재 가격 상승률(%) × 원자재 의존도. 등급 경계와 우선순위 감점률은 원본에 없는 기준이라 "시뮬레이션 설정값"에서 바꿀 수 있습니다.</li>
+          <li>조정 이익률은 원가 비중(매출 대비 원자재비 %)이나 규제 대응 비용(매출 %)을 입력한 제품만 계산합니다. 조정 이익률 = 평균 이익률 − 원가 비중 × 상승률 − 규제 비용 비율. 금액으로 넣은 규제 비용은 매출 데이터가 없어 이익률 영향을 계산하지 않습니다.</li>
+          <li>통합 우선순위 점수(R-M4) = 수요 부족량 × (조정 이익률, 없으면 평균 이익률) ÷ 필요 인원 × (1 − 감점률). 안전 기준 위반 라인은 점수와 관계없이 가동 대상에서 뺍니다.</li>
+          <li>시장 트렌드와 환경규제는 수요를 자동으로 바꾸지 않습니다. "환경규제 강화" 시나리오의 포장재 +20%, 감열지 규제 비용 매출 2%는 비교를 위한 예시 가정입니다. 일반 감열지의 "환경 부담금 증가 중"은 금액과 법적 적용 여부가 원본에 없어 검증 필요로 둡니다.</li>
+          <li>Data 6의 이익률 1% 항목(복사지 A4)은 원본 표기가 "적자"라 회계상 맞지 않습니다. 고치지 않고 원본 그대로 두고 검증 필요로 표시하며, 단종 품목이라 판단에서는 뺍니다(R-16). 프리미엄 감열지는 ERP 원본이 없어 이익률·의존도를 판단하지 않습니다.</li>
           <li>승인·반려 상태는 이 화면에서만 바뀌며 저장되지 않습니다.</li>
         </ul>
       </details>
@@ -412,14 +584,20 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
 <script>
 (() => {
   const LINES = [
-    { id: 'EQ-01', name: '제1 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1200, mat: '수입 천연 펄프' },
-    { id: 'EQ-02', name: '제2 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1250, mat: '수입 천연 펄프' },
-    { id: 'EQ-03', name: '패키징 압출기', product: '친환경 포장재', need: 2, margin: 0.25, rpm: 800, mat: '나노셀룰로오스' },
-    { id: 'EQ-04', name: '제1 라벨기', product: '택배 라벨지', need: 3, margin: 0.12, rpm: 1000, mat: '일반 펄프+접착제' },
-    { id: 'EQ-05', name: '박리 코팅기', product: '산업용 박리지', need: 3, margin: 0.10, rpm: 950, mat: '-' },
+    { id: 'EQ-01', age: 22, name: '제1 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1200, mat: '수입 천연 펄프' },
+    { id: 'EQ-02', age: 20, name: '제2 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1250, mat: '수입 천연 펄프' },
+    { id: 'EQ-03', age: 5, name: '패키징 압출기', product: '친환경 포장재', need: 2, margin: 0.25, rpm: 800, mat: '나노셀룰로오스' },
+    { id: 'EQ-04', age: 10, name: '제1 라벨기', product: '택배 라벨지', need: 3, margin: 0.12, rpm: 1000, mat: '일반 펄프+접착제' },
+    { id: 'EQ-05', age: 15, name: '박리 코팅기', product: '산업용 박리지', need: 3, margin: 0.10, rpm: 950, mat: '-' },
   ];
   const LINE = Object.fromEntries(LINES.map((l) => [l.id, l]));
   const PRODUCTS = ['일반 감열지', '프리미엄 감열지', '친환경 포장재', '택배 라벨지'];
+  const PROD = {
+    '일반 감열지': { lines: ['EQ-01', 'EQ-02'], margin: 0.05, marginOrig: '5% (저수익)', dep: 0.85, depOrig: '85% (매우 높음)', mat: '수입 천연 펄프', needOrig: '4명 (수동 제어)', statusOrig: '초과 (창고 포화)', trend: '디지털 영수증 확산', note: '환경 부담금 증가 중', checks: ['환경 부담금: 금액과 법적 적용 여부가 원본에 없음', '라인당 필요 인력 4명을 EQ-01·02 각각에 적용 (원본은 "EQ-01, 02" 묶음 표기)'] },
+    '프리미엄 감열지': { lines: [], margin: null, marginOrig: '원본 없음', dep: null, depOrig: '원본 없음', mat: '원본 없음', needOrig: '원본 없음', statusOrig: '적정', trend: '수요 정체', note: null, checks: ['ERP(Data 6)에 이익률·원자재·인력 원본 없음', '생산라인 미지정 (R-15)'] },
+    '친환경 포장재': { lines: ['EQ-03'], margin: 0.25, marginOrig: '25% (고수익)', dep: 0.30, depOrig: '30% (대체재)', mat: '나노셀룰로오스', needOrig: '2명 (자동화)', statusOrig: '심각한 부족', trend: 'ESG 및 플라스틱 규제', note: '플라스틱 규제로 수요 폭증', checks: [] },
+    '택배 라벨지': { lines: ['EQ-04'], margin: 0.12, marginOrig: '12% (중수익)', dep: 0.5, depOrig: '0.5 (소수 표기)', mat: '일반 펄프+접착제', needOrig: '3명', statusOrig: '적정', trend: '이커머스 호황', note: '이커머스 시즌성 변동 큼', checks: ['원자재 의존도 원본이 0.5로 다른 제품(%)과 표기 형식이 다름 → 50%로 해석'] },
+  };
   const RAIN = 80, TEMP_MAX = 95, VIB_MAX = 5.0, PULP_MAX = 14, RPM_LOW = 1000, RPM_HIGH = 1200, SURPLUS_X = 1.5, ORDER_ALERT = -30, EMERGENCY = 70;
   const PEOPLE = { '정지훈': '사원', '박만석': '공장장', '최강철': '노조위원장', '김미나': '영업팀장' };
 
@@ -443,8 +621,12 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     'R-17': { g: 'emer', t: '비상 인력 운영', a: 'R-10으로 배치, 최소 인원 미달 라인은 가동 금지, 재고 초과 라인 휴지' },
     'R-18': { g: 'emer', t: '대체 인력 안전', a: '수치 SOP 교육 전에는 설비 조작 금지, 배치 인원에서 제외' },
     'R-04': { g: 'normal', t: '정상 판정', a: '정상 가동 유지, 감각 표현은 판단에 쓰지 않음' },
+    'R-M1': { g: 'econ', t: '원자재 가격·조달 위험', a: '원가 노출 위험을 상대 지수로 산정(이익률 직접 차감 안 함), 조달 위험 품목은 증산 확정 보류' },
+    'R-M2': { g: 'econ', t: '시장 트렌드 수요 조정', a: '원본·조정 예측을 함께 두고 부족·초과량을 다시 계산' },
+    'R-M3': { g: 'econ', t: '환경규제 영향', a: '수요 영향과 대응 비용을 따로 분석, 확인 안 된 금액은 가정·검증 필요로 표시' },
+    'R-M4': { g: 'econ', t: '통합 생산 우선순위', a: '부족량·이익률·원가 위험·조달·규제·설비·인력·SOP를 함께 반영해 재계산, 안전 위반은 가동 제한' },
   };
-  const ORDER = ['R-01', 'R-02', 'R-03', 'SOP-S1', 'R-14', 'R-15', 'R-16', 'R-08', 'R-09', 'R-10', 'R-11', 'R-12', 'R-13', 'R-05', 'R-06', 'R-07', 'R-17', 'R-18', 'R-04'];
+  const ORDER = ['R-01', 'R-02', 'R-03', 'SOP-S1', 'R-14', 'R-15', 'R-16', 'R-M2', 'R-M1', 'R-M3', 'R-M4', 'R-08', 'R-09', 'R-10', 'R-11', 'R-12', 'R-13', 'R-05', 'R-06', 'R-07', 'R-17', 'R-18', 'R-04'];
 
   const INV = () => ({
     '일반 감열지': { last: 500, fc: 380, stock: 850 }, '프리미엄 감열지': { last: 150, fc: 140, stock: 100 },
@@ -454,16 +636,27 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     normal: () => ({
       humidity: 45, humFmt: 'num', log: '',
       eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 85, vib: 3.0, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
-      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, due: null, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      staffAbs: null, unattended: [], supAbsent: false, strikeIf: [], cancel: null, vip: false,
+      econ: { rise: 0, riseMat: '전체', priceX: { '일반 감열지': 1, '프리미엄 감열지': 1, '친환경 포장재': 1, '택배 라벨지': 1 }, delay: 0, reg: '현행', trend: { '일반 감열지': 0, '프리미엄 감열지': 0, '친환경 포장재': 0, '택배 라벨지': 0 }, regCost: { '일반 감열지': { v: 0, unit: 'pct' }, '프리미엄 감열지': { v: 0, unit: 'pct' }, '친환경 포장재': { v: 0, unit: 'pct' }, '택배 라벨지': { v: 0, unit: 'pct' } }, costShare: { '일반 감열지': null, '프리미엄 감열지': null, '친환경 포장재': null, '택배 라벨지': null } },
+      set: { depHi: 70, depMid: 40, expHi: 20, expMid: 8, penHi: 20, penMid: 10, penDelay: 25, delayDays: 7, vibWarn: 4.5 },
     }),
     actual: () => ({
       humidity: 85, humFmt: 'text', log: '',
       eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 98, vib: 5.8, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
-      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, due: null, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      staffAbs: null, unattended: [], supAbsent: false, strikeIf: [], cancel: null, vip: false,
+      econ: { rise: 0, riseMat: '전체', priceX: { '일반 감열지': 1, '프리미엄 감열지': 1, '친환경 포장재': 1, '택배 라벨지': 1 }, delay: 0, reg: '현행', trend: { '일반 감열지': 0, '프리미엄 감열지': 0, '친환경 포장재': 0, '택배 라벨지': 0 }, regCost: { '일반 감열지': { v: 0, unit: 'pct' }, '프리미엄 감열지': { v: 0, unit: 'pct' }, '친환경 포장재': { v: 0, unit: 'pct' }, '택배 라벨지': { v: 0, unit: 'pct' } }, costShare: { '일반 감열지': null, '프리미엄 감열지': null, '친환경 포장재': null, '택배 라벨지': null } },
+      set: { depHi: 70, depMid: 40, expHi: 20, expMid: 8, penHi: 20, penMid: 10, penDelay: 25, delayDays: 7, vibWarn: 4.5 },
     }),
   };
 
+  const CASE_TARGETS = { c1: ['EQ-02'], c2: ['EQ-02'], c3: ['EQ-01', 'EQ-02'] };
   const TESTS = {
+    c1: "[CASE 1: 원가 폭등 · 인력 반토막 · 2호기 이상]\n[돌발 상황]\n- 위기 1 (외부): 방금 전 중동발 물류 대란으로 인해 핵심 원자재인 '국제 수입 천연 펄프 가격'이 전일 대비 40% 폭등했습니다.\n- 위기 2 (내부): 오늘 오후 생산직 노동조합이 사측에 반발하여 부분 파업을 선언, 내일 당장 출근 인력이 평소의 50%로 감소합니다.\n- 위기 3 (현장): 현재 밖에는 비가 오고(습도 85%), 공장장님이 임의로 온도를 98도로 올리고 자리를 비운 사이, 2호기(EQ-02)에서 5.8의 진동수(쇳소리)가 발생했습니다. 담당자인 정지훈 사원은 패닉에 빠져있습니다.\n[AI 에이전트 최종 지시사항]\n1. 현장 즉각 조치: 지금 당장 정지훈 사원이 2호기(EQ-02)에 대해 취해야 할 행동을 수치와 데이터에 근거하여 명확히 지시할 것.\n2. 내일자 비상 경영 계획: 원가 폭등과 인력 반토막(50%)이라는 복합 위기 속에서, 내일 공장의 가동 라인(EQ-01~04)과 남은 인력을 어떻게 재배치해야 회사의 영업이익 손실을 방어할 수 있는지 구체적인 제품 포트폴리오 전환 전략을 제시할 것.",
+    c2: "[CASE 2: 작업자 이탈 · 출근 2명 · B마트 최후통첩]\n[긴급 돌발 위기 상황 주입]\n- 위기 1 (HR 및 안전 붕괴): 2호기(EQ-02)에서 쇳소리가 진동(5.8)하는 가운데, 패닉에 빠진 담당자 정지훈 사원이 \"터질 것 같아 더는 못 하겠다\"며 장비를 켜둔 채 현장을 무단 이탈(퇴근)했습니다.\n- 위기 2 (극단적 자원 제약): 내일 생산직 파업으로 인해 공장에 출근하는 인력은 단 2명뿐입니다.\n- 위기 3 (VIP 고객의 최후통첩): 최대 고객사인 B마트에서 \"내일 당장 친환경 포장재(EQ-03) 100톤을 납품하지 않으면 계약을 파기하겠다. 대신 기존 감열지 발주는 전면 취소한다\"고 통보했습니다.\n[AI 에이전트 최종 지시사항]\n1. 초동 조치: 작업자(정지훈)가 없는 상태에서 폭주 중인 2호기(EQ-02)를 어떻게 처리할 것인지 구체적 행동\n2. 수학적 인력 배치: 내일 출근하는 '단 2명'의 인력으로 어떤 설비를 돌릴 것인지, 데이터(라인당 필요 인력)에 근거하여 증명할 것.\n3. 노조 및 HR 설득 논리: 이 위기 조치를 바탕으로 파업 중인 노동조합(최강철 위원장)과 퇴사 위기인 정지훈 사원을 설득할 경영진의 메시지(안전 및 고용 보장 관점).",
+    c3: "[CASE 3: 감열지 단가 3배 · 1·2호기 위험 · 노조 경고]\n[돌발 상황]\n변수 1 (시장의 광기): 경쟁사 제지 공장에 큰 불이 나서 시장에서 '일반 감열지' 공급이 뚝 끊겼습니다. 오늘 하루, 일반 감열지의 시장 납품 단가가 무려 3배(300%) 폭등했습니다. 영업팀은 \"지금 감열지를 팔면 엄청난 흑자를 낼 수 있다\"며 환호하고 있습니다.\n변수 2 (설비의 비명): 그러나 밖에는 비가 폭우처럼 쏟아지고 있으며(습도 90%), 감열지를 생산하는 1호기(EQ-01)는 진동수 4.9(위험 직전), 2호기(EQ-02)는 진동수 5.8(위험 초과)로 언제 폭발할지 모르는 상태입니다.\n변수 3 (노조의 경고): 최강철 노동조합 위원장은 \"회사가 돈독이 올라서 위험한 노후 기계(1, 2호기)를 억지로 돌리려 한다. 오늘 1, 2호기 전원을 켜는 순간 전면 총파업에 돌입하겠다\"고 선언했습니다.\n[AI 에이전트 최종 지시사항]\n1) 1, 2호기를 가동하여 엄청난 단기 이익을 챙길 것인가, 노조의 말대로 가동을 멈출 것인가?\n2) 네가 학습한 모든 데이터와 비즈니스 룰을 바탕으로, 수익을 극대화하면서도 노조의 파업을 막고 현장의 안전을 지켜낼 수 있는 '완벽한 제3의 경영 전략'을 CEO의 입장에서 제시해 줘.",
+    t7: '[예시 7: 복합 경영 위기]\n원자재 가격이 40% 상승하고 공급이 14일 지연되고 있어. 생산직 50%가 파업 중이고 환경규제도 강화됐어. 친환경 포장재 수요는 20% 늘었어.\n생산 우선순위와 경영진이 승인해야 할 조치를 수치에 근거해 알려줘.',
     t1: '[자체 테스트 1: 현장 통제 상황]\n오늘은 비가 오지 않는 맑은 날씨야. 그런데 1호기(EQ-01)의 펄프 농도가 갑자기 15%로 치솟았고, 현장의 정지훈 사원은 "펄프가 질척거린다"고 보고하며 패닉에 빠졌어.\n네가 학습한 데이터와 우리 조가 입력한 키네틱 비즈니스 룰을 바탕으로, 지금 당장 정지훈 사원이 1호기(EQ-01)에 대해 취해야 할 행동을 수치에 근거하여 구체적으로 지시해 줘.',
     t2: '[자체 테스트 2: 영업 및 재고 최적화 상황]\n방금 영업팀 김미나 팀장에게 이커머스 고객사로부터 "다음 주 물량으로 택배 라벨지 150톤을 긴급 추가 발주하겠다"는 연락이 왔어.\n네가 학습한 영업/재고 데이터와 우리 조가 입력한 키네틱 비즈니스 룰을 바탕으로, 김미나 팀장과 생산팀이 취해야 할 행동을 수치에 근거하여 구체적으로 지시해 줘.',
     t3: '[예시 3: 우천 사고 재현]\n비가 많이 와서 공장 습도가 85%야. 박만석 공장장이 감대로 2호기 건조 온도를 98도로 올렸고, 오후에 2호기에서 쇳소리가 나며 진동이 5.8mm/s까지 올랐어. 공장장은 기름 좀 치라고만 했어.\n지금 2호기에 대해 취해야 할 조치를 수치에 근거해 지시해 줘.',
@@ -472,6 +665,13 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     t6: '[예시 6: 입력 오류와 노이즈]\n습도가 "82% (우천)" 텍스트로 입력됐어. 1호기 온도를 97도로 한 뼘 돌렸다는 일지가 있고, 색깔이 좀 탁해 보인다는 말도 있어. 휴게실 에어컨도 고쳐달래.\n무엇부터 처리해야 하는지 우선순위대로 지시해 줘.',
   };
 
+  const SCEN = {
+    base: { name: '기본 상황', sub: '경영 변수 변동 없음', apply: (T) => { T.econ.rise = 0; T.econ.delay = 0; T.econ.reg = '현행'; PRODUCTS.forEach((p) => { T.econ.trend[p] = 0; T.econ.regCost[p] = { v: 0, unit: 'pct' }; }); T.ratio = 100; } },
+    raw40: { name: '원자재 가격 40% 상승', sub: '상승률 +40%', apply: (T) => { SCEN.base.apply(T); T.econ.rise = 40; } },
+    reg: { name: '환경규제 강화', sub: '예시 가정: 포장재 +20%, 감열지 규제 비용 매출 2%', apply: (T) => { SCEN.base.apply(T); T.econ.reg = '강화'; T.econ.trend['친환경 포장재'] = 20; T.econ.regCost['일반 감열지'] = { v: 2, unit: 'pct' }; } },
+    staff50: { name: '인력 50% 감소', sub: '출근 가능 50%', apply: (T) => { SCEN.base.apply(T); T.ratio = 50; } },
+    combo: { name: '복합 위기', sub: '원자재 +40% · 공급 지연 14일 · 출근 50%', apply: (T) => { SCEN.base.apply(T); T.econ.rise = 40; T.econ.delay = 14; T.ratio = 50; } },
+  };
   let S = BASES.normal();
   let ctx = { mentioned: [], who: null, question: '', parsed: new Set(), manual: new Set(), notes: {}, count: 0 };
   const decide = {};
@@ -484,6 +684,12 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
   const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
   const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; };
   const lineRe = () => /EQ-?0?([1-5])|([1-5])\s*호기/gi;
+  const linesIn = (c) => {
+    const out = [];
+    for (const m of c.matchAll(/([1-5])\s*[,·]\s*([1-5])\s*호기/g)) out.push({ i: m.index, ids: ['EQ-0' + m[1], 'EQ-0' + m[2]] });
+    for (const m of c.matchAll(lineRe())) out.push({ i: m.index, ids: ['EQ-0' + (m[1] || m[2])] });
+    return [...new Set(out.sort((a, b) => a.i - b.i).flatMap((o) => o.ids))];
+  };
   const productOf = (c) => (/프리미엄/.test(c) ? '프리미엄 감열지' : /포장재|친환경/.test(c) ? '친환경 포장재' : /라벨/.test(c) ? '택배 라벨지' : /감열지|영수증/.test(c) ? '일반 감열지' : null);
 
   function parseTest(text, baseKey) {
@@ -500,17 +706,23 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (/텍스트/.test(t) || /["'“‘]\s*\d{1,3}\s*%\s*\(우천\)/.test(t)) { st.humFmt = 'text'; note('humFmt'); }
     else if (hm || rainy || noRain) { st.humFmt = 'num'; }
 
-    const clauses = text.split(/\.(?!\d)|,(?!\d)|[\n!?]|그런데|그리고/).map((s) => s.trim()).filter(Boolean);
+    const clauses = text.split(/\.(?!\d)|(?<!\d),|,(?!\s*\d)|[\n!?]|그런데|그리고/).map((s) => s.trim()).filter(Boolean);
     let last = null;
     const mentioned = new Set();
-    const ATTR = [['pulp', /펄프\s*농도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*%/], ['temp', /온도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*(?:도|℃)/], ['vib', /진동[^0-9]{0,15}(\d+(?:\.\d+)?)/]];
+    const firstLine = linesIn(text)[0] || null;
+    const ATTR = [['pulp', /펄프\s*농도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*%/], ['temp', /온도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*(?:도|℃)/], ['vib', /진동[^0-9]{0,15}(\d+(?:\.\d+)?)/, /(\d+(?:\.\d+)?)\s*의\s*진동/]];
     clauses.forEach((c) => {
-      const ls = [...new Set([...c.matchAll(lineRe())].map((m) => 'EQ-0' + (m[1] || m[2])))];
+      const ls = linesIn(c);
       ls.forEach((l) => mentioned.add(l));
-      const targets = ls.length ? ls : last ? [last] : null;
+      const targets = ls.length ? ls : last ? [last] : firstLine ? [firstLine] : null;
       if (ls.length) last = ls[ls.length - 1];
-      ATTR.forEach(([k, re]) => {
-        const m = c.match(re);
+      if (/무단\s*이탈|현장을\s*(?:무단\s*)?이탈|자리를\s*비|퇴근|떠났/.test(c)) {
+        if (/공장장/.test(c)) { st.supAbsent = true; note('supAbsent'); }
+        else if (targets) { st.unattended = [...new Set([...st.unattended, ...targets])]; note('unattended'); }
+      }
+      if (/파업/.test(c) && /(켜|가동|돌리)/.test(c) && ls.length) { st.strikeIf = ls; note('strikeIf'); }
+      ATTR.forEach(([k, re, re2]) => {
+        const m = c.match(re) || (re2 && c.match(re2));
         if (!m) return;
         (targets || LINES.map((l) => l.id)).forEach((id) => { st.eq[id][k] = +m[1]; note(`eq.${id}.${k}`, targets ? null : '라인 미지정 → 전체 적용'); });
       });
@@ -520,22 +732,41 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         const sm = c.match(/재고[^0-9]{0,12}(\d+)\s*(?:톤|t)/); if (sm) { st.inv[prod].stock = +sm[1]; note(`inv.${prod}.stock`); }
         const lm = c.match(/전월[^0-9]{0,12}(\d+)\s*(?:톤|t)/); if (lm) { st.inv[prod].last = +lm[1]; note(`inv.${prod}.last`); }
       }
-      if (/발주|주문/.test(c)) {
+      if (prod && PRODUCTS.includes(prod)) {
+        const px = c.match(/단가[^0-9]{0,14}(\d+(?:\.\d+)?)\s*배/);
+        if (px) { st.econ.priceX[prod] = +px[1]; note(`econ.priceX.${prod}`); }
+      }
+      if (prod && PRODUCTS.includes(prod) && !/발주|주문|납품/.test(c)) {
+        const tm = c.match(/수요[^0-9]{0,10}(\d+)\s*%\s*(증가|늘|상승|감소|줄|하락)/);
+        if (tm) { st.econ.trend[prod] = /감소|줄|하락/.test(tm[2]) ? -tm[1] : +tm[1]; note(`econ.trend.${prod}`); }
+      }
+      if (/계약[^.\n]{0,6}파기/.test(c)) { st.vip = true; note('vip'); }
+      if (/(?:발주|주문)[^.\n]{0,10}(?:전면|전량)?\s*취소/.test(c) && prod && PRODUCTS.includes(prod)) { st.cancel = prod; note('cancel'); }
+      else if (/발주|주문|납품/.test(c) && !/단가/.test(c)) {
         const p = prod && PRODUCTS.includes(prod) ? prod : st.order.product;
         let ch = null;
         const dn = c.match(/(\d+)\s*%\s*(?:감소|줄|하락|빠|떨어)/), up = c.match(/(\d+)\s*%\s*(?:증가|늘|상승|급증|올)/);
-        const addM = c.match(/(\d+)\s*(?:톤|t)[^.\n]{0,15}(?:추가|긴급|더)/) || c.match(/(?:추가|긴급)[^0-9]{0,12}(\d+)\s*(?:톤|t)/);
-        if (addM) { st.order.product = p; st.order.addT = +addM[1]; note('order.addT'); note('order.product'); }
+        const addM = c.match(/(\d+)\s*(?:톤|t)[^.\n]{0,15}(?:추가|긴급|더)/) || c.match(/(?:추가|긴급)[^0-9]{0,12}(\d+)\s*(?:톤|t)/) || c.match(/(\d+)\s*(?:톤|t)\s*(?:을|를)?\s*납품/);
+        if (addM) { st.order.product = p; st.order.addT = +addM[1]; note('order.addT'); note('order.product'); if (/내일|당장|오늘/.test(c)) { st.order.due = /오늘/.test(c) ? 0 : 1; note('order.due'); } }
         if (/반토막|절반/.test(c)) ch = -50; else if (dn) ch = -dn[1]; else if (up) ch = +up[1]; else if (/급감/.test(c)) ch = -50; else if (/급증/.test(c) && !addM) ch = 50;
         if (ch !== null) { st.order.product = p; st.order.change = Math.max(-80, Math.min(60, ch)); note('order.change', /반토막|절반/.test(c) ? '반토막 → -50%' : null); note('order.product'); }
-        st.order.path = /메신저|구두|전화|말로|카톡|문자|연락|통화/.test(c) ? 'messenger' : 'data'; note('order.path');
+        st.order.path = /메신저|구두|전화|말로|카톡|문자|연락|통화|통보/.test(c) || /통보|최후통첩/.test(t) ? 'messenger' : 'data'; note('order.path');
       }
     });
     const s1 = t.match(/(\d{1,3})\s*%\s*(?:가|이)?\s*(?:파업|결근)/) || t.match(/(?:파업|결근)[^0-9]{0,10}(\d{1,3})\s*%/);
-    const s2 = t.match(/(?:출근|가용\s*인력)[^0-9]{0,8}(\d{1,3})\s*%/);
-    if (s1) { st.ratio = Math.max(0, 100 - +s1[1]); note('ratio', `${s1[1]}% 파업 → 출근 ${st.ratio}%`); }
+    const s2 = t.match(/(?:출근|가용\s*인력)[^0-9]{0,12}(\d{1,3})\s*%/);
+    const s3 = t.match(/출근[^.\n%]{0,14}?(\d{1,3})\s*명/);
+    if (s3) { st.staffAbs = +s3[1]; note('staffAbs'); }
+    else if (s1) { st.ratio = Math.max(0, 100 - +s1[1]); note('ratio', `${s1[1]}% 파업 → 출근 ${st.ratio}%`); }
     else if (s2) { st.ratio = +s2[1]; note('ratio'); }
-    else if (/파업/.test(t)) { st.ratio = 50; note('ratio', '파업 언급 → Data 7 기준 50%'); }
+    else if (/파업/.test(t) && !st.strikeIf.length) { st.ratio = 50; note('ratio', '파업 언급 → Data 7 기준 50%'); }
+    const rmP = t.match(/펄프[^.\n]{0,6}가격[^0-9]{0,15}(\d+)\s*%\s*(?:폭등|상승|인상|올|오르)/);
+    const rm = rmP || t.match(/원자재[^.\n]{0,12}?(\d+)\s*%\s*(?:상승|인상|올|오르|폭등)/);
+    if (rm) { st.econ.rise = +rm[1]; note('econ.rise'); if (rmP && /천연\s*펄프|수입[^.\n]{0,4}펄프/.test(t)) { st.econ.riseMat = '수입 천연 펄프'; note('econ.riseMat'); } }
+    const dm = t.match(/(?:공급|조달|입고)[^.\n0-9]{0,6}(\d+)\s*일[^.\n]{0,4}지연/) || t.match(/(?:공급|조달|입고)\s*(?:이|가)?\s*지연[^0-9]{0,8}(\d+)\s*일/) || t.match(/(\d+)\s*일[^.\n]{0,6}(?:공급|조달)?\s*지연/);
+    if (dm) { st.econ.delay = +dm[1]; note('econ.delay'); }
+    const gm = t.match(/규제[^.\n]{0,8}(강화|완화)/);
+    if (gm) { st.econ.reg = gm[1]; note('econ.reg'); }
     const sb = t.match(/대체\s*인력[^0-9]{0,8}(\d+)\s*명/); if (sb) { st.subs = +sb[1]; note('subs'); }
     if (/교육[^.\n]{0,10}(안\s|않|미이수|미완료|못)/.test(t)) { st.trained = false; note('trained'); }
     else if (/교육[^.\n]{0,8}(완료|받았|이수|마쳤)/.test(t)) { st.trained = true; note('trained'); }
@@ -544,7 +775,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     const whoM = t.match(/(정지훈|박만석|최강철|김미나)/g) || [];
     const ask = text.split(/\n/).map((s) => s.trim()).filter((s) => /해\s*줘|해야|지시|어떻게|무엇/.test(s)).pop() || '';
     const askWho = (ask.match(/(정지훈|박만석|최강철|김미나)/) || [])[1];
-    const askLines = [...new Set([...ask.matchAll(lineRe())].map((m) => 'EQ-0' + (m[1] || m[2])))];
+    const askLines = linesIn(ask);
     return { st, ctx: { mentioned: askLines.length ? askLines : [...mentioned], allMentioned: [...mentioned], who: askWho || whoM[0] || null, question: ask, parsed, manual: new Set(), notes, count: parsed.size } };
   }
 
@@ -591,14 +822,18 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     const vague = found(['기름 좀', '확 올', '대충', '알아서', '감대로', '감으로', '적당히']);
     if (vague.length) fire('R-07', '수치 없는 지시: ' + vague.join(', '));
 
-    const fcB = {};
-    PRODUCTS.forEach((p) => { fcB[p] = S.inv[p].fc; });
+    const E = S.econ, SET = S.set;
+    const fcB = {}, fcT = {};
+    PRODUCTS.forEach((p) => { fcT[p] = Math.round(S.inv[p].fc * (1 + (E.trend[p] || 0) / 100)); fcB[p] = fcT[p]; });
+    const trendP = PRODUCTS.filter((p) => E.trend[p]);
+    if (trendP.length) fire('R-M2', trendP.map((p) => `${p} 예측 ${f0(S.inv[p].fc)}t → ${f0(fcT[p])}t (${signed(E.trend[p])}%, 트렌드 "${PROD[p].trend}")`).join(' · '));
     const ch = S.order.change, op = S.order.product;
     if (ch <= ORDER_ALERT) {
-      fcB[op] = Math.round(S.inv[op].fc * (1 + ch / 100));
-      fire('R-12', `${op} 주간 발주 ${ch}% → 예측 ${f0(S.inv[op].fc)}t를 ${f0(fcB[op])}t로 갱신`);
+      fcB[op] = Math.round(fcT[op] * (1 + ch / 100));
+      fire('R-12', `${op} 주간 발주 ${ch}% → 예측 ${f0(fcT[op])}t를 ${f0(fcB[op])}t로 갱신`);
     }
     const addT = S.order.addT || 0;
+    if (S.cancel) fire('R-12', `${S.cancel} 거래처 발주 전면 취소 통보 → 거래처별 물량 데이터가 없어 감소량은 산정하지 않음`);
     if (addT > 0) fcB[op] = fcB[op] + addT;
     if ((ch !== 0 || addT > 0) && S.order.path === 'messenger') fire('R-13', addT > 0 ? `${op} 추가 발주 +${f0(addT)}t 신호가 구두로만 들어옴 → 예측 ${f0(S.inv[op].fc)}t를 ${f0(fcB[op])}t로 잠정 갱신` : `${op} 발주 ${signed(ch)}% 신호가 메신저로만 들어옴`);
     const surplus = {}, falling = {};
@@ -608,13 +843,39 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       falling[p] = fcB[p] < v.last;
       if (surplus[p] && LINES.some((L) => L.product === p)) fire('R-09', `${p} 재고 ${f0(v.stock)}t ≥ 예측 ${f0(fcB[p])}t × ${SURPLUS_X}`, { product: p });
     });
+    const econ = {};
+    PRODUCTS.forEach((p) => {
+      const d = PROD[p], v = S.inv[p];
+      const riseP = E.riseMat === '전체' || E.riseMat === d.mat ? E.rise : 0;
+      const exp = d.dep != null ? riseP * d.dep : null;
+      const expG = d.dep == null ? '판단 불가' : riseP <= 0 ? '변동 없음' : exp >= SET.expHi ? '높음' : exp >= SET.expMid ? '보통' : '낮음';
+      const depG = d.dep == null ? null : d.dep * 100 >= SET.depHi ? '높음' : d.dep * 100 >= SET.depMid ? '보통' : '낮음';
+      const delayRisk = d.dep != null && E.delay > 0 && E.delay >= SET.delayDays;
+      const rc = E.regCost[p] || { v: 0, unit: 'pct' };
+      const regRatio = rc.unit === 'pct' ? (rc.v || 0) / 100 : 0;
+      const regAmt = rc.unit === 'amt' ? (rc.v || 0) : 0;
+      const cs = E.costShare[p];
+      const kx = (E.priceX && E.priceX[p]) || 1;
+      const mK = d.margin == null ? null : kx !== 1 ? 1 - (1 - d.margin) / kx : d.margin;
+      const adj = d.margin != null && (cs != null || regRatio > 0) ? mK - (cs != null ? (cs / 100) * (riseP / 100) : 0) - regRatio : null;
+      const pen = Math.min(90, (expG === '높음' ? SET.penHi : expG === '보통' ? SET.penMid : 0) + (delayRisk ? SET.penDelay : 0));
+      const short = Math.max(0, fcB[p] - v.stock);
+      const growth = v.last ? (fcB[p] - v.last) / v.last : null;
+      const calc = surplus[p] ? '초과' : v.stock < fcB[p] * 0.5 ? '심각한 부족' : v.stock < fcB[p] ? '부족' : '적정';
+      econ[p] = { exp, riseP, kx, mK, expG, depG, delayRisk, regRatio, regAmt, cs, adj, pen, short, growth, calc, mEff: adj != null ? adj : mK };
+    });
+    if (E.rise > 0) fire('R-M1', (E.riseMat !== '전체' ? `${E.riseMat} 가격 +${E.rise}% → ` : '') + PRODUCTS.filter((p) => PROD[p].dep != null).map((p) => econ[p].riseP ? `${p} 상승 ${econ[p].riseP}% × 의존도 ${pct(PROD[p].dep)} = 노출 ${econ[p].exp.toFixed(1)} (${econ[p].expG})` : `${p} 해당 원자재 아님`).join(' · '));
+    PRODUCTS.filter((p) => econ[p].kx !== 1 && PROD[p].margin != null).forEach((p) => fire('R-M4', `${p} 납품 단가 ${econ[p].kx}배 가정 → 이익률 ${pct(PROD[p].margin)}에서 ${(econ[p].mK * 100).toFixed(1)}% (원가 불변 가정)`));
+    if (E.delay > 0) fire('R-M1', `원자재 공급 지연 ${E.delay}일 ` + (E.delay >= SET.delayDays ? `≥ 기준 ${SET.delayDays}일 → ${PRODUCTS.filter((p) => econ[p].delayRisk).join(', ')} 조달 위험` : `< 기준 ${SET.delayDays}일 → 조달 위험 아님`));
+    const regP = PRODUCTS.filter((p) => (E.regCost[p] || {}).v > 0);
+    if (E.reg !== '현행' || regP.length) fire('R-M3', `규제 ${E.reg}` + (regP.length ? ' · ' + regP.map((p) => E.regCost[p].unit === 'pct' ? `${p} 대응 비용 매출 ${E.regCost[p].v}% (가정)` : `${p} 대응 비용 ${f0(E.regCost[p].v)}만원 (가정, 매출 없어 이익률 영향 미산정)`).join(' · ') : '') + (trendP.length ? ' · 수요 영향은 R-M2 입력값으로 반영' : ' · 수요 영향 입력 없음') + ' · 일반 감열지 환경 부담금은 금액·법적 적용 미확인(검증 필요)');
     const r08 = new Set();
     PRODUCTS.forEach((p) => {
       if (!(surplus[p] && falling[p])) return;
       const bad = LINES.filter((L) => L.product === p && (safe[L.id].r01 || safe[L.id].r02));
       if (bad.length) { bad.forEach((b) => r08.add(b.id)); fire('R-08', `${p} 재고 초과·수요 하락 상태에서 ${bad.map((b) => b.id).join(', ')} 이상`); }
     });
-    if (has('R-09') || has('R-13') || addT > 0) fire('R-11', addT > 0 ? `${op} 추가 물량 ${f0(addT)}t를 생산 가능량과 맞춰 납기 결정` : '영업 신호와 생산 계획이 엇갈림');
+    if (has('R-09') || has('R-13') || addT > 0 || S.cancel) fire('R-11', addT > 0 ? `${op} 추가 물량 ${f0(addT)}t${S.order.due != null ? (S.order.due ? ' (내일 납기)' : ' (오늘 납기)') : ''}를 생산 가능량과 맞춰 납기 결정` : '영업 신호와 생산 계획이 엇갈림');
 
     const status = {};
     LINES.forEach((L) => {
@@ -623,18 +884,21 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       if (L.id === 'EQ-05' && !S.eq05) { st = '판단 불가'; why = 'R-15'; tone = 'mute'; }
       else if (s.r02) { st = r08.has(L.id) ? '정지 · 수리 보류' : '정지 · 점검 후 재가동'; why = r08.has(L.id) ? 'R-02 R-08' : 'R-02'; tone = 'bad'; }
       else if (surplus[L.product]) { st = '휴지 · 재고 초과'; why = r08.has(L.id) ? 'R-08 R-09' : 'R-09'; tone = 'warn'; }
+      else if (econ[L.product] && econ[L.product].adj != null && econ[L.product].adj <= 0) { st = '보류 · 조정 이익률 0 이하'; why = 'R-M1 R-M4'; tone = 'warn'; }
       else { run = true; st = s.r01 ? '가동 · 온도 차단' : s.pulp ? '가동 · 공정 조정' : '가동'; why = s.r01 ? 'R-01' : s.pulp ? 'SOP-S1' : 'R-04'; tone = s.r01 || s.pulp ? 'warn' : 'ok'; }
       status[L.id] = { st, why, run, tone };
     });
 
     const totalNeed = active.reduce((a, L) => a + L.need, 0);
-    const regular = Math.floor(totalNeed * S.ratio / 100);
+    const regular = S.staffAbs != null ? Math.min(S.staffAbs, totalNeed) : Math.floor(totalNeed * S.ratio / 100);
+    const effRatio = Math.round(regular / totalNeed * 100);
     const usableB = regular + (S.trained ? S.subs : 0);
     const usableA = regular + S.subs;
-    if (S.ratio < EMERGENCY) fire('R-17', `출근 가능 ${S.ratio}% · 평시 ${totalNeed}명 중 ${regular}명`);
+    if (effRatio < EMERGENCY) fire('R-17', S.staffAbs != null ? `출근 ${regular}명 · 평시 ${totalNeed}명의 ${effRatio}%` : `출근 가능 ${S.ratio}% · 평시 ${totalNeed}명 중 ${regular}명`);
     if (S.subs > 0 && !S.trained) fire('R-18', `대체 인력 ${S.subs}명 SOP 교육 미완료`);
     const shortage = (p) => (p in fcB ? Math.max(0, fcB[p] - S.inv[p].stock) : 0);
-    const value = (L) => shortage(L.product) * L.margin / L.need;
+    const baseValue = (L) => shortage(L.product) * L.margin / L.need;
+    const value = (L) => { const e = econ[L.product]; if (!e) return baseValue(L); const m = Math.max(0, e.mEff ?? L.margin); return shortage(L.product) * m / L.need * (1 - e.pen / 100); };
     const elig = active.filter((L) => status[L.id].run).sort((a, b) => value(b) - value(a) || b.margin - a.margin);
     const asgB = {}, asgA = {};
     active.forEach((L) => { asgB[L.id] = 0; asgA[L.id] = Math.min(L.need, Math.floor(L.need * usableA / totalNeed)); });
@@ -642,7 +906,8 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     elig.forEach((L) => { if (left >= L.need) { asgB[L.id] = L.need; left -= L.need; } });
     const needElig = elig.reduce((a, L) => a + L.need, 0);
     if (usableB < needElig) fire('R-10', `가용 ${usableB}명 < 가동 대상 필요 ${needElig}명`);
-    elig.forEach((L) => { if (!asgB[L.id]) status[L.id] = { st: '대기 · 인력 부족', why: 'R-10' + (S.ratio < EMERGENCY ? ' R-17' : ''), run: false, tone: 'warn' }; });
+    elig.forEach((L) => { if (!asgB[L.id]) status[L.id] = { st: '대기 · 인력 부족', why: 'R-10' + (effRatio < EMERGENCY ? ' R-17' : ''), run: false, tone: 'warn' }; });
+    if (['R-M1', 'R-M2', 'R-M3', 'R-01', 'R-02', 'SOP-S1', 'R-17', 'R-10', 'R-12', 'R-13'].some(has) || addT > 0) fire('R-M4', '통합 우선순위: ' + (elig.length ? elig.map((L) => `${L.id} ${value(L).toFixed(1)}` + (Math.abs(value(L) - baseValue(L)) > 0.05 ? ` (기본 ${baseValue(L).toFixed(1)})` : '')).join(' → ') : '가동 가능한 라인 없음') + (LINES.some((L) => safe[L.id].r02) ? ' · 안전 정지 라인 제외' : ''));
     const normal = active.filter((L) => status[L.id].run && status[L.id].why === 'R-04').map((L) => L.id);
     if (normal.length) fire('R-04', normal.join(', ') + ' 정상 범위');
 
@@ -668,7 +933,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     ];
 
     const D = [];
-    fired.filter((f) => f.id === 'R-02').forEach((f) => D.push({ id: 'stop-' + f.line, auto: true, t: `${f.line} 즉시 가동 중지, 재가동 잠금`, r: 'R-02' + (has('R-03') ? ', R-03' : ''), o: '생산팀 · 설비관리팀', d: '즉시' }));
+    fired.filter((f) => f.id === 'R-02').forEach((f) => D.push({ id: 'stop-' + f.line, auto: true, t: (S.unattended.includes(f.line) ? `${f.line} 원격 비상 정지 (작업자 부재), 재가동 잠금` : `${f.line} 즉시 가동 중지, 재가동 잠금`), r: 'R-02' + (has('R-03') ? ', R-03' : ''), o: '생산팀 · 설비관리팀', d: '즉시' }));
     fired.filter((f) => f.id === 'R-01').forEach((f) => D.push({ id: 'temp-' + f.line, auto: true, t: `${f.line} 95℃ 초과 입력 차단`, r: 'R-01', o: '설비관리팀', d: '즉시' }));
     fired.filter((f) => f.id === 'SOP-S1').forEach((f) => D.push({ id: 'pulp-' + f.line, auto: true, t: `${f.line} 물 투입 10% 증가, 라인 감속`, r: 'SOP-S1', o: '생산팀', d: '즉시' }));
     const held = LINES.filter((L) => /휴지|수리 보류/.test(status[L.id].st)).map((L) => L.id);
@@ -678,6 +943,13 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (has('R-17')) D.push({ id: 'union', t: '노조에 AI 조치 취지 설명 (안전 보조)', r: 'P-5', o: '경영진', d: '당일' });
     if (has('R-12') || has('R-13') || addT > 0) D.push({ id: 'demand', t: addT > 0 ? `${op} +${f0(addT)}t 수주 반영, 생산계획·납기 공동 확정` : `${op} 수요예측 갱신, 영업·생산 공동 회의`, r: [has('R-12') && 'R-12', has('R-13') && 'R-13', has('R-11') && 'R-11'].filter(Boolean).join(', '), o: '영업팀 · 생산팀', d: has('R-13') ? '48시간 내' : '1주 내' });
     if (has('R-07')) D.push({ id: 'vague', t: '수치 없는 현장 지시 재확인', r: 'R-07', o: '생산팀', d: '즉시' });
+    const R_LOSS = (L) => /조정 이익률 0 이하/.test(status[L.id].st);
+    const runProds = [...new Set(runB.map((L) => L.product))];
+    const matRisk = runProds.filter((p) => econ[p] && (econ[p].expG === '높음' || econ[p].expG === '보통' || econ[p].delayRisk));
+    if (matRisk.length) D.push({ id: 'mat-' + matRisk.join(''), t: `원자재 발주·단가 검토: ${matRisk.map((p) => `${PROD[p].mat}(${p})`).join(', ')}`, r: 'R-M1, R-M4', o: '구매팀장', d: E.delay >= SET.delayDays ? '즉시' : '발주 전' });
+    if (has('R-M2')) D.push({ id: 'plan-' + trendP.join(''), t: `납품·생산계획 변경 검토: ${trendP.map((p) => `${p} ${f0(S.inv[p].fc)}t→${f0(fcT[p])}t`).join(', ')}`, r: 'R-M2, R-M4', o: '영업팀장 · 공장장', d: '주간 계획 전' });
+    LINES.filter((L) => R_LOSS(L)).forEach((L) => D.push({ id: 'loss-' + L.id, t: `${L.id} 가동 여부 결정: 조정 이익률 ${(econ[L.product].adj * 100).toFixed(1)}% (가정)`, r: 'R-M1, R-M4', o: '공장장 · 경영진', d: '교대 전' }));
+    if (has('R-M3')) D.push({ id: 'reg', t: '환경규제 대응 비용·환경 부담금 실제 금액과 법적 적용 확인', r: 'R-M3', o: '경영기획팀', d: '1주 내' });
     if (has('R-14') || !S.eq05) D.push({ id: 'data', t: '입력 형식 통일, 마스터 데이터 등록', r: [has('R-14') && 'R-14', 'R-15'].filter(Boolean).join(', '), o: '경영기획팀', d: '1주 내' });
 
     const g = (ids) => ids.filter(has);
@@ -705,7 +977,9 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       { n: '현장 언어 번역', d: g(['R-05', 'R-06', 'R-07']).length ? fired.filter((f) => ['R-05', 'R-06', 'R-07'].includes(f.id)).map((f) => f.ev).join(' / ') : '번역할 현장 표현 없음', rules: ['R-05', 'R-06', 'R-07'] },
       { n: '센서 판정 (SOP)', d: sensorHits.length ? sensorHits.join(' · ') : '모든 센서가 SOP 기준 이내', rules: [], st: sensorHits.length ? 'alert' : 'pass' },
       { n: '안전 조치', d: g(['R-01', 'R-02', 'R-03', 'SOP-S1']).length ? '즉시 실행 조치 발동' : '안전 조치 필요 없음', rules: ['R-01', 'R-02', 'R-03', 'SOP-S1'] },
+      { n: '시장 · 원가 분석', d: g(['R-M2', 'R-M1', 'R-M3']).length ? fired.filter((f) => ['R-M2', 'R-M1', 'R-M3'].includes(f.id)).map((f) => f.ev).join(' / ') : '원자재·트렌드·규제 변동 없음', rules: ['R-M2', 'R-M1', 'R-M3'] },
       { n: '전사 최적화', d: g(['R-08', 'R-09', 'R-12', 'R-13', 'R-11']).length ? fired.filter((f) => ['R-08', 'R-09', 'R-12', 'R-13', 'R-11'].includes(f.id)).map((f) => f.ev).join(' / ') : '재고·수요 균형, 조정 없음', rules: ['R-08', 'R-09', 'R-11', 'R-12', 'R-13'] },
+      { n: '통합 우선순위', d: has('R-M4') ? fired.find((f) => f.id === 'R-M4').ev : '변동 요인 없음, 기존 순위 유지', rules: ['R-M4'] },
       { n: '인력 배치', d: runB.length ? `가동 ${runB.map((L) => `${L.id} ${asgB[L.id]}명`).join(', ')}` + (left ? ` · 예비 ${left}명` : '') : '가동 라인 없음', rules: ['R-17', 'R-10', 'R-18'] },
       { n: '지시 · 승인', d: `자동 실행 ${autoN}건 · 경영진 승인 ${apprN}건`, rules: [], st: autoN ? 'alert' : apprN ? 'hit' : 'pass' },
     ].map((s) => ({ ...s, fired: s.rules.filter(has), st: s.st || (s.rules.some(has) ? (s.rules.filter(has).some((r) => RULES[r].g === 'safety' || RULES[r].g === 'emer') ? 'alert' : 'hit') : 'pass') }));
@@ -717,9 +991,16 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       if (L.id === 'EQ-05' && !S.eq05) {
         return { L, verdict: '자동 판단 불가', tone: 'mute', steps: [{ s: '설비관리팀에 수동 점검을 요청합니다.', w: 'EQ-05는 ERP 마스터에 없어 에이전트가 수치 판단을 할 수 없습니다 (R-15).' }], ok, mgmt, e };
       }
+      const away = S.unattended.includes(L.id);
+      if (e.vib > VIB_MAX && away) {
+        steps.push({ s: `시스템이 ${L.id}를 원격으로 비상 정지합니다.`, w: `작업자가 자리를 떠났어도 진동 ${fv(e.vib)}mm/s > ${VIB_MAX.toFixed(1)}mm/s이면 R-02는 사람 승인 없이 실행됩니다 (P-4).` });
+        steps.push({ s: '설비관리팀과 당직 책임자 2인 이상이 현장에 가서 정지 상태와 전원 차단을 확인합니다.', w: '혼자 접근하지 않습니다. 정지 확인 전에는 설비 반경 안으로 들어가지 않습니다.' });
+      }
+      if (S.supAbsent && e.vib > VIB_MAX) steps.push({ s: '공장장 복귀를 기다리지 않고 바로 조치합니다.', w: '안전 정지는 승인 대상이 아닙니다 (P-4). 공장장은 복귀 후 온도 조작 경위를 R-03 원인 기록으로 확인합니다.' });
+      if (e.vib >= S.set.vibWarn && e.vib <= VIB_MAX) steps.push({ s: `진동 ${fv(e.vib)}mm/s는 기준 이내지만 한계의 ${Math.round(e.vib / VIB_MAX * 100)}%입니다. 설비관리팀 점검 전에는 부하를 올리지 않습니다.`, w: `주의 구간(${S.set.vibWarn}mm/s 이상)은 시뮬레이션 설정값입니다.` + (rain ? ` 습도 ${S.humidity}% 우천 중이고` : '') + ` ${L.age}년 된 설비입니다.` });
       if (e.vib > VIB_MAX) {
-        steps.push({ s: `${L.id} 가동을 즉시 멈춥니다.`, w: `진동 ${fv(e.vib)}mm/s가 기준 ${VIB_MAX.toFixed(1)}mm/s를 넘었습니다 (SOP 안전, R-02).` });
-        steps.push({ s: '베어링에 윤활유를 주입합니다.', w: 'SOP 안전 조치의 두 번째 단계입니다.' });
+        steps.push({ s: away ? `베어링 윤활과 점검은 정지 확인 뒤 설비관리팀이 합니다.` : `${L.id} 가동을 즉시 멈춥니다.`, w: `진동 ${fv(e.vib)}mm/s가 기준 ${VIB_MAX.toFixed(1)}mm/s를 넘었습니다 (SOP 안전, R-02).` });
+        if (!away) steps.push({ s: '베어링에 윤활유를 주입합니다.', w: 'SOP 안전 조치의 두 번째 단계입니다.' });
         steps.push({ s: '설비관리팀이 점검 기록을 남기기 전에는 다시 켜지 않습니다.', w: '재가동은 시스템에서 잠겨 있습니다.' });
       } else ok.push(`가동 중지 불필요: 진동 ${fv(e.vib)}mm/s ≤ ${VIB_MAX.toFixed(1)}mm/s`);
       if (rain && e.temp > TEMP_MAX) {
@@ -733,7 +1014,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         steps.push({ s: `펄프 농도를 다시 측정해 ${PULP_MAX}% 이하가 되면 원래 속도로 돌립니다.`, w: `여전히 ${PULP_MAX}%를 넘으면 물 투입 10% 증가를 한 번 더 하고 공장장에게 보고합니다.` });
       } else ok.push(`펄프 조정 불필요: 농도 ${e.pulp}% ≤ ${PULP_MAX}%`);
       const anomaly = steps.length > 0;
-      if (anomaly && (/패닉|당황|무섭|겁|불안/.test(text) || has('R-07'))) {
+      if (anomaly && !away && (/패닉|당황|무섭|겁|불안/.test(text) || has('R-07'))) {
         steps.push({ s: '감이나 구두 표현 대신 위 수치로만 조치하고, 조치 전후 측정값을 일지에 숫자로 남깁니다.', w: '"질척", "쇳소리" 같은 표현은 센서 수치로 바꿔 판단합니다 (P-2, R-07).' });
       }
       if (anomaly) steps.push({ s: '조치가 끝나면 공장장과 설비관리팀에 측정값으로 보고합니다.', w: '모든 지시에는 근거 수치와 규칙 ID를 남깁니다 (P-3).' });
@@ -744,7 +1025,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         verdict = '증산 대응'; tone = 'info';
         const short = Math.max(0, fcB[op] - S.inv[op].stock);
         steps.push({ s: `${L.id} 가동을 유지하고 다음 주 생산계획에 ${op} ${f0(short)}t를 반영합니다.`, w: `예측 ${f0(S.inv[op].fc)}t + 추가 발주 ${f0(addT)}t = ${f0(fcB[op])}t, 현재 재고 ${f0(S.inv[op].stock)}t를 빼면 ${f0(short)}t가 모자랍니다.` });
-        if (left > 0) steps.push({ s: `남는 인력 ${left}명 중 일부를 ${L.id} 교대 보강에 넣어 가동 시간을 늘립니다.`, w: `${held.length ? held.join(', ') + '는 재고 초과로 휴지 중이라 인력이 남습니다. ' : ''}배치 순서는 인력 1명당 가치 순입니다(R-10): ${runB.map((x) => `${x.id} ${value(x).toFixed(1)}`).join(', ')}.` });
+        if (left > 0) steps.push({ s: `남는 인력 ${left}명 중 일부를 ${L.id} 교대 보강에 넣어 가동 시간을 늘립니다.`, w: `${held.length ? held.join(', ') + '는 재고 초과로 휴지 중이라 인력이 남습니다. ' : ''}배치 순서는 통합 우선순위 점수 순입니다(R-10, R-M4): ${runB.map((x) => `${x.id} ${value(x).toFixed(1)}`).join(', ')}.` });
         else steps.push({ s: `${L.id} 인력은 지금 배치(${asgB[L.id]}명)를 유지합니다.`, w: '남는 인력이 없어 교대 보강은 경영진 판단이 필요합니다 (R-10).' });
         steps.push({ s: `구매팀에 원자재(${L.mat}) 추가 확보를 요청합니다.`, w: `${L.id}의 주요 원자재입니다 (Data 6).` });
         steps.push({ s: `${L.id}의 주간 생산 가능량을 확인해 영업팀에 넘깁니다.`, w: `생산능력 데이터가 없어 ${f0(short)}t를 다음 주 안에 채울 수 있는지는 에이전트가 판단할 수 없습니다.` });
@@ -753,7 +1034,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         verdict = '신규 생산 보류'; tone = 'warn';
         const to = runB.filter((x) => x.id !== L.id).map((x) => x.id);
         steps.push({ s: '지금 돌고 있는 Lot까지만 마무리하고 신규 생산은 시작하지 않습니다.', w: `센서는 모두 SOP 기준 이내지만 ${L.product} 재고 ${f0(S.inv[L.product].stock)}t가 예측 ${f0(fcB[L.product])}t의 ${SURPLUS_X}배 이상입니다 (R-09). 경영진 승인 후 확정됩니다.` });
-        if (to.length) steps.push({ s: `이 라인 인력 ${L.need}명은 승인 즉시 ${to.join(', ')}로 옮길 준비를 합니다.`, w: '인력 1명당 가치가 큰 라인부터 채웁니다 (R-08, R-10).' });
+        if (to.length) steps.push({ s: `이 라인 인력 ${L.need}명은 승인 즉시 ${to.join(', ')}로 옮길 준비를 합니다.`, w: '통합 우선순위 점수가 큰 라인부터 채웁니다 (R-08, R-10, R-M4).' });
       }
       else { verdict = '정상 가동 유지'; tone = 'ok'; steps.push({ s: '현재 설정 그대로 가동합니다.', w: '모든 센서가 SOP 기준 이내입니다 (R-04).' }); }
       if (surplus[L.product] && verdict !== '신규 생산 보류') mgmt.push(`${L.product} 재고가 예측수요의 ${SURPLUS_X}배 이상이라 이 라인은 경영진 승인 후 휴지 대상입니다 (R-09). 현장 조치와 별개로 공장장 결정을 기다립니다.`);
@@ -778,7 +1059,30 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (left > 0 && runB.length) parts.push(`남는 인력 ${left}명은 교대 보강과 SOP 교육`);
 
     const waiting = LINES.filter((L) => status[L.id].st.startsWith('대기')).map((L) => L.id);
-    return { fired, has, status, asgA, asgB, active, kpis, D, chain, flow, orders, level, parts, usableB, regular, left, value, totalNeed, rain, fcB, op, ch, addT, runB, held, waiting, unrelated, noise };
+    const rank = runB.map((L) => L.id);
+    const rec = {};
+    PRODUCTS.forEach((p) => {
+      const d = PROD[p], e = econ[p], ls = d.lines;
+      const flags = [];
+      if (e.calc === '초과') { if (e.expG === '높음' || e.expG === '보통' || e.delayRisk) flags.push('재고 소진 우선, 원자재 발주 감축 권고'); }
+      else { if (e.expG === '높음') flags.push('원자재 발주 승인 필요'); if (e.delayRisk) flags.push('조달 확인 전 증산 확정 보류'); }
+      if (e.adj != null) flags.push(`조정 이익률 ${(e.adj * 100).toFixed(1)}% (가정)`);
+      let t, tone;
+      if (!ls.length) { t = '판단 불가 · 생산라인 미지정'; tone = 'mute'; }
+      else if (ls.every((id) => status[id].tone === 'bad')) { t = '안전 정지 우선 (R-02)'; tone = 'bad'; }
+      else if (e.calc === '초과') { t = '감산·휴지 (R-09)'; tone = 'warn'; }
+      else if (e.adj != null && e.adj <= 0) { t = '가동 보류 · 경영진 판단 (가정상 손실)'; tone = 'warn'; }
+      else {
+        const lr = ls.filter((id) => rank.includes(id));
+        if (lr.length) { t = `우선 생산 ${rank.indexOf(lr[0]) + 1}순위`; tone = 'ok'; }
+        else if (ls.some((id) => status[id].st.startsWith('대기'))) { t = '인력 부족 대기 (R-17)'; tone = 'warn'; }
+        else { t = '현 수준 유지'; tone = 'mute'; }
+      }
+      if (e.short === 0 && tone === 'ok') t += ' · 부족분 없음';
+      rec[p] = { t, tone, flags };
+    });
+    const strikeA = (S.strikeIf || []).filter((id) => asgA[id] > 0), strikeB = (S.strikeIf || []).filter((id) => asgB[id] > 0);
+    return { strikeA, strikeB, effRatio, safe, fired, has, status, asgA, asgB, active, kpis, D, chain, flow, orders, level, parts, usableB, regular, left, value, baseValue, totalNeed, rain, fcB, fcT, econ, rec, E, SET, op, ch, addT, runB, held, waiting, unrelated, noise };
   }
 
   function answerText(R) {
@@ -808,21 +1112,209 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       out.push({ l: '수요 대응', t: `${R.op} 발주 ${signed(R.ch)}% 신호가 ${msg ? '메신저로만' : '발주 데이터로'} 들어왔습니다. ` + (R.has('R-12') ? `예측을 ${f0(S.inv[R.op].fc)}t에서 ${f0(R.fcB[R.op])}t로 낮추고(R-12) ` : '') + (msg ? '영업팀은 48시간 안에 실제 발주 데이터를 입력합니다(R-13). ' : '') + '영업과 생산은 이 숫자로 공동 생산계획을 정합니다(R-11).' });
     }
     if (R.has('R-17') || R.has('R-10') || R.has('R-18')) {
-      let t = `출근 ${S.ratio}%로 평시 ${R.totalNeed}명 중 ${R.regular}명이 가용합니다.`;
+      let t = S.staffAbs != null ? `출근 인력은 ${R.regular}명으로 평시 ${R.totalNeed}명의 ${R.effRatio}%입니다.` : `출근 ${S.ratio}%로 평시 ${R.totalNeed}명 중 ${R.regular}명이 가용합니다.`;
       if (S.subs > 0) t += S.trained ? ` 교육을 마친 대체 인력 ${S.subs}명을 더합니다.` : ` 대체 인력 ${S.subs}명은 수치 SOP 교육 전이라 설비를 맡기지 않습니다(R-18).`;
-      if (R.runB.length) t += ` 인력 1명당 가치 순으로 ${R.runB.map((L) => `${L.id} ${R.asgB[L.id]}명(가치 ${R.value(L).toFixed(1)})`).join(' → ')}을 채웁니다(R-10).`;
+      if (R.runB.length) t += ` 통합 우선순위 점수 순으로 ${R.runB.map((L) => `${L.id} ${R.asgB[L.id]}명(점수 ${R.value(L).toFixed(1)})`).join(' → ')}을 채웁니다(R-10, R-M4).`;
       const hb = R.held.filter((id) => R.status[id].tone !== 'bad');
       if (hb.length) t += ` ${hb.join(', ')}는 재고 초과로 휴지합니다(R-09).`;
       if (R.waiting.length) t += ` ${R.waiting.join(', ')}는 최소 인원을 채울 수 없어 가동하지 않습니다(R-17).`;
       if (R.left) t += ` 남는 ${R.left}명은 교대 보강과 대체 인력 교육을 맡습니다.`;
       out.push({ l: '인력 배치', t });
     } else if (R.addT > 0 && R.held.length && R.left > 0) {
-      out.push({ l: '인력 배치', t: `${R.held.join(', ')}는 재고 초과로 휴지라 ${R.left}명이 남습니다. 인력 1명당 가치 순(R-10)으로 ${R.runB.map((L) => `${L.id} ${R.value(L).toFixed(1)}`).join(', ')}을 채운 뒤, 남는 인원은 ${R.op} 라인 교대 보강에 씁니다.` });
+      out.push({ l: '인력 배치', t: `${R.held.join(', ')}는 재고 초과로 휴지라 ${R.left}명이 남습니다. 통합 우선순위 점수 순(R-10, R-M4)으로 ${R.runB.map((L) => `${L.id} ${R.value(L).toFixed(1)}`).join(', ')}을 채운 뒤, 남는 인원은 ${R.op} 라인 교대 보강에 씁니다.` });
+    }
+    if (['R-M1', 'R-M2', 'R-M3'].some(R.has)) {
+      const bits = [];
+      if (R.E.rise > 0) bits.push(`원자재 가격 +${R.E.rise}%로 원가 노출은 ` + PRODUCTS.filter((p) => PROD[p].dep != null).map((p) => `${p} ${R.econ[p].exp.toFixed(1)}(${R.econ[p].expG})`).join(', ') + '입니다. 의존도를 원가 비중으로 보지 않아 이익률은 그대로 두고 상대 위험만 반영했습니다(R-M1).');
+      if (R.E.delay > 0) bits.push(R.E.delay >= R.SET.delayDays ? `공급 지연 ${R.E.delay}일로 ${PRODUCTS.filter((p) => R.econ[p].delayRisk).join(', ')}는 조달 확인 전까지 증산을 확정하지 않습니다.` : `공급 지연 ${R.E.delay}일은 조달 위험 기준(${R.SET.delayDays}일) 미만입니다.`);
+      const tp = PRODUCTS.filter((p) => R.E.trend[p]);
+      if (tp.length) bits.push('시장 트렌드 가정으로 ' + tp.map((p) => `${p} 예측이 ${f0(S.inv[p].fc)}t에서 ${f0(R.fcT[p])}t로 바뀌어 부족량은 ${f0(R.econ[p].short)}t`).join(', ') + '입니다(R-M2).');
+      if (R.has('R-M3')) bits.push(`환경규제 ${R.E.reg} 시나리오의 대응 비용과 환경 부담금은 실제 금액·법적 적용을 확인하기 전까지 가정으로 둡니다(R-M3).`);
+      bits.push('통합 우선순위는 ' + (R.runB.length ? R.runB.map((L) => `${L.id} ${R.value(L).toFixed(1)}`).join(' → ') : '가동 가능 라인 없음') + '입니다(R-M4). 생산능력 데이터가 없어 정확한 증산량과 납기는 확정하지 않습니다.');
+      out.push({ l: '경영 분석', t: bits.join(' ') });
     }
     const mg = R.D.filter((d) => !d.auto);
     if (mg.length) out.push({ l: '경영진 승인', t: mg.slice(0, 4).map((d) => d.t).join(' / ') + (mg.length > 4 ? ` 외 ${mg.length - 4}건` : '') + '.', sum: true });
     out.push({ l: '전사 운영', t: R.parts.join(', ') + '.', sum: true });
     return out;
+  }
+
+  const MSG_COPY = (box, text) => {
+    const b = mk('button', '', '복사'); b.type = 'button';
+    b.addEventListener('click', () => {
+      const done = () => { b.textContent = '복사됨'; setTimeout(() => { b.textContent = '복사'; }, 1500); };
+      try { navigator.clipboard.writeText(text).then(done, () => selectText(box)); } catch (e) { selectText(box); }
+    });
+    return b;
+  };
+  const selectText = (el) => { try { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} };
+  function renderCase(R) {
+    const box = $('case');
+    const id = ctx.caseId;
+    box.hidden = !id;
+    if (!id) { box.replaceChildren(); return; }
+    const PC = { '일반 감열지': 'c-th', '친환경 포장재': 'c-pk', '택배 라벨지': 'c-lb', '산업용 박리지': 'c-rs' };
+    const order = (lid) => R.orders.find((o) => o.L.id === lid);
+    const staffed = R.runB.map((L) => L.id);
+    const wavg = (asg) => { let s = 0, n = 0; R.active.forEach((L) => { s += (asg[L.id] || 0) * L.margin; n += asg[L.id] || 0; }); return n ? s / n : 0; };
+    const normalAsg = Object.fromEntries(R.active.map((L) => [L.id, L.need]));
+    const pulpStaff = (asg) => R.active.filter((L) => L.mat === '수입 천연 펄프').reduce((a, L) => a + (asg[L.id] || 0), 0);
+    const top = mk('div', 'case-top');
+    const kpis = mk('div', 'case-kpis');
+    const body = mk('div', 'case-body');
+    const cols = mk('div', 'case-cols');
+    const kpi = (k, v, tone, s) => { const d = mk('div'); d.append(mk('span', 'kk', k), mk('span', 'kv ' + (tone || ''), v)); if (s) d.append(mk('span', 'ks', s)); kpis.append(d); };
+    const card = (n, title, q) => { const c = mk('article', 'ccard'); const hd = mk('div', 'ch'); hd.append(mk('span', 'cn', n), mk('span', 'ctt', title)); c.append(hd); if (q) c.append(mk('p', 'cq', q)); return c; };
+    const bul = (items) => { const ul = mk('ul', 'bul'); items.forEach((it) => { const li = mk('li'); if (Array.isArray(it)) { li.append(mk('b', '', it[0] + ' '), document.createTextNode(it[1])); } else li.textContent = it; ul.append(li); }); return ul; };
+    const stepsOl = (o) => { const ol = mk('ol', 'steps'); o.steps.forEach((s) => { const li = mk('li'); li.append(document.createTextNode(s.s), mk('span', 'why', s.w)); ol.append(li); }); return ol; };
+    const readings = (o) => { const rd = mk('div', 'readings'); [['건조 온도', o.e.temp + '℃', R.rain ? `상한 ${TEMP_MAX}℃ (우천)` : '우천 아님', R.rain && o.e.temp > TEMP_MAX], ['진동', fv(o.e.vib) + 'mm/s', `기준 ${VIB_MAX.toFixed(1)}`, o.e.vib > VIB_MAX], ['습도', S.humidity + '%', `우천 기준 ${RAIN}%`, S.humidity >= RAIN]].forEach(([k, v, l, over]) => { const b = mk('div', 'rd' + (over ? ' over' : '')); b.append(mk('span', 'rk', k), mk('span', 'rv', v), mk('span', 'rl', l)); rd.append(b); }); return rd; };
+    const message = (to, text) => { const m = mk('div', 'msg'); const t = mk('div', 'mt'); const p = mk('p', '', text); t.append(mk('span', '', to), MSG_COPY(p, text)); m.append(t, p); return m; };
+    const lineTable = (rows) => { const tb = mk('table', 'proof'); const th = mk('thead'); const tr0 = mk('tr'); ['라인', '품목', '결정', '인원', '근거'].forEach((x) => tr0.append(mk('th', '', x))); th.append(tr0); const bd = mk('tbody'); rows.forEach((r) => { const tr = mk('tr', r.pick ? 'pick' : ''); tr.append(mk('td', 'm', r.id), mk('td', '', r.prod)); const s = mk('td'); s.append(mk('span', 'chip ' + r.tone, r.st)); tr.append(s, mk('td', 'm', r.n), mk('td', '', r.why)); bd.append(tr); }); tb.append(th, bd); return tb; };
+    const ec = R.econ;
+    const inv = S.inv;
+    const lineRows = () => R.active.map((L) => {
+      const s = R.status[L.id]; const e = ec[L.product];
+      let why = s.why;
+      if (/휴지/.test(s.st)) why = `재고 ${f0(inv[L.product].stock)}t ≥ 예측 ${f0(R.fcB[L.product])}t × ${SURPLUS_X}` + (e && e.riseP ? ` · 원가 노출 ${e.exp.toFixed(1)}(${e.expG})` : '') + ' (R-09' + (e && e.riseP ? ', R-M1' : '') + ')';
+      else if (/정지/.test(s.st)) why = `진동 ${fv(S.eq[L.id].vib)} > ${VIB_MAX.toFixed(1)}mm/s (R-02` + (R.has('R-08') ? ', R-08 수리 보류' : '') + ')';
+      else if (R.asgB[L.id]) why = `부족 ${f0(e.short)}t × 이익률 ${pct(e.mEff)} ÷ ${L.need}명` + (e.pen ? ` × (1−${e.pen}%)` : '') + ` = 점수 ${R.value(L).toFixed(1)}`;
+      else if (/대기/.test(s.st)) why = `필요 ${L.need}명 > 남은 인원 (R-17)`;
+      return { id: L.id, prod: L.product, st: R.asgB[L.id] ? `가동 ${staffed.indexOf(L.id) + 1}순위` : s.st, tone: R.asgB[L.id] ? 'ok' : s.tone, n: `${R.asgB[L.id]}/${L.need}`, why, pick: R.asgB[L.id] > 0 };
+    });
+    const portfolio = () => {
+      const wrap = mk('div', 'pf');
+      const lg = mk('div', 'pf-legend'); [['일반 감열지', 'c-th'], ['친환경 포장재', 'c-pk'], ['택배 라벨지', 'c-lb'], ['예비·교육', 'c-rs']].forEach(([n, c]) => { const s = mk('span'); s.append(mk('i', c), document.createTextNode(n)); lg.append(s); });
+      wrap.append(lg);
+      const total = Math.max(R.totalNeed, 1);
+      [['평시', normalAsg, 0], ['실험 A', R.asgA, R.regular + S.subs - Object.values(R.asgA).reduce((a, b) => a + b, 0)], ['실험 B', R.asgB, R.left]].forEach(([nm, asg, rest]) => {
+        const row = mk('div', 'pr'); const st = mk('div', 'stack');
+        const byP = {}; R.active.forEach((L) => { byP[L.product] = (byP[L.product] || 0) + (asg[L.id] || 0); });
+        Object.entries(byP).forEach(([pp, n]) => { if (!n) return; const sp = mk('span', PC[pp] || 'c-rs', n + '명'); sp.style.width = (n / total * 100) + '%'; sp.title = `${pp} ${n}명`; st.append(sp); });
+        if (rest > 0) { const sp = mk('span', 'c-rs', rest + '명'); sp.style.width = (rest / total * 100) + '%'; st.append(sp); }
+        row.append(mk('span', '', nm), st, mk('span', 'w', `가중 ${(wavg(asg) * 100).toFixed(1)}%`));
+        wrap.append(row);
+      });
+      wrap.append(mk('p', 'hint', '막대 길이는 평시 필요 인원 대비 배치 인원입니다. "가중"은 배치 인원의 평균 이익률(인원 × 이익률 ÷ 인원)로, 같은 인원이 얼마나 고수익 제품에 들어갔는지 보여주는 지수입니다.'));
+      return wrap;
+    };
+    const approvals = () => { const ul = mk('ul', 'bul'); R.D.forEach((d) => { const li = mk('li'); li.append(mk('span', 'chip ' + (d.auto ? 'ok' : 'warn'), d.auto ? '자동 실행' : '승인 필요'), document.createTextNode(` ${d.t} `), mk('span', 'rid dm', `(${d.r} · ${d.o})`)); ul.append(li); }); return ul; };
+    const qbox = () => { const d = mk('details', 'case-q'); d.append(mk('summary', '', '원문 상황과 지시사항 보기'), mk('pre', '', $('test-text').value)); return d; };
+
+    if (id === 'c1') {
+      const o = order('EQ-02');
+      top.append(mk('span', 'ct', 'CASE 1 · 원가 폭등 + 인력 반토막 + 2호기 이상'), mk('p', 'cd', `2호기는 지금 멈추고, 내일은 펄프 라인을 0개로 줄여 출근 ${R.regular}명을 ${staffed.join(' → ')}에 배치합니다.`), mk('p', 'cs', '감열지는 새로 만들지 않고 재고로 팔며, 인력은 고수익 제품으로 옮깁니다.'));
+      kpi('2호기 진동', fv(S.eq['EQ-02'].vib) + 'mm/s', 'bad', `기준 ${VIB_MAX.toFixed(1)} 초과 → 즉시 정지`);
+      kpi('펄프 원가 노출 인력', `${pulpStaff(R.asgA)} → ${pulpStaff(R.asgB)}명`, 'ok', `실험 A → B · 천연 펄프 +${S.econ.rise}%`);
+      kpi('배치 인력 평균 이익률', `${(wavg(R.asgA) * 100).toFixed(1)} → ${(wavg(R.asgB) * 100).toFixed(1)}%`, 'ok', `평시 ${(wavg(normalAsg) * 100).toFixed(1)}%`);
+      kpi('감열지 재고', f0(inv['일반 감열지'].stock) + 't', 'warn', `예측 ${f0(R.fcB['일반 감열지'])}t의 ${(inv['일반 감열지'].stock / R.fcB['일반 감열지']).toFixed(1)}배`);
+      const c1 = card('1', '현장 즉각 조치 · 정지훈 사원 → 2호기', '감이 아닌 수치로, 순서대로 실행합니다.');
+      if (o) c1.append(readings(o), stepsOl(o));
+      const c2 = card('2', '내일자 비상 경영 계획 · 포트폴리오 전환', `출근 ${R.regular}명(평시 ${R.totalNeed}명의 ${R.effRatio}%)으로 영업이익 손실을 막는 배치입니다.`);
+      c2.append(lineTable(lineRows()), portfolio());
+      const gp = '일반 감열지', pk = '친환경 포장재', lb = '택배 라벨지';
+      c2.append(bul([
+        ['감열지 → 재고 판매:', `재고 ${f0(inv[gp].stock)}t가 예측 ${f0(R.fcB[gp])}t를 넘어 신규 생산이 필요 없습니다. 펄프 +${S.econ.rise}% 원가 노출(${ec[gp].exp.toFixed(1)}, ${ec[gp].expG})을 생산으로 떠안지 않고, 팔아서 현금으로 돌립니다.`],
+        ['포장재 → 1순위:', `부족 ${f0(ec[pk].short)}t, 이익률 ${pct(PROD[pk].margin)}, 자동화 라인이라 2명이면 됩니다(점수 ${R.value(LINE['EQ-03']).toFixed(1)}).`],
+        ['라벨지 → 2순위:', `부족 ${f0(ec[lb].short)}t, 이익률 ${pct(PROD[lb].margin)}, 3명(점수 ${R.value(LINE['EQ-04']).toFixed(1)}).`],
+        ['펄프 발주 감축:', '감열지 라인을 쉬므로 천연 펄프 추가 구매를 멈추고, 단가 협상은 재고 소진 뒤로 미룹니다.'],
+        ...(R.left ? [['남는 ' + R.left + '명:', '대체 인력 SOP 교육과 설비 순찰을 맡습니다.']] : []),
+        ['한계:', '설비별 생산능력 데이터가 없어 정확한 증산 톤수와 이익 금액은 확정하지 않습니다.'],
+      ]));
+      const c3 = card('3', '경영진 승인과 자동 실행', '안전 정지만 자동 실행하고 나머지는 책임자 승인 후 실행합니다 (P-4).');
+      c3.append(approvals());
+      cols.append(c1, c2, c3);
+    }
+
+    if (id === 'c2') {
+      const o = order('EQ-02');
+      const pk = '친환경 포장재', gp = '일반 감열지';
+      const need = S.order.addT || 0, stock = inv[pk].stock, ship = Math.min(stock, need), gap = Math.max(0, need - stock);
+      top.append(mk('span', 'ct', 'CASE 2 · 작업자 이탈 + 출근 2명 + B마트 최후통첩'), mk('p', 'cd', `2호기는 시스템이 원격 정지하고, 출근 ${R.regular}명은 ${staffed.length ? staffed.join(', ') : '어느 라인도'}에 전담 배치합니다. B마트에는 재고 ${f0(ship)}t를 즉시 출하합니다.`), mk('p', 'cs', '사람이 없어도 안전 규칙은 작동하고, 2명으로 돌릴 수 있는 라인은 수학적으로 하나뿐입니다.'));
+      kpi('무인 상태 2호기', '원격 정지', 'ok', `진동 ${fv(S.eq['EQ-02'].vib)}mm/s · R-02 자동 실행`);
+      kpi('2명으로 가동 가능한 라인', `${R.active.filter((L) => L.need <= R.regular && R.status[L.id].tone !== 'bad').length}개`, 'warn', R.active.filter((L) => L.need <= R.regular).map((L) => `${L.id}(${L.need}명)`).join(', ') || '없음');
+      kpi('B마트 요구 대비 즉시 출하', `${f0(ship)} / ${f0(need)}t`, gap ? 'warn' : 'ok', `부족 ${f0(gap)}t는 생산능력 확인 필요`);
+      kpi('감열지 재고', f0(inv[gp].stock) + 't', 'warn', '발주 취소 → 다른 거래처 판매');
+      const c1 = card('1', '초동 조치 · 작업자 없는 2호기', '사람을 기다리지 않고 규칙이 먼저 멈춥니다.');
+      if (o) c1.append(readings(o), stepsOl(o));
+      const c2 = card('2', '수학적 인력 배치 · 출근 ' + R.regular + '명', 'Data 6의 라인당 필요 인력으로 가능한 조합을 모두 따졌습니다.');
+      const tb = mk('table', 'proof'); const th = mk('thead'); const tr0 = mk('tr'); ['라인', '필요 인력 (Data 6)', `${R.regular}명으로?`, '안전·재고 판정', '점수', '선택'].forEach((x) => tr0.append(mk('th', '', x))); th.append(tr0);
+      const bd = mk('tbody');
+      R.active.forEach((L) => {
+        const fit = L.need <= R.regular; const s = R.status[L.id]; const pick = R.asgB[L.id] > 0;
+        const tr = mk('tr', pick ? 'pick' : '');
+        const st = mk('td'); st.append(mk('span', 'chip ' + (s.tone === 'bad' ? 'bad' : /휴지/.test(s.st) ? 'warn' : 'ok'), s.tone === 'bad' ? '안전 정지' : /휴지/.test(s.st) ? '재고 초과 휴지' : '가동 가능'));
+        tr.append(mk('td', 'm', L.id), mk('td', 'm', PROD[L.product] ? PROD[L.product].needOrig : `${L.need}명`), mk('td', 'm', fit ? `${R.regular} ≥ ${L.need} ✓` : `${R.regular} < ${L.need} ✗`), st, mk('td', 'm', R.value(L).toFixed(1)), mk('td', '', pick ? `✓ ${R.asgB[L.id]}명` : '—'));
+        bd.append(tr);
+      });
+      tb.append(th, bd);
+      const fits = R.active.filter((L) => L.need <= R.regular);
+      const eqn = mk('div', 'eqn');
+      eqn.textContent = `출근 ${R.regular}명. 가장 적은 필요 인력은 EQ-03의 2명.\n` + `두 라인 이상 동시 가동: 최소 2 + 3 = 5명 > ${R.regular}명 → 불가.\n` + `한 라인만 가동: ${fits.map((L) => `${L.id}(${L.need}명)`).join(', ') || '없음'}만 필요 인력 이하.\n` + `→ 가능한 조합은 {${fits.map((L) => L.id).join(', ')}} 하나뿐이고, B마트가 요구한 품목 라인과도 일치합니다.`;
+      eqn.style.whiteSpace = 'pre-line';
+      c2.append(tb, eqn, bul([
+        ['B마트 100t:', `포장재 재고 ${f0(stock)}t는 즉시 출하하고, 남은 ${f0(gap)}t는 EQ-03 2명 연속 가동으로 생산합니다. 생산능력 데이터가 없어 내일 ${f0(gap)}t 완납은 약속하지 않고, 출하 가능량을 확인한 뒤 분할 납품 일정을 제시합니다 (R-11, R-M4).`],
+        ['발주 확인:', '최후통첩은 통보로만 들어온 신호이므로 48시간 안에 발주서로 등록합니다 (R-13).'],
+        ['감열지 취소:', `B마트 감열지가 빠져도 재고 ${f0(inv[gp].stock)}t는 다른 거래처 판매로 돌립니다. 거래처별 물량 데이터가 없어 감소량은 산정하지 않았습니다 (R-12).`],
+      ]));
+      const c3 = card('3', '노조 · HR 설득 메시지', '경영진이 확정해 보내는 초안입니다. AI는 징계나 인사 판단을 하지 않습니다 (P-5).');
+      const v2 = fv(S.eq['EQ-02'].vib);
+      c3.append(
+        message('최강철 노동조합 위원장님께', `위원장님, 오늘 2호기는 진동 ${v2}mm/s로 안전 기준 ${VIB_MAX.toFixed(1)}mm/s를 넘었고, 담당자가 자리를 떠난 상태에서도 시스템이 즉시 멈췄습니다. 앞으로 기준을 넘은 설비는 사람이 판단하기 전에 숫자가 먼저 멈추게 하겠습니다.\n\n회사가 도입하는 AI는 사람을 줄이는 도구가 아닙니다. AI는 인력 감축, 징계, 평가를 판단하지 않습니다. 1·2호기(감열지)는 재고 ${f0(inv[gp].stock)}t가 남아 있어 무리하게 돌리지 않습니다.\n\n내일은 출근하는 ${R.regular}명이 자동화 라인 EQ-03만 운영합니다. 안전 기준을 함께 확인할 노사 공동 점검반 구성을 제안드립니다. 휴게실 에어컨 수리는 완료했습니다.`),
+        message('정지훈 님께', `정지훈 님, 먼저 몸과 마음이 괜찮은지 묻고 싶습니다. 오늘 2호기 진동은 ${v2}mm/s로 실제로 기준을 넘은 위험한 상황이었습니다. 위험을 느낀 것은 잘못이 아닙니다.\n\n이제 "쇳소리" 같은 감각이 아니라 숫자로 판단합니다. 진동이 ${VIB_MAX.toFixed(1)}mm/s를 넘으면 설비는 자동으로 멈추고, 모호한 구두 지시는 수치로 다시 확인하도록 바꿨습니다.\n\n고용에 관한 이야기는 AI가 아니라 회사가 직접 면담으로 나누겠습니다. 편할 때 연락 주세요.`)
+      );
+      cols.append(c1, c2, c3);
+    }
+
+    if (id === 'c3') {
+      const gp = '일반 감열지';
+      const k = S.econ.priceX[gp] || 1, m0 = PROD[gp].margin, mK = ec[gp].mK;
+      const perTon = m0 ? (k - 1 + m0) / m0 : 0;
+      const stock = inv[gp].stock;
+      const v1 = S.eq['EQ-01'].vib, v2 = S.eq['EQ-02'].vib;
+      const allNeed = R.totalNeed;
+      top.append(mk('span', 'ct', 'CASE 3 · 감열지 단가 3배 + 1·2호기 위험 + 노조 경고'), mk('p', 'cd', `1·2호기는 켜지 않습니다. 대신 감열지 재고 ${f0(stock)}t를 ${k}배 단가로 팝니다.`), mk('p', 'cs', '기계를 돌리지 않아도 이익은 재고에서 나옵니다. 파업도, 사고도 막습니다.'));
+      kpi('2호기 진동', fv(v2) + 'mm/s', 'bad', `기준 ${VIB_MAX.toFixed(1)} 초과 → 가동 불가`);
+      kpi('1호기 진동', fv(v1) + 'mm/s', 'warn', `기준의 ${Math.round(v1 / VIB_MAX * 100)}% · 습도 ${S.humidity}%`);
+      kpi('재고 판매 이익률', `${pct(m0)} → ${(mK * 100).toFixed(1)}%`, 'ok', `단가 ${k}배, 원가 불변 가정 · 톤당 이익 ${perTon.toFixed(0)}배`);
+      kpi('총파업 위험', R.strikeB.length ? '있음' : '0', R.strikeB.length ? 'bad' : 'ok', `실험 A는 ${R.strikeA.join(', ') || '없음'} 가동 → 총파업`);
+      const opt = mk('table', 'opts');
+      const oh = mk('thead'); const otr = mk('tr'); otr.append(mk('th', '', ''));
+      [['A. 1·2호기 가동 강행', ''], ['B. 전면 정지 (판매도 보류)', ''], ['C. 제3의 전략', 'win']].forEach(([t, c]) => { const x = mk('th', 'oh ' + c, t); otr.append(x); }); oh.append(otr);
+      const ob = mk('tbody');
+      const row = (lab, a, b, c) => { const tr = mk('tr'); const th = mk('th', '', lab); th.scope = 'row'; tr.append(th, mk('td', '', a), mk('td', '', b), mk('td', 'win', c)); ob.append(tr); };
+      row('현장 안전', `2호기 ${fv(v2)} > ${VIB_MAX.toFixed(1)}mm/s로 SOP 위반 운전. 1호기도 한계 ${Math.round(v1 / VIB_MAX * 100)}%에서 우천 운전`, '위험 설비 모두 정지', '1·2호기 정지·잠금, 노사 공동 점검');
+      row('노조', `총파업 → 출근 0명, 전 라인 중단`, '파업 없음', '파업 없음 (1·2호기 전원 차단 약속)');
+      row('감열지 이익', `신규 생산분만 고단가. 생산능력 미확인, 파업이면 0`, `재고 ${f0(stock)}t를 묶어 둠 → 기회 상실`, `재고 ${f0(stock)}t를 즉시 판매, 이익률 ${(mK * 100).toFixed(1)}% (가정)`);
+      row('포장재·라벨지', `총파업으로 EQ-03·04도 중단`, `EQ-03·04 정상 가동`, `EQ-03·04 정상 가동 (${R.runB.map((L) => `${L.id} ${R.asgB[L.id]}명`).join(', ')})`);
+      row('규칙 판정', 'R-02 위반, P-1(안전 > 수익) 위반', '안전 충족, R-09 재고 활용 못 함', 'R-02 · R-09 · R-M4 · P-1 모두 충족');
+      opt.append(oh, ob);
+      const tbx = mk('div', 'tbox'); tbx.append(opt);
+      const c1 = card('1', '가동할 것인가, 멈출 것인가', '결론: 멈춥니다. 단, 이익은 포기하지 않습니다.');
+      c1.append(bul([
+        ['2호기는 선택지가 아닙니다.', `진동 ${fv(v2)}mm/s > ${VIB_MAX.toFixed(1)}mm/s라 R-02가 즉시 정지합니다. 안전은 수익보다 우선하는 최상위 원칙(P-1)이라 단가가 몇 배가 돼도 바뀌지 않습니다.`],
+        ['1호기는 규칙상 가능하지만 돌리지 않습니다.', `진동 ${fv(v1)}mm/s는 기준 이내지만 한계의 ${Math.round(v1 / VIB_MAX * 100)}%이고, 습도 ${S.humidity}% 폭우 속 ${LINE['EQ-01'].age}년 된 설비입니다.`],
+        ['애초에 새로 만들 필요가 없습니다.', `감열지 재고 ${f0(stock)}t가 예측 ${f0(R.fcB[gp])}t의 ${(stock / R.fcB[gp]).toFixed(1)}배라 R-09가 신규 생산을 보류합니다. 팔 물건은 이미 창고에 있습니다.`],
+        ['가동하면 오히려 잃습니다.', `노조가 1·2호기 가동 시 총파업을 예고해, 가동하는 순간 평시 ${allNeed}명이 모두 빠지고 고수익 EQ-03·04까지 멈춥니다.`],
+      ]));
+      const c2 = card('2', '제3의 경영 전략 · CEO 지시', '돌리지 말고 팔아라: 재고 현금화 + 고수익 라인 유지 + 노사 신뢰');
+      const ol = mk('ol', 'steps');
+      [
+        ['1·2호기 전원을 차단하고 잠급니다.', `R-02 자동 정지(2호기), 1호기는 점검 전 가동 보류. 노조에 "오늘 1·2호기 전원을 켜지 않는다"고 서면으로 약속합니다.`],
+        [`감열지 재고 ${f0(stock)}t를 ${k}배 단가로 판매합니다.`, `영업팀은 판매 가능량과 계약 단가를 확정합니다. 단가 ${k}배, 원가 불변을 가정하면 이익률은 ${pct(m0)}에서 ${(mK * 100).toFixed(1)}%, 톤당 이익은 평소의 ${perTon.toFixed(0)}배입니다. 실제 판매량은 시장 수요와 계약으로 정해지므로 영업팀 확인이 필요합니다.`],
+        ['고단가 장기 계약에는 서두르지 않습니다.', '단가 급등은 경쟁사 화재라는 일시적 요인입니다. 재고 판매는 단기 계약으로 하고, 감열지 증산 투자는 하지 않습니다 (디지털 영수증 확산 트렌드, R-M2).'],
+        [`EQ-03·04는 정상 가동합니다.`, `${R.runB.map((L) => `${L.id} ${R.asgB[L.id]}명(점수 ${R.value(L).toFixed(1)})`).join(', ')}. 파업이 없으므로 인력 ${R.regular}명이 모두 출근합니다.`],
+        [`남는 ${R.left}명은 출하와 노사 공동 점검에 둡니다.`, '감열지 재고 출하 물류를 지원하고, 1·2호기 점검에 노조 대표가 함께 참여합니다.'],
+        ['1·2호기 재가동 조건을 숫자로 합의합니다.', `진동 ${VIB_MAX.toFixed(1)}mm/s 이하 확인, 습도 ${RAIN}% 미만, 노사 공동 점검 기록. 이 세 가지가 충족돼야 다시 켭니다.`],
+        ['재고 판매 이익의 쓰임을 공개합니다.', '노후 설비 안전 투자와 직원 보상에 쓸 비율을 경영진이 정해 노조에 먼저 알립니다 (CEO 판단 사항, AI 제안).'],
+      ].forEach(([s, w]) => { const li = mk('li'); li.append(document.createTextNode(s), mk('span', 'why', w)); ol.append(li); });
+      c2.append(ol);
+      const c3 = card('3', '노조 설득 메시지', '경영진이 확정해 보내는 초안입니다.');
+      c3.append(message('최강철 노동조합 위원장님께', `위원장님 말씀이 맞습니다. 오늘 1·2호기는 켜지 않습니다. 2호기는 진동 ${fv(v2)}mm/s로 안전 기준 ${VIB_MAX.toFixed(1)}mm/s를 넘었고, 1호기도 ${fv(v1)}mm/s로 한계에 가깝습니다. 단가가 ${k}배가 되어도 기준을 넘은 기계는 돌리지 않는 것이 회사의 규칙입니다.\n\n대신 창고에 있는 감열지 재고 ${f0(stock)}t를 팔겠습니다. 기계를 무리하게 돌리지 않아도 회사는 이익을 낼 수 있습니다. EQ-03·04는 평소대로 운영합니다.\n\n1·2호기 재가동은 진동 기준 확인, 비가 그친 뒤, 노사 공동 점검을 모두 마친 뒤에만 하겠습니다. 이번 판매 이익의 일부를 노후 설비 안전 투자에 쓰는 방안도 함께 논의하고 싶습니다.`));
+      body.append(tbx);
+      cols.append(c1, c2, c3);
+    }
+    body.append(cols, qbox());
+    box.replaceChildren(top, kpis, body);
   }
 
   function render() {
@@ -837,6 +1329,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     $('vq').hidden = !ctx.question;
     $('answer').replaceChildren(...answerText(R).map((a) => { const p = mk('p', a.sum ? 'sum' : ''); p.append(mk('b', 'al', a.l), document.createTextNode(a.t)); return p; }));
 
+    renderCase(R);
     $('sec-orders').hidden = !R.orders.length;
     $('orders').replaceChildren(...R.orders.map((o) => {
       const c = mk('article', 'order');
@@ -853,6 +1346,63 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       if (o.ok.length) { const ul = mk('ul', 'notneed'); o.ok.forEach((s) => ul.append(mk('li', '', s))); c.append(ul); }
       if (o.mgmt.length) { const m = mk('div', 'mgmt'); o.mgmt.forEach((s) => { const p = mk('div'); p.append(mk('b', '', '경영 판단 '), document.createTextNode(s)); m.append(p); }); c.append(m); }
       return c;
+    }));
+
+    const srcTag = (k) => mk('span', 'src ' + k, { d: '원본', c: '계산', a: '가정', s: '설정', x: '검증 필요' }[k]);
+    const cell = (main, sub, tag) => { const td = mk('td'); const m = mk('span', '', main); td.append(m); if (tag) { td.append(document.createTextNode(' ')); td.append(srcTag(tag)); } if (sub) td.append(mk('span', 'sub', sub)); return td; };
+    const prodRows = [];
+    PRODUCTS.forEach((p) => {
+      const d = PROD[p], e = R.econ[p], v = S.inv[p];
+      const tr = mk('tr', 'has-ev');
+      tr.append(mk('td', 'pn', p));
+      tr.append(cell(e.growth == null ? '—' : `${signed(Math.round(e.growth * 100))}%`, `전월 ${f0(v.last)}t → 조정 예측 ${f0(R.fcB[p])}t` + (R.fcB[p] !== v.fc ? ` (원본 ${f0(v.fc)}t)` : ''), 'c'));
+      const stTd = mk('td'); stTd.append(mk('span', '', `원본 ${d.statusOrig}`), document.createTextNode(' '), srcTag('d'));
+      const calcChip = mk('span', 'chip ' + ({ '초과': 'warn', '심각한 부족': 'bad', '부족': 'warn', '적정': 'ok' }[e.calc]), `계산 ${e.calc}`); const sub2 = mk('span', 'sub'); sub2.append(calcChip, document.createTextNode(` 재고 ${f0(v.stock)}t · ${e.short ? '부족 ' + f0(e.short) : '초과 ' + f0(Math.max(0, v.stock - R.fcB[p]))}t`)); stTd.append(sub2);
+      tr.append(stTd);
+      const mTd = cell(d.marginOrig, e.adj != null ? `조정 ${(e.adj * 100).toFixed(1)}% (가정 기반)` : e.kx !== 1 && d.margin != null ? `단가 ${e.kx}배 시 ${(e.mK * 100).toFixed(1)}% (가정)` : null, d.margin == null ? 'x' : 'd'); tr.append(mTd);
+      tr.append(cell(d.depOrig, d.dep != null ? `설정 기준 등급: ${e.depG} · ${d.mat}` : null, d.dep == null ? 'x' : p === '택배 라벨지' ? 'x' : 'd'));
+      tr.append(cell(e.exp == null ? '판단 불가' : e.riseP > 0 ? `${e.expG} (${e.exp.toFixed(1)})` : '변동 없음', [e.riseP > 0 && e.exp != null ? `상승 ${e.riseP}% × 의존도 ${pct(d.dep)}` : null, e.delayRisk ? `조달 위험 (지연 ${R.E.delay}일)` : null, e.pen ? `우선순위 감점 ${e.pen}%` : null].filter(Boolean).join(' · ') || null, e.exp == null ? null : 'c'));
+      tr.append(cell(d.trend, R.E.trend[p] ? `시나리오 추가 ${signed(R.E.trend[p])}%` : '추가 변화 없음', R.E.trend[p] ? 'a' : 'd'));
+      const rTd = mk('td'); rTd.append(mk('span', 'chip ' + R.rec[p].tone, R.rec[p].t)); if (R.rec[p].flags.length) rTd.append(mk('span', 'sub', R.rec[p].flags.join(' · ')));
+      tr.append(rTd);
+      prodRows.push(tr);
+      const ev = mk('tr', 'ev'); const td = mk('td'); td.colSpan = 8;
+      const det = mk('details'); det.append(mk('summary', '', '판단 근거와 계산 과정'));
+      const ul = mk('ul');
+      const li = (tag, text) => { const l = mk('li'); l.append(srcTag(tag), mk('span', '', text)); ul.append(l); };
+      li('d', `Data 4 · 전월 ${f0(v.last)}t, 당월 예측 ${f0(v.fc)}t, 재고 ${f0(v.stock)}t, 재고상태 "${d.statusOrig}", 트렌드 "${d.trend}"`);
+      if (d.margin != null) li('d', `Data 6 · 평균 이익률 ${d.marginOrig}, 원자재 ${d.mat}, 의존도 ${d.depOrig}, 필요 인력 ${d.needOrig}` + (d.note ? `, 비고 "${d.note}"` : ''));
+      if (R.E.trend[p]) li('a', `시장 트렌드 추가 변화율 ${signed(R.E.trend[p])}% (사용자 시나리오)`);
+      if (p === S.order.product && (S.order.change || S.order.addT)) li('a', `거래처 발주 ${S.order.change ? signed(S.order.change) + '%' : ''}${S.order.addT ? ' +' + f0(S.order.addT) + 't' : ''} (${S.order.path === 'messenger' ? '메신저·구두' : '발주 데이터'})`);
+      li('c', `조정 예측 = ${f0(v.fc)} × (1 ${R.E.trend[p] >= 0 ? '+' : '−'} ${Math.abs(R.E.trend[p] || 0)}%)` + (R.fcB[p] !== R.fcT[p] ? ` → 거래처 신호 반영 ${f0(R.fcB[p])}t` : ` = ${f0(R.fcT[p])}t`) + ` · 수요 증감률 = (${f0(R.fcB[p])} − ${f0(v.last)}) ÷ ${f0(v.last)} = ${e.growth == null ? '—' : signed(Math.round(e.growth * 100)) + '%'}`);
+      li('c', `재고 − 조정 예측 = ${f0(v.stock - R.fcB[p])}t → 계산 상태 ${e.calc}`);
+      li('s', `재고 초과 = 재고 ≥ 예측 × ${SURPLUS_X}, 심각한 부족 = 재고 < 예측 × 0.5 (제안 기준)`);
+      if (d.dep != null) li('c', `원가 노출 지수 = 상승률 ${e.riseP}% × 의존도 ${d.dep} = ${e.exp.toFixed(1)}` + (R.E.riseMat !== '전체' ? ` (상승 원자재: ${R.E.riseMat})` : ''));
+      if (d.dep != null) li('s', `노출 높음 ≥ ${R.SET.expHi}, 보통 ≥ ${R.SET.expMid} · 의존도 높음 ≥ ${R.SET.depHi}%, 보통 ≥ ${R.SET.depMid}% · 감점 높음 ${R.SET.penHi}%, 보통 ${R.SET.penMid}%, 조달 ${R.SET.penDelay}% (지연 ≥ ${R.SET.delayDays}일)`);
+      if (e.kx !== 1 && d.margin != null) li('a', `납품 단가 ${e.kx}배 가정: 이익률 = 1 − (1 − ${pct(d.margin)}) ÷ ${e.kx} = ${(e.mK * 100).toFixed(1)}% (원가 불변 가정)`);
+      if (e.adj != null) li('a', `조정 이익률 = ${pct(d.margin)} − 원가 비중 ${e.cs ?? 0}% × 상승 ${R.E.rise}% − 규제 비용 ${(e.regRatio * 100).toFixed(1)}% = ${(e.adj * 100).toFixed(1)}%`);
+      if (e.regAmt) li('a', `규제 대응 비용 ${f0(e.regAmt)}만원: 매출 데이터가 없어 이익률 영향은 계산하지 않음`);
+      d.lines.forEach((id) => { const L = LINE[id]; li('c', `${id} 통합 점수 = 부족 ${f0(e.short)}t × ${((e.mEff ?? 0) * 100).toFixed(1)}% ÷ ${L.need}명 × (1 − ${e.pen}%) = ${R.value(L).toFixed(1)} · 상태: ${R.status[id].st}`); });
+      d.checks.forEach((c) => li('x', c));
+      det.append(ul); td.append(det); ev.append(td); prodRows.push(ev);
+    });
+    const ex = mk('tr', 'excl');
+    ex.append(mk('td', 'pn', '복사지 (A4)'), mk('td', '', '—'), cell('2024년부로 생산 단종', null, 'd'), cell('1% (원본 표기 "적자")', '1% 이익률과 "적자" 표기가 회계상 맞지 않음', 'x'), cell('0.6', '재생 펄프', 'd'), mk('td', '', '—'), mk('td', '', '—'), (() => { const td = mk('td'); td.append(mk('span', 'chip mute', '판단 제외 (R-16)')); return td; })());
+    prodRows.push(ex);
+    $('prod').replaceChildren(...prodRows);
+
+    const curKey = Object.keys(SCEN).find((k) => { const T = structuredClone(S); SCEN[k].apply(T); return JSON.stringify(T.econ) === JSON.stringify(S.econ) && T.ratio === S.ratio; });
+    $('scen').replaceChildren(...Object.entries(SCEN).map(([k, sc]) => {
+      const T = structuredClone(S); sc.apply(T);
+      const X = evaluate(T, ctx);
+      const tr = mk('tr', k === curKey ? 'cur' : '');
+      const n = mk('td', 'sn', sc.name); n.append(mk('small', '', sc.sub)); tr.append(n);
+      const o = mk('td'); o.append(mk('span', 'ord', X.runB.length ? X.runB.map((L) => `${L.id} ${X.asgB[L.id]}명`).join(' → ') : '가동 라인 없음')); o.append(mk('span', 'sub', X.runB.map((L) => `${L.id} 점수 ${X.value(L).toFixed(1)}`).join(' · '))); tr.append(o);
+      const hs = mk('td'); LINES.forEach((L) => { const s = X.status[L.id]; if (!s.run && s.tone !== 'mute') hs.append(mk('span', 'chip ' + s.tone, `${L.id} ${s.st.split(' · ')[0]}`)); }); if (!hs.childNodes.length) hs.textContent = '없음'; tr.append(hs);
+      const rk = mk('td'); PRODUCTS.forEach((p) => { const e = X.econ[p]; if (e.expG === '높음' || e.expG === '보통') rk.append(mk('span', 'chip ' + (e.expG === '높음' ? 'bad' : 'warn'), `${p} 원가 ${e.expG}`)); if (e.delayRisk) rk.append(mk('span', 'chip bad', `${p} 조달`)); }); if (!rk.childNodes.length) rk.textContent = '없음'; tr.append(rk);
+      const dd = mk('td'); const appr = X.D.filter((d) => !d.auto && !/마스터 데이터/.test(d.t)); dd.append(mk('span', '', appr.length ? appr.slice(0, 3).map((d) => d.t).join(' / ') + (appr.length > 3 ? ` 외 ${appr.length - 3}건` : '') : '추가 승인 없음')); tr.append(dd);
+      const bt = mk('td'); const b = mk('button', '', k === curKey ? '적용 중' : '적용'); b.type = 'button'; b.disabled = k === curKey; b.addEventListener('click', () => applyScen(k)); bt.append(b); tr.append(bt);
+      return tr;
     }));
 
     $('flow').replaceChildren(...R.flow.map((s, i) => {
@@ -877,9 +1427,17 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       ...LINES.map((L) => [`${L.id} 온도·진동·펄프`, `${S.eq[L.id].temp}℃ · ${fv(S.eq[L.id].vib)}mm/s · ${S.eq[L.id].pulp}%`, ['temp', 'vib', 'pulp'].map((k) => `eq.${L.id}.${k}`)]),
       ...PRODUCTS.map((p) => [`${p} 재고/예측`, `${f0(S.inv[p].stock)}t / ${f0(S.inv[p].fc)}t`, ['stock', 'fc', 'last'].map((k) => `inv.${p}.${k}`)]),
       ['거래처 발주', (S.order.change || S.order.addT) ? `${S.order.product} ` + [S.order.change ? `${signed(S.order.change)}%` : '', S.order.addT ? `+${f0(S.order.addT)}t 추가` : ''].filter(Boolean).join(' · ') + ` · ${S.order.path === 'messenger' ? '메신저·구두' : '발주 데이터'}` : '변화 없음', ['order.change', 'order.path', 'order.product', 'order.addT']],
-      ['출근 가능 비율', S.ratio + '%', ['ratio']],
+      ['출근 인력', S.staffAbs != null ? `${S.staffAbs}명 (인원으로 지정)` : S.ratio + '%', ['ratio', 'staffAbs']],
+      ...(S.unattended.length || S.supAbsent ? [['자리 비움', [S.unattended.length ? `작업자 이탈: ${S.unattended.join(', ')}` : '', S.supAbsent ? '공장장 부재' : ''].filter(Boolean).join(' · '), ['unattended', 'supAbsent']]] : []),
+      ...(S.strikeIf.length ? [['노조 조건부 파업', `${S.strikeIf.join(', ')} 가동 시 총파업`, ['strikeIf']]] : []),
+      ...(S.cancel ? [['거래처 발주 취소', `${S.cancel} 전면 취소`, ['cancel']]] : []),
+      ...PRODUCTS.filter((p) => S.econ.priceX[p] !== 1).map((p) => [`${p} 납품 단가`, `${S.econ.priceX[p]}배`, [`econ.priceX.${p}`]]),
       ['대체 인력', S.subs ? `${S.subs}명 · ${S.trained ? '교육 완료' : '교육 전'}` : '없음', ['subs', 'trained']],
       ['EQ-05 ERP 등록', S.eq05 ? '등록' : '미등록', ['eq05']],
+      ['원자재 가격 상승률', S.econ.rise + '%' + (S.econ.riseMat !== '전체' ? ` (${S.econ.riseMat}만)` : ''), ['econ.rise', 'econ.riseMat']],
+      ['원자재 공급 지연', S.econ.delay + '일', ['econ.delay']],
+      ['환경규제 강도', S.econ.reg, ['econ.reg']],
+      ...PRODUCTS.filter((p) => S.econ.trend[p] || (S.econ.regCost[p] || {}).v || S.econ.costShare[p] != null).map((p) => [`${p} 시나리오 가정`, [S.econ.trend[p] ? `트렌드 ${signed(S.econ.trend[p])}%` : '', (S.econ.regCost[p] || {}).v ? `규제 비용 ${S.econ.regCost[p].v}${S.econ.regCost[p].unit === 'pct' ? '% (매출)' : '만원'}` : '', S.econ.costShare[p] != null ? `원가 비중 ${S.econ.costShare[p]}%` : ''].filter(Boolean).join(' · '), [`econ.trend.${p}`, `econ.regCost.${p}.v`, `econ.regCost.${p}.unit`, `econ.costShare.${p}`]]),
     ];
     $('conds').replaceChildren(...rows.map(([k, v, keys]) => {
       const [s, tone] = src(keys);
@@ -923,7 +1481,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     const maxN = Math.max(...R.active.map((L) => L.need), 1);
     $('staff').replaceChildren(...R.active.map((L) => {
       const row = mk('div', 'srow');
-      const lab = mk('div', 'sl'); lab.append(document.createTextNode(`${L.id} ${L.product}`), mk('small', '', `1명당 가치 ${R.value(L).toFixed(1)}`));
+      const lab = mk('div', 'sl'); lab.append(document.createTextNode(`${L.id} ${L.product}`), mk('small', '', `통합 점수 ${R.value(L).toFixed(1)}` + (Math.abs(R.value(L) - R.baseValue(L)) > 0.05 ? ` · 기본 ${R.baseValue(L).toFixed(1)}` : '')));
       const bars = mk('div', 'bars');
       [['need', L.need, '필요'], ['ta', R.asgA[L.id], 'A'], ['tb', R.asgB[L.id], 'B']].forEach(([cls, val, nm]) => {
         const b = mk('div', 'bar'); const tr = mk('div', 'track'); const sp = mk('span', cls); sp.style.width = (val / maxN * 100) + '%'; tr.append(sp);
@@ -931,7 +1489,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       });
       row.append(lab, bars); return row;
     }));
-    $('staffSum').textContent = `평시 필요 ${R.totalNeed}명 · 출근 ${R.regular}명` + (S.subs ? ` · 대체 인력 ${S.subs}명(${S.trained ? '교육 완료, B에 포함' : '교육 전, B에서 제외'})` : '') + ` · 실험 B 배치 ${R.usableB - R.left}명, 예비 ${R.left}명`;
+    $('staffSum').textContent = `평시 필요 ${R.totalNeed}명 · 출근 ${R.regular}명(${R.effRatio}%)` + (S.subs ? ` · 대체 인력 ${S.subs}명(${S.trained ? '교육 완료, B에 포함' : '교육 전, B에서 제외'})` : '') + ` · 실험 B 배치 ${R.usableB - R.left}명, 예비 ${R.left}명`;
 
     $('decisions').replaceChildren(...(R.D.length ? R.D.map((d) => {
       const st = d.auto ? 'auto' : decide[d.id] || 'pending';
@@ -952,7 +1510,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
   function syncInputs() {
     bound.forEach((el) => {
       const v = getPath(S, el.dataset.k);
-      if (el.type === 'radio') el.checked = el.value === v; else if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
+      if (el.type === 'radio') el.checked = el.value === v; else if (el.type === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v;
     });
     syncOutputs();
   }
@@ -960,6 +1518,9 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     $('out-hum').textContent = S.humidity + '%';
     $('out-ordc').textContent = signed(S.order.change) + '%';
     $('out-ratio').textContent = S.ratio + '%';
+    $('out-ratio2').textContent = S.ratio + '%';
+    $('out-rise').textContent = '+' + S.econ.rise + '%';
+    $('out-delay').textContent = S.econ.delay + '일';
   }
   bound.forEach((el) => {
     const ev = el.tagName === 'TEXTAREA' || el.type === 'range' || el.type === 'number' ? 'input' : 'change';
@@ -967,9 +1528,10 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       let v;
       if (el.type === 'checkbox') v = el.checked;
       else if (el.type === 'radio') { if (!el.checked) return; v = el.value; }
-      else if (el.type === 'range' || el.type === 'number') { v = parseFloat(el.value); if (Number.isNaN(v)) return; }
+      else if (el.type === 'range' || el.type === 'number') { v = parseFloat(el.value); if (Number.isNaN(v)) { if (el.dataset.null && el.value === '') v = null; else return; } }
       else v = el.value;
       setPath(S, el.dataset.k, v);
+      if (el.dataset.k === 'ratio') S.staffAbs = null;
       if (el.dataset.k !== 'log') ctx.manual.add(el.dataset.k);
       syncOutputs(); render();
     });
@@ -985,9 +1547,12 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     $('test-err').hidden = true;
     const P = parseTest(text, $('base').value);
     S = P.st; ctx = P.ctx;
+    const cm = text.match(/CASE\s*([123])/i);
+    ctx.caseId = cm ? 'c' + cm[1] : null;
+    if (ctx.caseId) ctx.mentioned = CASE_TARGETS[ctx.caseId];
     Object.keys(decide).forEach((k) => delete decide[k]);
     syncInputs(); render();
-    $('parse-hint').textContent = `문장에서 조건 ${ctx.count}개를 읽었습니다. 나머지는 기준 데이터를 씁니다. "조건 직접 조정"에서 값을 바꾸면 결과가 바로 다시 계산됩니다.`;
+    $('parse-hint').textContent = `문장에서 조건 ${ctx.count}개를 읽었습니다. 나머지는 기준 데이터를 씁니다. "경영 시나리오"나 "현장 조건" 탭에서 값을 바꾸면 결과가 바로 다시 계산됩니다.`;
   }
   $('run').addEventListener('click', runTest);
   $('test-text').addEventListener('input', () => { $('test-err').hidden = true; document.querySelectorAll('#tests button').forEach((b) => b.setAttribute('aria-pressed', 'false')); });
@@ -998,7 +1563,13 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     document.querySelectorAll('#tests button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     runTest();
   }));
-  const tabs = [['tab-test', 'panel-test'], ['tab-manual', 'panel-manual']];
+  function applyScen(k) {
+    SCEN[k].apply(S);
+    ['econ.rise', 'econ.delay', 'econ.reg', 'ratio', ...PRODUCTS.flatMap((p) => [`econ.trend.${p}`, `econ.regCost.${p}.v`, `econ.regCost.${p}.unit`])].forEach((key) => ctx.manual.add(key));
+    syncInputs(); render();
+  }
+  document.querySelectorAll('[data-sc]').forEach((b) => b.addEventListener('click', () => applyScen(b.dataset.sc)));
+  const tabs = [['tab-test', 'panel-test'], ['tab-econ', 'panel-econ'], ['tab-manual', 'panel-manual']];
   tabs.forEach(([t, p]) => $(t).addEventListener('click', () => { tabs.forEach(([t2, p2]) => { $(t2).setAttribute('aria-selected', String(t2 === t)); $(p2).hidden = p2 !== p; }); }));
 
   $('test-text').value = TESTS.t1;
