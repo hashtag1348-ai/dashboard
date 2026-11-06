@@ -205,10 +205,11 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
           <h3>테스트 예시 <span class="tag">눌러서 불러오기</span></h3>
           <div class="tests" id="tests">
             <button type="button" data-t="t1" aria-pressed="true"><span class="tn">T1</span>현장 통제: 1호기 펄프 농도 15%</button>
-            <button type="button" data-t="t2" aria-pressed="false"><span class="tn">T2</span>우천 사고 재현: 2호기 98℃·쇳소리</button>
-            <button type="button" data-t="t3" aria-pressed="false"><span class="tn">T3</span>파업 비상운영: 생산직 50% 파업</button>
-            <button type="button" data-t="t4" aria-pressed="false"><span class="tn">T4</span>수요 급감 신호: B마트 발주 반토막</button>
-            <button type="button" data-t="t5" aria-pressed="false"><span class="tn">T5</span>입력 오류와 노이즈</button>
+            <button type="button" data-t="t2" aria-pressed="false"><span class="tn">T2</span>영업·재고 최적화: 라벨지 150t 긴급 추가 발주</button>
+            <button type="button" data-t="t3" aria-pressed="false"><span class="tn">예3</span>우천 사고 재현: 2호기 98℃·쇳소리</button>
+            <button type="button" data-t="t4" aria-pressed="false"><span class="tn">예4</span>파업 비상운영: 생산직 50% 파업</button>
+            <button type="button" data-t="t5" aria-pressed="false"><span class="tn">예5</span>수요 급감 신호: B마트 발주 반토막</button>
+            <button type="button" data-t="t6" aria-pressed="false"><span class="tn">예6</span>입력 오류와 노이즈</button>
           </div>
           <div class="field">
             <label for="test-text">테스트 상황과 질문</label>
@@ -294,6 +295,10 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
             <div class="field">
               <label for="in-ordc">주간 발주 변화 <output id="out-ordc">0%</output></label>
               <input type="range" id="in-ordc" min="-80" max="60" step="5" data-k="order.change">
+            </div>
+            <div class="field">
+              <label for="in-addt">긴급 추가 발주량(t)</label>
+              <input type="number" id="in-addt" min="0" max="2000" step="10" data-k="order.addT">
             </div>
             <div class="field">
               <span class="flab">신호 경로</span>
@@ -391,8 +396,9 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         <summary>시뮬레이션 모델과 가정</summary>
         <ul>
           <li>판정 기준은 SOP(Data 5)와 키네틱 규칙 v2입니다. 우천 기준 습도 80% 이상, 건조 온도 상한 95℃, 진동 기준 5.0mm/s, 펄프 농도 기준 14%, 정상 RPM 1,000~1,200입니다.</li>
-          <li>문장 해석은 정해진 표현을 찾는 방식입니다. 호기·설비 번호, 습도·온도·진동·펄프 농도 수치, 비·맑음, 파업 비율, 대체 인력 수와 교육 여부, 제품별 재고·수요(톤), 발주 변화(반토막, N% 감소·증가)와 전달 경로를 읽습니다. 읽은 값과 기준 데이터 값은 조건 표에 출처로 구분해 보여줍니다.</li>
+          <li>문장 해석은 정해진 표현을 찾는 방식입니다. 호기·설비 번호, 습도·온도·진동·펄프 농도 수치, 비·맑음, 파업 비율, 대체 인력 수와 교육 여부, 제품별 재고·수요(톤), 발주 변화(반토막, N% 감소·증가, N톤 추가 발주)와 전달 경로(메신저·연락·구두)를 읽습니다. 읽은 값과 기준 데이터 값은 조건 표에 출처로 구분해 보여줍니다.</li>
           <li>비가 온다고만 하고 습도 수치가 없으면 10/14 실측 85%를, 맑다고 하면 평시 45%를 씁니다. 파업 비율이 없으면 Data 7의 50%를 씁니다.</li>
+          <li>추가 발주 톤수는 해당 제품의 당월 예측수요에 더합니다. 설비별 주간 생산능력은 데이터에 없어 추가 물량을 기한 안에 채울 수 있는지는 판단하지 않습니다.</li>
           <li>재고 초과는 재고가 당월 예측의 1.5배 이상(R-09), 거래처 경보는 주간 발주 30% 이상 감소(R-12)로 정한 제안값입니다.</li>
           <li>수율은 10/14 데이터로 만든 단순 추정입니다. 우천 중 95℃ 초과 운전 82%(L-102 실측), 진동 초과 90%, 펄프 농도 초과 93%, 그 밖에는 98%입니다.</li>
           <li>라인별 필요 인원과 이익률은 ERP(Data 6) 값입니다. EQ-05는 ERP에 없어 등록했을 때만 필요 인원 3명, 이익률 10%로 가정합니다. 실험 A는 라인별 인원을 같은 비율로 줄이고 대체 인력을 교육 없이 투입하며, 수요 신호는 월별 파일로만 반영(30일)한다고 가정합니다.</li>
@@ -406,11 +412,11 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
 <script>
 (() => {
   const LINES = [
-    { id: 'EQ-01', name: '제1 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1200 },
-    { id: 'EQ-02', name: '제2 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1250 },
-    { id: 'EQ-03', name: '패키징 압출기', product: '친환경 포장재', need: 2, margin: 0.25, rpm: 800 },
-    { id: 'EQ-04', name: '제1 라벨기', product: '택배 라벨지', need: 3, margin: 0.12, rpm: 1000 },
-    { id: 'EQ-05', name: '박리 코팅기', product: '산업용 박리지', need: 3, margin: 0.10, rpm: 950 },
+    { id: 'EQ-01', name: '제1 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1200, mat: '수입 천연 펄프' },
+    { id: 'EQ-02', name: '제2 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1250, mat: '수입 천연 펄프' },
+    { id: 'EQ-03', name: '패키징 압출기', product: '친환경 포장재', need: 2, margin: 0.25, rpm: 800, mat: '나노셀룰로오스' },
+    { id: 'EQ-04', name: '제1 라벨기', product: '택배 라벨지', need: 3, margin: 0.12, rpm: 1000, mat: '일반 펄프+접착제' },
+    { id: 'EQ-05', name: '박리 코팅기', product: '산업용 박리지', need: 3, margin: 0.10, rpm: 950, mat: '-' },
   ];
   const LINE = Object.fromEntries(LINES.map((l) => [l.id, l]));
   const PRODUCTS = ['일반 감열지', '프리미엄 감열지', '친환경 포장재', '택배 라벨지'];
@@ -448,21 +454,22 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     normal: () => ({
       humidity: 45, humFmt: 'num', log: '',
       eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 85, vib: 3.0, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
-      inv: INV(), order: { product: '일반 감열지', change: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
     }),
     actual: () => ({
       humidity: 85, humFmt: 'text', log: '',
       eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 98, vib: 5.8, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
-      inv: INV(), order: { product: '일반 감열지', change: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+      inv: INV(), order: { product: '일반 감열지', change: 0, addT: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
     }),
   };
 
   const TESTS = {
     t1: '[자체 테스트 1: 현장 통제 상황]\n오늘은 비가 오지 않는 맑은 날씨야. 그런데 1호기(EQ-01)의 펄프 농도가 갑자기 15%로 치솟았고, 현장의 정지훈 사원은 "펄프가 질척거린다"고 보고하며 패닉에 빠졌어.\n네가 학습한 데이터와 우리 조가 입력한 키네틱 비즈니스 룰을 바탕으로, 지금 당장 정지훈 사원이 1호기(EQ-01)에 대해 취해야 할 행동을 수치에 근거하여 구체적으로 지시해 줘.',
-    t2: '[자체 테스트 2: 우천 사고 재현]\n비가 많이 와서 공장 습도가 85%야. 박만석 공장장이 감대로 2호기 건조 온도를 98도로 올렸고, 오후에 2호기에서 쇳소리가 나며 진동이 5.8mm/s까지 올랐어. 공장장은 기름 좀 치라고만 했어.\n지금 2호기에 대해 취해야 할 조치를 수치에 근거해 지시해 줘.',
-    t3: '[자체 테스트 3: 파업 비상운영]\n내일 오전 9시부터 생산직 50%가 파업에 들어가. 협력사 대체 인력 2명이 오는데 아직 SOP 교육은 안 받았어. 친환경 포장재 수요는 500톤으로 늘었어.\n라인별 인력을 어떻게 배치하고 어떤 라인을 멈춰야 하는지 지시해 줘.',
-    t4: '[자체 테스트 4: 수요 급감 신호]\n영업팀장이 메신저로 B마트 감열지 발주가 반토막 났다고 알려왔어. 감열지 재고는 850톤이야. 생산팀은 1호기와 2호기를 계속 돌리고 있어.\n생산과 영업은 각각 무엇을 해야 해?',
-    t5: '[자체 테스트 5: 입력 오류와 노이즈]\n습도가 "82% (우천)" 텍스트로 입력됐어. 1호기 온도를 97도로 한 뼘 돌렸다는 일지가 있고, 색깔이 좀 탁해 보인다는 말도 있어. 휴게실 에어컨도 고쳐달래.\n무엇부터 처리해야 하는지 우선순위대로 지시해 줘.',
+    t2: '[자체 테스트 2: 영업 및 재고 최적화 상황]\n방금 영업팀 김미나 팀장에게 이커머스 고객사로부터 "다음 주 물량으로 택배 라벨지 150톤을 긴급 추가 발주하겠다"는 연락이 왔어.\n네가 학습한 영업/재고 데이터와 우리 조가 입력한 키네틱 비즈니스 룰을 바탕으로, 김미나 팀장과 생산팀이 취해야 할 행동을 수치에 근거하여 구체적으로 지시해 줘.',
+    t3: '[예시 3: 우천 사고 재현]\n비가 많이 와서 공장 습도가 85%야. 박만석 공장장이 감대로 2호기 건조 온도를 98도로 올렸고, 오후에 2호기에서 쇳소리가 나며 진동이 5.8mm/s까지 올랐어. 공장장은 기름 좀 치라고만 했어.\n지금 2호기에 대해 취해야 할 조치를 수치에 근거해 지시해 줘.',
+    t4: '[예시 4: 파업 비상운영]\n내일 오전 9시부터 생산직 50%가 파업에 들어가. 협력사 대체 인력 2명이 오는데 아직 SOP 교육은 안 받았어. 친환경 포장재 수요는 500톤으로 늘었어.\n라인별 인력을 어떻게 배치하고 어떤 라인을 멈춰야 하는지 지시해 줘.',
+    t5: '[예시 5: 수요 급감 신호]\n영업팀장이 메신저로 B마트 감열지 발주가 반토막 났다고 알려왔어. 감열지 재고는 850톤이야. 생산팀은 1호기와 2호기를 계속 돌리고 있어.\n생산과 영업은 각각 무엇을 해야 해?',
+    t6: '[예시 6: 입력 오류와 노이즈]\n습도가 "82% (우천)" 텍스트로 입력됐어. 1호기 온도를 97도로 한 뼘 돌렸다는 일지가 있고, 색깔이 좀 탁해 보인다는 말도 있어. 휴게실 에어컨도 고쳐달래.\n무엇부터 처리해야 하는지 우선순위대로 지시해 줘.',
   };
 
   let S = BASES.normal();
@@ -517,9 +524,11 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
         const p = prod && PRODUCTS.includes(prod) ? prod : st.order.product;
         let ch = null;
         const dn = c.match(/(\d+)\s*%\s*(?:감소|줄|하락|빠|떨어)/), up = c.match(/(\d+)\s*%\s*(?:증가|늘|상승|급증|올)/);
-        if (/반토막|절반/.test(c)) ch = -50; else if (dn) ch = -dn[1]; else if (up) ch = +up[1]; else if (/급감/.test(c)) ch = -50; else if (/급증/.test(c)) ch = 50;
+        const addM = c.match(/(\d+)\s*(?:톤|t)[^.\n]{0,15}(?:추가|긴급|더)/) || c.match(/(?:추가|긴급)[^0-9]{0,12}(\d+)\s*(?:톤|t)/);
+        if (addM) { st.order.product = p; st.order.addT = +addM[1]; note('order.addT'); note('order.product'); }
+        if (/반토막|절반/.test(c)) ch = -50; else if (dn) ch = -dn[1]; else if (up) ch = +up[1]; else if (/급감/.test(c)) ch = -50; else if (/급증/.test(c) && !addM) ch = 50;
         if (ch !== null) { st.order.product = p; st.order.change = Math.max(-80, Math.min(60, ch)); note('order.change', /반토막|절반/.test(c) ? '반토막 → -50%' : null); note('order.product'); }
-        st.order.path = /메신저|구두|전화|말로|카톡|문자/.test(c) ? 'messenger' : 'data'; note('order.path');
+        st.order.path = /메신저|구두|전화|말로|카톡|문자|연락|통화/.test(c) ? 'messenger' : 'data'; note('order.path');
       }
     });
     const s1 = t.match(/(\d{1,3})\s*%\s*(?:가|이)?\s*(?:파업|결근)/) || t.match(/(?:파업|결근)[^0-9]{0,10}(\d{1,3})\s*%/);
@@ -589,7 +598,9 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       fcB[op] = Math.round(S.inv[op].fc * (1 + ch / 100));
       fire('R-12', `${op} 주간 발주 ${ch}% → 예측 ${f0(S.inv[op].fc)}t를 ${f0(fcB[op])}t로 갱신`);
     }
-    if (ch !== 0 && S.order.path === 'messenger') fire('R-13', `${op} 발주 ${signed(ch)}% 신호가 메신저로만 들어옴`);
+    const addT = S.order.addT || 0;
+    if (addT > 0) fcB[op] = fcB[op] + addT;
+    if ((ch !== 0 || addT > 0) && S.order.path === 'messenger') fire('R-13', addT > 0 ? `${op} 추가 발주 +${f0(addT)}t 신호가 구두로만 들어옴 → 예측 ${f0(S.inv[op].fc)}t를 ${f0(fcB[op])}t로 잠정 갱신` : `${op} 발주 ${signed(ch)}% 신호가 메신저로만 들어옴`);
     const surplus = {}, falling = {};
     PRODUCTS.forEach((p) => {
       const v = S.inv[p];
@@ -603,7 +614,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       const bad = LINES.filter((L) => L.product === p && (safe[L.id].r01 || safe[L.id].r02));
       if (bad.length) { bad.forEach((b) => r08.add(b.id)); fire('R-08', `${p} 재고 초과·수요 하락 상태에서 ${bad.map((b) => b.id).join(', ')} 이상`); }
     });
-    if (has('R-09') || has('R-13')) fire('R-11', '영업 신호와 생산 계획이 엇갈림');
+    if (has('R-09') || has('R-13') || addT > 0) fire('R-11', addT > 0 ? `${op} 추가 물량 ${f0(addT)}t를 생산 가능량과 맞춰 납기 결정` : '영업 신호와 생산 계획이 엇갈림');
 
     const status = {};
     LINES.forEach((L) => {
@@ -653,7 +664,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       { k: 'SOP 위반 상태 가동', a: sopA, b: 0, u: '라인' },
       { k: '재고 초과 품목 가동 라인', a: runA.filter((L) => surplusA(L.product)).length, b: runB.filter((L) => surplus[L.product]).length, u: '개' },
       { k: '최소 인원 미달 가동 라인', a: runA.filter((L) => asgA[L.id] < L.need).length, b: 0, u: '개' },
-      { k: '수요 신호 반영까지', a: 30, b: ch !== 0 && S.order.path === 'messenger' ? 2 : 7, u: '일' },
+      { k: '수요 신호 반영까지', a: 30, b: (ch !== 0 || addT > 0) && S.order.path === 'messenger' ? 2 : 7, u: '일' },
     ];
 
     const D = [];
@@ -665,7 +676,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (has('R-10') || has('R-17')) D.push({ id: 'staff', t: '인력 배치안: ' + (runB.length ? runB.map((L) => `${L.id} ${asgB[L.id]}명`).join(', ') : '가동 라인 없음'), r: ['R-10', has('R-17') && 'R-17'].filter(Boolean).join(', '), o: '공장장 · 경영진', d: '교대 전' });
     if (has('R-18')) D.push({ id: 'subs', t: `대체 인력 ${S.subs}명 수치 SOP 교육 후 투입`, r: 'R-18', o: '안전관리', d: '투입 전' });
     if (has('R-17')) D.push({ id: 'union', t: '노조에 AI 조치 취지 설명 (안전 보조)', r: 'P-5', o: '경영진', d: '당일' });
-    if (has('R-12') || has('R-13')) D.push({ id: 'demand', t: `${op} 수요예측 갱신, 영업·생산 공동 회의`, r: [has('R-12') && 'R-12', has('R-13') && 'R-13', has('R-11') && 'R-11'].filter(Boolean).join(', '), o: '영업팀 · 생산팀', d: has('R-13') ? '48시간 내' : '1주 내' });
+    if (has('R-12') || has('R-13') || addT > 0) D.push({ id: 'demand', t: addT > 0 ? `${op} +${f0(addT)}t 수주 반영, 생산계획·납기 공동 확정` : `${op} 수요예측 갱신, 영업·생산 공동 회의`, r: [has('R-12') && 'R-12', has('R-13') && 'R-13', has('R-11') && 'R-11'].filter(Boolean).join(', '), o: '영업팀 · 생산팀', d: has('R-13') ? '48시간 내' : '1주 내' });
     if (has('R-07')) D.push({ id: 'vague', t: '수치 없는 현장 지시 재확인', r: 'R-07', o: '생산팀', d: '즉시' });
     if (has('R-14') || !S.eq05) D.push({ id: 'data', t: '입력 형식 통일, 마스터 데이터 등록', r: [has('R-14') && 'R-14', 'R-15'].filter(Boolean).join(', '), o: '경영기획팀', d: '1주 내' });
 
@@ -694,7 +705,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       { n: '현장 언어 번역', d: g(['R-05', 'R-06', 'R-07']).length ? fired.filter((f) => ['R-05', 'R-06', 'R-07'].includes(f.id)).map((f) => f.ev).join(' / ') : '번역할 현장 표현 없음', rules: ['R-05', 'R-06', 'R-07'] },
       { n: '센서 판정 (SOP)', d: sensorHits.length ? sensorHits.join(' · ') : '모든 센서가 SOP 기준 이내', rules: [], st: sensorHits.length ? 'alert' : 'pass' },
       { n: '안전 조치', d: g(['R-01', 'R-02', 'R-03', 'SOP-S1']).length ? '즉시 실행 조치 발동' : '안전 조치 필요 없음', rules: ['R-01', 'R-02', 'R-03', 'SOP-S1'] },
-      { n: '전사 최적화', d: g(['R-08', 'R-09', 'R-12', 'R-13']).length ? fired.filter((f) => ['R-08', 'R-09', 'R-12', 'R-13'].includes(f.id)).map((f) => f.ev).join(' / ') : '재고·수요 균형, 조정 없음', rules: ['R-08', 'R-09', 'R-11', 'R-12', 'R-13'] },
+      { n: '전사 최적화', d: g(['R-08', 'R-09', 'R-12', 'R-13', 'R-11']).length ? fired.filter((f) => ['R-08', 'R-09', 'R-12', 'R-13', 'R-11'].includes(f.id)).map((f) => f.ev).join(' / ') : '재고·수요 균형, 조정 없음', rules: ['R-08', 'R-09', 'R-11', 'R-12', 'R-13'] },
       { n: '인력 배치', d: runB.length ? `가동 ${runB.map((L) => `${L.id} ${asgB[L.id]}명`).join(', ')}` + (left ? ` · 예비 ${left}명` : '') : '가동 라인 없음', rules: ['R-17', 'R-10', 'R-18'] },
       { n: '지시 · 승인', d: `자동 실행 ${autoN}건 · 경영진 승인 ${apprN}건`, rules: [], st: autoN ? 'alert' : apprN ? 'hit' : 'pass' },
     ].map((s) => ({ ...s, fired: s.rules.filter(has), st: s.st || (s.rules.some(has) ? (s.rules.filter(has).some((r) => RULES[r].g === 'safety' || RULES[r].g === 'emer') ? 'alert' : 'hit') : 'pass') }));
@@ -729,6 +740,15 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       if (e.vib > VIB_MAX) { verdict = '즉시 정지'; tone = 'bad'; }
       else if (rain && e.temp > TEMP_MAX) { verdict = '온도 복귀 후 가동'; tone = 'warn'; }
       else if (e.pulp > PULP_MAX) { verdict = '가동 유지 · 공정 조정'; tone = 'warn'; }
+      else if (addT > 0 && L.product === op && !surplus[L.product]) {
+        verdict = '증산 대응'; tone = 'info';
+        const short = Math.max(0, fcB[op] - S.inv[op].stock);
+        steps.push({ s: `${L.id} 가동을 유지하고 다음 주 생산계획에 ${op} ${f0(short)}t를 반영합니다.`, w: `예측 ${f0(S.inv[op].fc)}t + 추가 발주 ${f0(addT)}t = ${f0(fcB[op])}t, 현재 재고 ${f0(S.inv[op].stock)}t를 빼면 ${f0(short)}t가 모자랍니다.` });
+        if (left > 0) steps.push({ s: `남는 인력 ${left}명 중 일부를 ${L.id} 교대 보강에 넣어 가동 시간을 늘립니다.`, w: `${held.length ? held.join(', ') + '는 재고 초과로 휴지 중이라 인력이 남습니다. ' : ''}배치 순서는 인력 1명당 가치 순입니다(R-10): ${runB.map((x) => `${x.id} ${value(x).toFixed(1)}`).join(', ')}.` });
+        else steps.push({ s: `${L.id} 인력은 지금 배치(${asgB[L.id]}명)를 유지합니다.`, w: '남는 인력이 없어 교대 보강은 경영진 판단이 필요합니다 (R-10).' });
+        steps.push({ s: `구매팀에 원자재(${L.mat}) 추가 확보를 요청합니다.`, w: `${L.id}의 주요 원자재입니다 (Data 6).` });
+        steps.push({ s: `${L.id}의 주간 생산 가능량을 확인해 영업팀에 넘깁니다.`, w: `생산능력 데이터가 없어 ${f0(short)}t를 다음 주 안에 채울 수 있는지는 에이전트가 판단할 수 없습니다.` });
+      }
       else if (surplus[L.product]) {
         verdict = '신규 생산 보류'; tone = 'warn';
         const to = runB.filter((x) => x.id !== L.id).map((x) => x.id);
@@ -743,7 +763,8 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     }
     const askLines = (ctx.mentioned || []).filter((id) => LINE[id]);
     const anomalyLines = LINES.filter((L) => safe[L.id].r01 || safe[L.id].r02 || safe[L.id].pulp).map((L) => L.id);
-    const targetIds = askLines.length ? askLines : anomalyLines;
+    const demandLines = addT > 0 ? LINES.filter((L) => L.product === op).map((L) => L.id) : [];
+    const targetIds = askLines.length ? askLines : [...new Set([...anomalyLines, ...demandLines])];
     const orders = targetIds.map((id) => orderFor(LINE[id]));
 
     const stopped = LINES.filter((L) => status[L.id].tone === 'bad').map((L) => L.id);
@@ -757,18 +778,19 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (left > 0 && runB.length) parts.push(`남는 인력 ${left}명은 교대 보강과 SOP 교육`);
 
     const waiting = LINES.filter((L) => status[L.id].st.startsWith('대기')).map((L) => L.id);
-    return { fired, has, status, asgA, asgB, active, kpis, D, chain, flow, orders, level, parts, usableB, regular, left, value, totalNeed, rain, fcB, op, ch, runB, held, waiting, unrelated, noise };
+    return { fired, has, status, asgA, asgB, active, kpis, D, chain, flow, orders, level, parts, usableB, regular, left, value, totalNeed, rain, fcB, op, ch, addT, runB, held, waiting, unrelated, noise };
   }
 
   function answerText(R) {
     const who = ctx.who ? `${ctx.who} ${PEOPLE[ctx.who] || ''}`.trim() : null;
     const out = [];
-    const headOf = { '즉시 정지': '지금 바로 멈춰야 합니다', '정상 가동 유지': '정상 범위라 그대로 가동하면 됩니다', '자동 판단 불가': '데이터가 없어 자동 판단을 할 수 없습니다', '온도 복귀 후 가동': '온도를 되돌린 뒤 가동할 수 있습니다', '가동 유지 · 공정 조정': '멈출 필요는 없고 공정만 조정하면 됩니다', '신규 생산 보류': '센서는 정상이지만 재고 초과로 신규 생산을 멈춰야 합니다' };
+    const headOf = { '즉시 정지': '지금 바로 멈춰야 합니다', '정상 가동 유지': '정상 범위라 그대로 가동하면 됩니다', '자동 판단 불가': '데이터가 없어 자동 판단을 할 수 없습니다', '온도 복귀 후 가동': '온도를 되돌린 뒤 가동할 수 있습니다', '가동 유지 · 공정 조정': '멈출 필요는 없고 공정만 조정하면 됩니다', '신규 생산 보류': '센서는 정상이지만 재고 초과로 신규 생산을 멈춰야 합니다', '증산 대응': '가동을 유지하면서 추가 물량에 맞춰 생산을 늘려야 합니다' };
+    const salesWho = ctx.who && /영업/.test(PEOPLE[ctx.who] || '');
     R.orders.forEach((o, idx) => {
-      const head = `${who && idx === 0 ? who + '님, ' : ''}${o.L.id}(${o.L.name})는 ${headOf[o.verdict] || o.verdict}.`;
+      const head = `${who && idx === 0 && !salesWho ? who + '님, ' : ''}${o.L.id}(${o.L.name})는 ${headOf[o.verdict] || o.verdict}.`;
       const why = o.ok.length && o.verdict !== '즉시 정지' && o.verdict !== '신규 생산 보류' ? ' ' + o.ok.slice(0, 2).map((s) => s.replace(/^[^:]+:\s*/, '')).join(', ') + '이므로 다른 조치는 필요 없습니다.' : '';
       const steps = o.steps.filter((s) => !/보고합니다|일지에/.test(s.s)).map((s, i) => `${'①②③④⑤⑥'[i] || ''} ${s.s}`).join(' ');
-      out.push({ l: '현장 조치', t: head + why + (steps ? ' 지금 할 일은 ' + steps : '') });
+      out.push({ l: o.verdict === '증산 대응' ? '생산 조치' : '현장 조치', t: head + why + (steps ? ' 지금 할 일은 ' + steps : '') });
     });
     if (!R.orders.length) out.push({ l: '현장 조치', t: '설비 센서는 모두 SOP 기준 이내입니다. 현장에서 바로 멈추거나 조정할 설비는 없습니다.' });
     const dataBits = [];
@@ -776,7 +798,12 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
     if (R.noise.length) dataBits.push(`"${R.noise.join('", "')}" 같은 표현은 생산 판단에서 빼고 시설 요청으로만 넘깁니다(R-06).`);
     if (R.unrelated.length) dataBits.push(`${R.unrelated.join(', ')} 건은 생산 의사결정과 무관해 제외합니다(R-16).`);
     if (dataBits.length) out.push({ l: '데이터 정비', t: dataBits.join(' ') });
-    if (R.has('R-12') || R.has('R-13')) {
+    if (R.addT > 0) {
+      const msg = S.order.path === 'messenger';
+      const short = Math.max(0, R.fcB[R.op] - S.inv[R.op].stock);
+      out.splice(salesWho ? 0 : out.length, 0, { l: '영업 조치', t: `${salesWho ? who + '님, ' : ''}${R.op} 추가 발주 ${f0(R.addT)}t는 ${msg ? '연락으로만 들어온 미확인 신호입니다. 48시간 안에 고객사 발주를 발주 데이터로 등록해 주세요(R-13). ' : '발주 데이터로 들어왔습니다. '}당월 예측은 ${f0(S.inv[R.op].fc)}t에서 ${f0(R.fcB[R.op])}t로 올라가고, 재고 ${f0(S.inv[R.op].stock)}t를 빼면 ${f0(short)}t를 더 만들어야 합니다. 생산팀이 주간 생산 가능량을 확인하기 전에는 고객에게 납기를 확정하지 말고, 공동 생산계획 회의에서 같은 숫자로 정합니다(R-11).` });
+    }
+    if (R.has('R-12') || (R.has('R-13') && !R.addT)) {
       const msg = S.order.path === 'messenger';
       out.push({ l: '수요 대응', t: `${R.op} 발주 ${signed(R.ch)}% 신호가 ${msg ? '메신저로만' : '발주 데이터로'} 들어왔습니다. ` + (R.has('R-12') ? `예측을 ${f0(S.inv[R.op].fc)}t에서 ${f0(R.fcB[R.op])}t로 낮추고(R-12) ` : '') + (msg ? '영업팀은 48시간 안에 실제 발주 데이터를 입력합니다(R-13). ' : '') + '영업과 생산은 이 숫자로 공동 생산계획을 정합니다(R-11).' });
     }
@@ -789,6 +816,8 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       if (R.waiting.length) t += ` ${R.waiting.join(', ')}는 최소 인원을 채울 수 없어 가동하지 않습니다(R-17).`;
       if (R.left) t += ` 남는 ${R.left}명은 교대 보강과 대체 인력 교육을 맡습니다.`;
       out.push({ l: '인력 배치', t });
+    } else if (R.addT > 0 && R.held.length && R.left > 0) {
+      out.push({ l: '인력 배치', t: `${R.held.join(', ')}는 재고 초과로 휴지라 ${R.left}명이 남습니다. 인력 1명당 가치 순(R-10)으로 ${R.runB.map((L) => `${L.id} ${R.value(L).toFixed(1)}`).join(', ')}을 채운 뒤, 남는 인원은 ${R.op} 라인 교대 보강에 씁니다.` });
     }
     const mg = R.D.filter((d) => !d.auto);
     if (mg.length) out.push({ l: '경영진 승인', t: mg.slice(0, 4).map((d) => d.t).join(' / ') + (mg.length > 4 ? ` 외 ${mg.length - 4}건` : '') + '.', sum: true });
@@ -847,7 +876,7 @@ details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4p
       ['습도 입력 형식', S.humFmt === 'text' ? '텍스트' : '숫자', ['humFmt']],
       ...LINES.map((L) => [`${L.id} 온도·진동·펄프`, `${S.eq[L.id].temp}℃ · ${fv(S.eq[L.id].vib)}mm/s · ${S.eq[L.id].pulp}%`, ['temp', 'vib', 'pulp'].map((k) => `eq.${L.id}.${k}`)]),
       ...PRODUCTS.map((p) => [`${p} 재고/예측`, `${f0(S.inv[p].stock)}t / ${f0(S.inv[p].fc)}t`, ['stock', 'fc', 'last'].map((k) => `inv.${p}.${k}`)]),
-      ['거래처 발주 변화', S.order.change ? `${S.order.product} ${signed(S.order.change)}% · ${S.order.path === 'messenger' ? '메신저' : '발주 데이터'}` : '변화 없음', ['order.change', 'order.path', 'order.product']],
+      ['거래처 발주', (S.order.change || S.order.addT) ? `${S.order.product} ` + [S.order.change ? `${signed(S.order.change)}%` : '', S.order.addT ? `+${f0(S.order.addT)}t 추가` : ''].filter(Boolean).join(' · ') + ` · ${S.order.path === 'messenger' ? '메신저·구두' : '발주 데이터'}` : '변화 없음', ['order.change', 'order.path', 'order.product', 'order.addT']],
       ['출근 가능 비율', S.ratio + '%', ['ratio']],
       ['대체 인력', S.subs ? `${S.subs}명 · ${S.trained ? '교육 완료' : '교육 전'}` : '없음', ['subs', 'trained']],
       ['EQ-05 ERP 등록', S.eq05 ? '등록' : '미등록', ['eq05']],
