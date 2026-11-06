@@ -3,576 +3,978 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>한결제지 AI 에이전트 관제센터</title>
-<meta name="description" content="한결제지 10/14 품질사고와 10/15 파업 대응을 키네틱 규칙 기반 AI 에이전트로 시뮬레이션한 관제 대시보드">
+<meta name="description" content="자체 테스트 문장을 키네틱 규칙 v2로 시뮬레이션하는 한결제지 통합 AI 에이전트">
+<title>한결제지 비상운영 시뮬레이터</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&family=Noto+Serif+KR:wght@400&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control room. Left = test question / condition panel, right = agent answer, work order, workflow, evidence. Pulp-mill neutrals, steel-blue accent, semantic ok/warn/bad. */
+:root {
+  --bg: #f2f3ef; --panel: #ffffff; --sunk: #f7f8f5; --ink: #1b2220; --muted: #5c6662; --line: #dde1dc;
+  --accent: #1f5c86; --accent-soft: #e2ecf4;
+  --ok: #1d7448; --ok-soft: #e3f1e8; --warn: #9a5806; --warn-soft: #f8edd8; --bad: #b3302a; --bad-soft: #f9e5e3;
+  --font: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px; --fs-cap: .78rem; --fs-body: .92rem; --fs-h: 1.06rem; --fs-title: 1.7rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111513; --panel: #191e1c; --sunk: #151a18; --ink: #e4eae7; --muted: #95a09b; --line: #2a322f;
+  --accent: #82b6de; --accent-soft: #1b2a35;
+  --ok: #5fcf93; --ok-soft: #15281e; --warn: #e6a94c; --warn-soft: #2c2314; --bad: #f2776e; --bad-soft: #311b19; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #111513; --panel: #191e1c; --sunk: #151a18; --ink: #e4eae7; --muted: #95a09b; --line: #2a322f;
+  --accent: #82b6de; --accent-soft: #1b2a35;
+  --ok: #5fcf93; --ok-soft: #15281e; --warn: #e6a94c; --warn-soft: #2c2314; --bad: #f2776e; --bad-soft: #311b19; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.55;
+  padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 84rem; margin-inline: auto; display: grid; gap: 20px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+h1 { font-size: var(--fs-title); font-weight: 600; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+h3 { font-size: var(--fs-body); font-weight: 600; margin: 0; }
+.eyebrow { font-family: var(--mono); font-size: var(--fs-cap); color: var(--muted); letter-spacing: .06em; margin: 0 0 6px; }
+.lead { margin: 6px 0 0; color: var(--muted); max-width: 66ch; }
+button { font: inherit; font-size: var(--fs-cap); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 10px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"], button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); font-weight: 500; padding: 8px 14px; }
+.layout { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 64rem) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.inputs { display: grid; gap: 12px; position: sticky; top: max(12px, env(safe-area-inset-top, 0px)); max-height: calc(100vh - 24px); overflow: auto; padding-right: 2px; }
+@media (max-width: 64rem) { .inputs { position: static; max-height: none; overflow: visible; } }
+.tabs { display: flex; gap: 4px; }
+.tabs button { flex: 1; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; min-width: 0; }
+.box > h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.box > h3 .tag { font-family: var(--mono); font-size: var(--fs-cap); color: var(--muted); font-weight: 400; }
+.field { display: grid; gap: 4px; margin-bottom: 10px; }
+.field:last-child { margin-bottom: 0; }
+.field label, .field .flab { font-size: var(--fs-cap); color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.field output { font-family: var(--mono); color: var(--ink); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="number"], select, textarea { font: inherit; font-size: var(--fs-cap); color: var(--ink); background: var(--sunk); border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; width: 100%; min-width: 0; }
+input[type="number"] { font-family: var(--mono); }
+textarea { min-height: 6.5rem; resize: vertical; line-height: 1.55; }
+#test-text { min-height: 11rem; font-size: var(--fs-body); }
+.tests { display: grid; gap: 4px; margin-bottom: 10px; }
+.tests button { text-align: left; display: flex; gap: 8px; align-items: baseline; }
+.tests button .tn { font-family: var(--mono); color: var(--muted); }
+.tests button[aria-pressed="true"] .tn { color: inherit; }
+.run-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.err { color: var(--bad); font-size: 13px; margin: 6px 0 0; }
+.hint { font-size: var(--fs-cap); color: var(--muted); margin: 8px 0 0; }
+.seg { display: flex; gap: 4px; flex-wrap: wrap; }
+.seg label { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-cap); color: var(--ink); background: var(--sunk); border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px; cursor: pointer; }
+.seg input { accent-color: var(--accent); margin: 0; }
+.check { display: flex; align-items: center; gap: 6px; font-size: var(--fs-cap); }
+.check input { accent-color: var(--accent); }
+.mini { width: 100%; border-collapse: collapse; font-size: var(--fs-cap); }
+.mini th { text-align: left; font-weight: 500; color: var(--muted); padding: 2px 4px 4px; }
+.mini td { padding: 2px 4px; }
+.mini td:first-child { white-space: nowrap; font-family: var(--mono); }
+.phrases { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.phrases button { padding: 2px 8px; font-size: .72rem; background: var(--sunk); }
+.results { display: grid; gap: 14px; min-width: 0; }
+.verdict { padding: 16px 18px; border: 1px solid var(--line); background: var(--panel); display: grid; gap: 10px; border-left: 4px solid var(--muted); border-radius: 0 var(--r) var(--r) 0; }
+.verdict.lv-bad { border-left-color: var(--bad); } .verdict.lv-warn { border-left-color: var(--warn); } .verdict.lv-ok { border-left-color: var(--ok); }
+.vhead { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vq { font-size: var(--fs-cap); color: var(--muted); margin: 0; }
+.answer { display: grid; gap: 8px; }
+.answer p { margin: 0; font-size: 1rem; line-height: 1.7; max-width: 72ch; text-wrap: pretty; }
+.answer p.sum { color: var(--muted); font-size: var(--fs-body); }
+.answer .al { font-weight: 600; font-size: var(--fs-cap); color: var(--accent); margin-right: 8px; font-family: var(--mono); letter-spacing: .02em; }
+.answer p.sum .al { color: var(--muted); }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-cap); line-height: 1.6; padding: 0 8px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
+.chip.ok { color: var(--ok); background: var(--ok-soft); } .chip.warn { color: var(--warn); background: var(--warn-soft); } .chip.bad { color: var(--bad); background: var(--bad-soft); } .chip.info { color: var(--accent); background: var(--accent-soft); } .chip.mute { color: var(--muted); background: var(--sunk); border: 1px solid var(--line); }
+.rid { font-family: var(--mono); }
+.orders { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 12px; }
+.order { border: 1px solid var(--line); border-radius: var(--r); background: var(--sunk); padding: 14px; display: grid; gap: 10px; align-content: start; }
+.order .oh { display: flex; justify-content: space-between; gap: 8px; align-items: center; flex-wrap: wrap; }
+.order .ot { font-weight: 600; font-size: var(--fs-h); }
+.order .ot small { font-weight: 400; color: var(--muted); font-size: var(--fs-cap); margin-left: 6px; }
+.readings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rd { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; display: grid; gap: 2px; }
+.rd .rk { font-size: .72rem; color: var(--muted); }
+.rd .rv { font-family: var(--mono); font-size: 1.05rem; font-weight: 500; }
+.rd .rl { font-family: var(--mono); font-size: .7rem; color: var(--muted); }
+.rd.over { border-color: var(--bad); background: var(--bad-soft); } .rd.over .rv { color: var(--bad); }
+.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: 6px; }
+.steps li { line-height: 1.55; }
+.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 500; }
+.steps .why { display: block; font-size: var(--fs-cap); color: var(--muted); }
+.notneed { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: var(--fs-cap); color: var(--muted); }
+.notneed li::before { content: "✓ "; color: var(--ok); }
+.mgmt { font-size: var(--fs-cap); border-top: 1px dashed var(--line); padding-top: 8px; display: grid; gap: 4px; }
+.mgmt b { font-weight: 500; color: var(--warn); }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.flow li { display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 0 12px; position: relative; }
+.flow li::before { content: ""; position: absolute; left: calc(1rem - 1px); top: 2rem; bottom: 0; width: 2px; background: var(--line); }
+.flow li:last-child::before { display: none; }
+.flow .dot { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: var(--fs-cap); font-weight: 500; background: var(--sunk); border: 2px solid var(--line); color: var(--muted); position: relative; z-index: 1; }
+.flow li.hit .dot { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.flow li.alert .dot { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); }
+.flow li.pass .dot { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
+.flow .fbody { padding: 4px 0 16px; display: grid; gap: 4px; min-width: 0; }
+.flow .fh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.flow .fn { font-weight: 600; }
+.flow .fd { font-size: var(--fs-cap); color: var(--muted); }
+.flow .fr { display: flex; gap: 4px; flex-wrap: wrap; }
+.flow .fr .chip.off { color: var(--muted); background: transparent; border: 1px dashed var(--line); font-weight: 400; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 14px; }
+.tbox { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-cap); }
+.tbl th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl td { padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl td.c-id { font-family: var(--mono); white-space: nowrap; }
+.tbl td.c-v { font-family: var(--mono); }
+.tbl td.c-why { font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: 10px; }
+.kpi { background: var(--sunk); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; display: grid; gap: 6px; align-content: start; }
+.kpi .k { font-size: var(--fs-cap); color: var(--muted); min-height: 2.4em; }
+.kpi .v { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font-family: var(--mono); }
+.kpi .a { color: var(--bad); font-size: 1rem; } .kpi .a.same { color: var(--muted); }
+.kpi .b { color: var(--ok); font-size: 1.45rem; font-weight: 500; }
+.kpi .u, .kpi .arw { color: var(--muted); font-size: var(--fs-cap); }
+.legend-ab { font-size: var(--fs-cap); color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.legend-ab b { font-family: var(--mono); font-weight: 500; }
+.legend-ab .la { color: var(--bad); } .legend-ab .lb { color: var(--ok); }
+.chain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: 8px; }
+.node { border: 1px solid var(--line); border-radius: var(--r); padding: 10px; display: grid; gap: 6px; background: var(--sunk); align-content: start; }
+.node.risk { border-color: var(--bad); background: var(--bad-soft); }
+.node.risk.handled { border-color: var(--ok); background: var(--ok-soft); }
+.node .nt { font-weight: 600; display: flex; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
+.node .nd { font-size: var(--fs-cap); color: var(--muted); line-height: 1.45; }
+.node .nr { display: flex; flex-wrap: wrap; gap: 4px; }
+.fired { list-style: none; margin: 0; padding: 0; display: grid; }
+.fired li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 4px 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.fired li:first-child { border-top: 0; padding-top: 0; }
+.fired .fid { font-family: var(--mono); font-weight: 500; }
+.fired .fid.g-safety, .fired .fid.g-emer { color: var(--bad); } .fired .fid.g-data, .fired .fid.g-field { color: var(--warn); } .fired .fid.g-opt, .fired .fid.g-demand { color: var(--accent); } .fired .fid.g-normal { color: var(--ok); }
+.fired .ft { font-weight: 500; }
+.fired .fe { font-size: var(--fs-cap); color: var(--muted); }
+.fired .fa { font-size: var(--fs-cap); grid-column: 2; }
+.fired .fa::before { content: "→ "; color: var(--muted); }
+.empty { color: var(--muted); font-size: var(--fs-cap); margin: 0; }
+.staff { display: grid; gap: 12px; }
+.srow { display: grid; grid-template-columns: 8.4rem minmax(0, 1fr); gap: 4px 10px; align-items: center; }
+.srow .sl { font-size: var(--fs-cap); line-height: 1.3; }
+.srow .sl small { display: block; color: var(--muted); }
+.bars { display: grid; gap: 3px; }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) 3.2rem; align-items: center; gap: 6px; }
+.track { height: 9px; background: var(--sunk); border-radius: 2px; overflow: hidden; border: 1px solid var(--line); }
+.track span { display: block; height: 100%; border-radius: 2px; transition: width .35s ease; }
+.track .need { background: var(--line); } .track .ta { background: var(--bad); } .track .tb { background: var(--ok); }
+.bar .bv { font-family: var(--mono); font-size: .72rem; color: var(--muted); text-align: right; }
+.staff-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-cap); color: var(--muted); margin-bottom: 10px; }
+.staff-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.staff-sum { font-size: var(--fs-cap); color: var(--muted); margin: 10px 0 0; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 10px; }
+.dcard { border: 1px solid var(--line); border-radius: var(--r); padding: 12px; display: flex; flex-direction: column; gap: 6px; background: var(--sunk); }
+.dcard.st-rejected { opacity: .55; }
+.dcard .dh { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+.dcard .dt { font-weight: 600; }
+.dcard .dm { font-size: var(--fs-cap); color: var(--muted); }
+.dcard .da { display: flex; gap: 6px; margin-top: auto; padding-top: 4px; }
+details.notes { font-size: var(--fs-cap); color: var(--muted); }
+details.notes summary { cursor: pointer; color: var(--ink); }
+details.notes ul { margin: 8px 0 0; padding-left: 1.1rem; display: grid; gap: 4px; }
+@media (max-width: 30rem) { .readings { grid-template-columns: minmax(0, 1fr); } .srow { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .track span { transition: none; } }
+</style>
 </head>
 <body>
-<style>
-:root{
- --font-anthropic-sans:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
- --font-anthropic-serif:"Noto Serif KR","Apple Myungjo",Georgia,serif;
- --cds-font-size-caption:.8125rem;--cds-font-size-body:.9375rem;--cds-font-size-heading:1.125rem;--cds-font-size-title:1.875rem;
- --cds-font-weight-medium:500;
- --cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:16px;--cds-gap-lg:24px;--cds-gap-xl:40px;
- --cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:14px;--cds-pad-lg:20px;--cds-radius:8px;--cds-dur-slow:.3s;
- --color-bg:#f6f7f9;--color-panel:#ffffff;--color-fg:#1b2230;--color-fg-muted:#5f6878;--color-border-line:#e1e4ea;
- --color-ok:#1d7a4e;--color-warn:#a3620a;--color-bad:#c0392b;
- --series-0:#2f62c9;--series-1:#d9822b;
- --cds-chart-muted:#c3c9d4;--cds-chart-grid:#eceef2;--cds-chart-axis:#b8bfcb;
- --cds-surface-popover:#ffffff;--cds-border:#d7dbe3;--cds-shadow-popover:0 4px 14px rgba(20,30,50,.12);--cds-text-secondary:#5f6878;
- color-scheme:light;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
- --color-bg:#12151b;--color-panel:#1a1e26;--color-fg:#e6e9ef;--color-fg-muted:#9aa3b2;--color-border-line:#2b313c;
- --color-ok:#4cc38a;--color-warn:#e3a33b;--color-bad:#f07167;--series-0:#6d9bff;--series-1:#f0a45a;
- --cds-chart-muted:#4a5262;--cds-chart-grid:#252a33;--cds-chart-axis:#4a5262;
- --cds-surface-popover:#222732;--cds-border:#363d4a;--cds-shadow-popover:0 4px 14px rgba(0,0,0,.4);--cds-text-secondary:#9aa3b2;color-scheme:dark}}
-:root[data-theme="dark"]{
- --color-bg:#12151b;--color-panel:#1a1e26;--color-fg:#e6e9ef;--color-fg-muted:#9aa3b2;--color-border-line:#2b313c;
- --color-ok:#4cc38a;--color-warn:#e3a33b;--color-bad:#f07167;--series-0:#6d9bff;--series-1:#f0a45a;
- --cds-chart-muted:#4a5262;--cds-chart-grid:#252a33;--cds-chart-axis:#4a5262;
- --cds-surface-popover:#222732;--cds-border:#363d4a;--cds-shadow-popover:0 4px 14px rgba(0,0,0,.4);--cds-text-secondary:#9aa3b2;color-scheme:dark}
-*,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans);font-size:15px;line-height:1.5;
- padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.dash-select{font:inherit;font-size:var(--cds-font-size-caption);color:var(--color-fg);background-color:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:4px 8px}
-.hg-foot{margin-top:8px}
 
-.hg { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-xl); max-width: 76rem; margin-inline: auto; }
-.hg-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
-.hg-eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; margin: 0 0 var(--cds-gap-xs); }
-.hg-take { margin: var(--cds-gap-sm) 0 0; max-width: 62ch; line-height: 1.6; }
-.hg .hg-take b { font-weight: 500; font-variant-numeric: tabular-nums; }
-.hg-sec { display: grid; gap: var(--cds-gap-md); min-width: 0; }
-.hg-sec > h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
-.hg-sec > .hg-lead { margin: calc(var(--cds-gap-sm) * -1) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.hg-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
-.hg-card h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0; }
-.hg-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
-.hg-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
-.hg-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); }
-.hg-tile { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
-.hg-tile .lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.hg-tile .vals { display: flex; align-items: baseline; gap: var(--cds-gap-sm); flex-wrap: wrap; font-variant-numeric: tabular-nums; }
-.hg-tile .va { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); color: var(--color-bad); }
-.hg-tile .vb { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); color: var(--color-ok); }
-.hg-tile .ar, .hg-tile .un { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.hg-tile .cap { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: auto; }
-.hg-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
-.hg-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.hg-sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--cds-chart-muted); }
-.hg-ctrl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); justify-content: space-between; align-items: center; margin-bottom: var(--cds-gap-md); }
-.hg-seg, .hg-steps { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-.hg-btn { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
-.hg-btn:hover { border-color: var(--color-fg-muted); }
-.hg-btn:focus-visible, .rp-node:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
-.hg-btn[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
-.hg-chip { display: inline-block; font-size: var(--cds-font-size-caption); line-height: 1.5; padding: 0 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
-.hg-chip.ok { color: var(--color-ok); } .hg-chip.warn { color: var(--color-warn); } .hg-chip.bad { color: var(--color-bad); } .hg-chip.mute { color: var(--color-fg-muted); }
-.hg-chart { position: relative; min-height: 12rem; }
-.hg-tip { position: absolute; z-index: 2; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); pointer-events: none; white-space: nowrap; }
-.hg-tip-h { color: var(--cds-text-secondary); margin-bottom: 2px; }
-.hg-tip-l { display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
-.rp-chain { list-style: none; margin: 0 0 var(--cds-gap-md); padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr)); gap: var(--cds-gap-sm); }
-.rp-node { position: relative; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm); display: flex; flex-direction: column; gap: 2px; cursor: pointer; background: var(--color-bg); transition: border-color var(--cds-dur-slow), opacity var(--cds-dur-slow); }
-.rp-node.is-future { opacity: .45; }
-.rp-node.tone-ok { border-color: color-mix(in srgb, var(--color-ok) 55%, transparent); }
-.rp-node.tone-bad { border-color: color-mix(in srgb, var(--color-bad) 55%, transparent); }
-.rp-node.is-now.tone-ok { background: color-mix(in srgb, var(--color-ok) 10%, var(--color-bg)); border-color: var(--color-ok); }
-.rp-node.is-now.tone-bad { background: color-mix(in srgb, var(--color-bad) 10%, var(--color-bg)); border-color: var(--color-bad); }
-.rp-t { font-weight: var(--cds-font-weight-medium); }
-.rp-s { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
-.rp-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--cds-gap-md); }
-.rp-now { border-radius: var(--cds-radius); padding: var(--cds-pad-md); border: 1px solid var(--color-border-line); display: grid; gap: var(--cds-gap-sm); align-content: start; min-height: 13rem; }
-.rp-now.tone-ok { border-left: 3px solid var(--color-ok); border-radius: 0; }
-.rp-now.tone-bad { border-left: 3px solid var(--color-bad); border-radius: 0; }
-.rp-meta, .rp-lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.rp-fact { font-size: var(--cds-font-size-heading); line-height: 1.4; text-wrap: balance; }
-.rp-out { line-height: 1.6; }
-.rp-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.rp-log { display: grid; gap: var(--cds-gap-sm); align-content: start; }
-.rp-loglist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: var(--cds-font-size-caption); }
-.rp-loglist li { display: grid; grid-template-columns: 6.5rem 7.5rem 1fr; gap: var(--cds-gap-sm); padding: 4px 0; border-bottom: 1px solid var(--color-border-line); font-variant-numeric: tabular-nums; }
-.rp-loglist li.is-now { font-weight: var(--cds-font-weight-medium); }
-.rp-lt { color: var(--color-fg-muted); }
-.rp-lr { color: var(--color-ok); }
-.dc-sum { display: flex; gap: var(--cds-gap-sm); flex-wrap: wrap; margin-bottom: var(--cds-gap-md); }
-.dc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-md); }
-.dc-card { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: flex; flex-direction: column; gap: var(--cds-gap-sm); background: var(--color-bg); }
-.dc-card.st-rejected { opacity: .6; }
-.dc-head { display: flex; justify-content: space-between; align-items: center; gap: var(--cds-gap-sm); }
-.dc-id { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
-.dc-title { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0; }
-.dc-detail { margin: 0; font-size: var(--cds-font-size-caption); line-height: 1.6; color: var(--color-fg-muted); }
-.dc-meta { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--cds-gap-sm); margin: 0; font-size: var(--cds-font-size-caption); }
-.dc-meta dt { color: var(--color-fg-muted); } .dc-meta dd { margin: 0; }
-.dc-acts { display: flex; gap: 6px; margin-top: auto; padding-top: var(--cds-gap-xs); }
-.pp-list { display: grid; gap: var(--cds-gap-md); }
-.pp-row { display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; gap: var(--cds-gap-sm) var(--cds-gap-md); align-items: center; }
-.pp-rank { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); color: var(--color-fg-muted); }
-.pp-main { display: grid; gap: 4px; min-width: 0; }
-.pp-title { font-weight: var(--cds-font-weight-medium); }
-.pp-bar { height: 8px; border-radius: 2px; background: color-mix(in srgb, var(--color-fg) 8%, transparent); overflow: hidden; }
-.pp-bar > span { display: block; height: 100%; border-radius: 2px; }
-.pp-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.pp-side { display: grid; justify-items: end; gap: 4px; font-variant-numeric: tabular-nums; }
-.hg-tablebox { overflow: auto; max-height: 28rem; }
-.hg-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
-.hg-table th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); position: sticky; top: 0; background: var(--color-panel); white-space: nowrap; }
-.hg-table td { padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
-.hg-table td.num, .hg-table th.num { text-align: right; }
-.hg-table td.is-bad { color: var(--color-bad); font-weight: var(--cds-font-weight-medium); }
-.hg-table td.is-warn { color: var(--color-warn); font-weight: var(--cds-font-weight-medium); }
-.hg-table tr.is-mute td { color: var(--color-fg-muted); }
-.hg-filter { display: flex; align-items: center; gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-#data .hg-grid2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr)); }
-#data .hg-table td { white-space: nowrap; }
-.hg-foot { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.hg-foot summary { cursor: pointer; color: var(--color-fg); }
-.hg-foot dl { display: grid; grid-template-columns: minmax(7rem, auto) 1fr; gap: 4px var(--cds-gap-md); }
-.hg-foot dd { margin: 0; }
-[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-[data-dash-source-state=empty] { color: transparent; }
-@media (max-width: 34rem) { .rp-loglist li { grid-template-columns: 5.5rem 1fr; } .rp-lr { display: none; } .pp-row { grid-template-columns: 2rem minmax(0, 1fr); } .pp-side { grid-column: 2; justify-items: start; grid-auto-flow: column; } }
-</style>
-
-<div class="hg">
-  <header class="hg-head" id="top">
-    <p class="hg-eyebrow">(주)한결제지 · 10/14 우천 품질사고 ~ 10/15 파업 대응</p>
-    <h1>한결제지 AI 에이전트 관제센터</h1>
-    <p class="hg-take">EQ-02 진동은 <b data-draw="vib" data-source="equipment" data-field="vibration" data-where="eq_id=EQ-02">—</b>mm/s, L-102 수율은 <b data-draw="l102" data-source="lots" data-field="final_yield" data-where="lot=L-102">—</b>까지 떨어졌습니다. 키네틱 규칙을 적용하면 08:30 온도 입력 단계에서 사고 경로가 끊기고, 파업 중 인력은 친환경 포장재 라인부터 배치됩니다.</p>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">(주)한결제지 통합 AI 에이전트 · 키네틱 규칙 v2</p>
+    <h1>한결제지 비상운영 시뮬레이터</h1>
+    <p class="lead">자체 테스트 문장을 넣으면 에이전트가 문장에서 조건을 읽고, 학습한 데이터(Data 1~7)와 키네틱 규칙으로 시뮬레이션해 수치에 근거한 지시를 내립니다.</p>
   </header>
 
-  <section class="hg-sec" id="kpi">
-    <h2>실험 A와 실험 B 비교</h2>
-    <p class="hg-lead">빨간 숫자는 규칙 없이 흘러간 실험 A, 초록 숫자는 키네틱 규칙을 적용한 실험 B입니다. 실험 B 값은 시뮬레이션 가정입니다.</p>
-    <div class="hg-tiles">
-      <div class="hg-card hg-tile" id="kpi-yield"><span class="lab">EQ-02 수율</span><div class="vals"><span class="va" data-draw="kpi" data-source="kpi" data-field="before" data-where="metric=yield">—</span><span class="ar">→</span><span class="vb" data-draw="kpi" data-source="kpi" data-field="after" data-where="metric=yield">—</span><span class="un">%</span></div><span class="cap">실험 B는 같은 날 EQ-01 수율 기준</span></div>
-      <div class="hg-card hg-tile" id="kpi-sop"><span class="lab">SOP 위반 상태 가동</span><div class="vals"><span class="va" data-draw="kpi" data-source="kpi" data-field="before" data-where="metric=sop">—</span><span class="ar">→</span><span class="vb" data-draw="kpi" data-source="kpi" data-field="after" data-where="metric=sop">—</span><span class="un">건</span></div><span class="cap">온도 상한 초과 운전, 진동 기준 초과 가동</span></div>
-      <div class="hg-card hg-tile" id="kpi-thermal"><span class="lab">재고 초과 감열지 가동 라인</span><div class="vals"><span class="va" data-draw="kpi" data-source="kpi" data-field="before" data-where="metric=thermal">—</span><span class="ar">→</span><span class="vb" data-draw="kpi" data-source="kpi" data-field="after" data-where="metric=thermal">—</span><span class="un">개</span></div><span class="cap">R-08 · R-09 적용</span></div>
-      <div class="hg-card hg-tile" id="kpi-staff"><span class="lab">파업 중 최소 인원 미달 가동 라인</span><div class="vals"><span class="va" data-draw="kpi" data-source="kpi" data-field="before" data-where="metric=understaffed">—</span><span class="ar">→</span><span class="vb" data-draw="kpi" data-source="kpi" data-field="after" data-where="metric=understaffed">—</span><span class="un">개</span></div><span class="cap">R-17 적용, EQ-05 제외</span></div>
-      <div class="hg-card hg-tile" id="kpi-signal"><span class="lab">수요 신호 반영 주기</span><div class="vals"><span class="va" data-draw="kpi" data-source="kpi" data-field="before" data-where="metric=signal">—</span><span class="ar">→</span><span class="vb" data-draw="kpi" data-source="kpi" data-field="after" data-where="metric=signal">—</span><span class="un">일</span></div><span class="cap">월별 파일에서 주간 거래처 경보로 전환 가정</span></div>
-    </div>
-  </section>
+  <div class="layout">
+    <aside class="inputs" aria-label="입력">
+      <div class="tabs" role="tablist" aria-label="입력 방식">
+        <button type="button" role="tab" id="tab-test" aria-selected="true" aria-controls="panel-test">자체 테스트</button>
+        <button type="button" role="tab" id="tab-manual" aria-selected="false" aria-controls="panel-manual">조건 직접 조정</button>
+      </div>
 
-  <section class="hg-sec" id="replay">
-    <h2>시나리오 재생</h2>
-    <p class="hg-lead">데이터 7종을 날씨부터 최종 전략까지 하나의 사슬로 연결했습니다. 단계를 누르거나 재생해서 두 실험을 비교하세요.</p>
-    <div class="hg-card">
-      <div class="hg-ctrl">
-        <div class="hg-seg" role="group" aria-label="실험 선택">
-          <button type="button" class="hg-btn hg-mode" data-mode="A" aria-pressed="false">실험 A · 규칙 없음</button>
-          <button type="button" class="hg-btn hg-mode" data-mode="B" aria-pressed="true">실험 B · 키네틱 규칙 적용</button>
-        </div>
-        <div class="hg-steps">
-          <button type="button" class="hg-btn hg-prev">이전 단계</button>
-          <button type="button" class="hg-btn hg-play">처음부터 재생</button>
-          <button type="button" class="hg-btn hg-next">다음 단계</button>
-        </div>
+      <div id="panel-test" role="tabpanel" aria-labelledby="tab-test">
+        <section class="box">
+          <h3>테스트 예시 <span class="tag">눌러서 불러오기</span></h3>
+          <div class="tests" id="tests">
+            <button type="button" data-t="t1" aria-pressed="true"><span class="tn">T1</span>현장 통제: 1호기 펄프 농도 15%</button>
+            <button type="button" data-t="t2" aria-pressed="false"><span class="tn">T2</span>우천 사고 재현: 2호기 98℃·쇳소리</button>
+            <button type="button" data-t="t3" aria-pressed="false"><span class="tn">T3</span>파업 비상운영: 생산직 50% 파업</button>
+            <button type="button" data-t="t4" aria-pressed="false"><span class="tn">T4</span>수요 급감 신호: B마트 발주 반토막</button>
+            <button type="button" data-t="t5" aria-pressed="false"><span class="tn">T5</span>입력 오류와 노이즈</button>
+          </div>
+          <div class="field">
+            <label for="test-text">테스트 상황과 질문</label>
+            <textarea id="test-text" aria-describedby="test-err"></textarea>
+            <p class="err" id="test-err" hidden>테스트 상황을 입력하세요.</p>
+          </div>
+          <div class="field">
+            <label for="base">문장에 없는 값은</label>
+            <select id="base">
+              <option value="normal">평시 정상 기준 (Data 2·4·6, EQ-02는 정상 운전값)</option>
+              <option value="actual">10/14 실측 그대로 (Data 2 사고 시점)</option>
+            </select>
+          </div>
+          <div class="run-row">
+            <button type="button" class="primary" id="run">시뮬레이션 실행</button>
+            <span class="hint" style="margin:0">Ctrl + Enter</span>
+          </div>
+          <p class="hint" id="parse-hint"></p>
+        </section>
       </div>
-      <div data-draw="replay" data-source="events">—</div>
-    </div>
-  </section>
 
-  <section class="hg-sec" id="decisions">
-    <h2>에이전트 권고와 경영진 승인</h2>
-    <p class="hg-lead">안전 정지는 에이전트가 즉시 실행하고, 라인 전환·감산·인력 재배치는 승인 후 실행합니다(P-4). 승인 상태는 이 화면에서만 바뀌고 저장되지 않습니다.</p>
-    <div class="hg-card">
-      <div data-draw="decisions" data-source="decisions">—</div>
-    </div>
-  </section>
-
-  <section class="hg-sec" id="staffing">
-    <h2>파업 비상 인력 배치</h2>
-    <p class="hg-lead">10/15 09:00 생산직 부분 파업 기준. 실험 A는 라인별 평시 인원을 절반씩 줄인다고 가정했습니다.</p>
-    <div class="hg-grid2">
-      <div class="hg-card">
-        <h3>라인별 배치 인원</h3>
-        <p class="hg-note">실험 A는 모든 라인이 필요 인원에 못 미칩니다. 실험 B는 감열지 라인을 쉬고 두 라인을 채웁니다.</p>
-        <div class="hg-legend"><span><i class="hg-sw" data-sw="muted"></i>평시 필요</span><span><i class="hg-sw" data-sw="1"></i>실험 A 배치</span><span><i class="hg-sw" data-sw="0"></i>실험 B 배치</span></div>
-        <div class="hg-chart" data-draw="staffchart" data-source="staffing"></div>
-      </div>
-      <div class="hg-card">
-        <h3>배치 우선순위 계산 (R-10)</h3>
-        <p class="hg-note">인력 1명당 가치 = 수요 부족량 × 이익률 ÷ 필요 인원. 값이 큰 라인부터 채웁니다. 남는 인원은 대체 인력 SOP 교육과 설비 순찰에 둡니다.</p>
-        <div class="hg-tablebox">
-          <table class="hg-table" data-source="staffing" data-row-key="line">
-            <thead><tr><th data-field="line">라인</th><th data-field="product">품목</th><th class="num" data-field="need">필요 인원</th><th class="num" data-field="shortage_t">부족량(t)</th><th class="num" data-field="margin">이익률</th><th class="num" data-source="staff_value" data-field="value_per_staff">1명당 가치</th><th class="num" data-field="after_assign">실험 B 배치</th></tr></thead>
-            <tbody data-draw="stafftable"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="hg-sec" id="painpoints">
-    <h2>Pain point 해결 현황</h2>
-    <p class="hg-lead">AHP 최종 점수(가치와 실현 가능성 가중) 순서입니다. 실행 순서는 안전을 앞세워 4위부터 시작합니다.</p>
-    <div class="hg-card">
-      <div data-draw="pp" data-source="painpoints">—</div>
-    </div>
-  </section>
-
-  <section class="hg-sec" id="rules">
-    <h2>키네틱 규칙 v2</h2>
-    <p class="hg-lead">AI 에이전트가 반드시 지키는 IF-THEN 규칙입니다. 충돌 시 안전 → 데이터 신뢰성 → 전사 최적화 → 수요 신호 순으로 따릅니다.</p>
-    <div class="hg-card">
-      <div class="hg-filter">
-        <label for="hg-rule-filter">대상 pain point</label>
-        <select id="hg-rule-filter" class="dash-select hg-rule-filter">
-          <option value="">전체</option>
-          <option value="원칙">최상위 원칙</option>
-          <option value="1위">1위 영업·생산 불일치</option>
-          <option value="2위">2위 거래처 실적 분절</option>
-          <option value="3위">3위 비정형 문서</option>
-          <option value="4위">4위 감에 의존한 판단</option>
-          <option value="5위">5위 수기·정합성</option>
-          <option value="비상">비상운영(파업)</option>
-        </select>
-      </div>
-      <div class="hg-tablebox">
-        <table class="hg-table" data-source="rules" data-row-key="id">
-          <thead><tr><th data-field="id">ID</th><th data-field="pp">대상</th><th data-field="if_text">IF (조건)</th><th data-field="then_text">THEN (조치)</th></tr></thead>
-          <tbody data-draw="rules"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section class="hg-sec" id="data">
-    <h2>원천 데이터</h2>
-    <p class="hg-lead">온톨로지에 연결된 데이터입니다. SOP 기준을 넘은 값은 색으로 표시했습니다.</p>
-    <div class="hg-grid2">
-      <div class="hg-card">
-        <h3>제품별 재고와 당월 예측수요 (Data 4)</h3>
-        <p class="hg-note">일반 감열지는 재고가 수요의 두 배를 넘고, 친환경 포장재는 거의 비어 있습니다.</p>
-        <div class="hg-legend"><span><i class="hg-sw" data-sw="0"></i>현재 재고(t)</span><span><i class="hg-sw" data-sw="muted"></i>당월 예측수요(t)</span></div>
-        <div class="hg-chart" data-draw="invchart" data-source="inventory"></div>
-      </div>
-      <div class="hg-card">
-        <h3>설비 센서 (Data 2)</h3>
-        <p class="hg-note">EQ-02만 온도 상한과 진동 기준을 함께 넘었습니다.</p>
-        <div class="hg-tablebox">
-          <table class="hg-table" data-source="equipment" data-row-key="eq_id">
-            <thead><tr><th data-field="eq_id">설비</th><th data-field="name">설비명</th><th data-field="product">품목</th><th class="num" data-field="age_years">노후(년)</th><th class="num" data-field="temp_c">온도(℃)</th><th class="num" data-field="vibration">진동(mm/s)</th><th class="num" data-field="rpm">RPM</th><th data-field="alarm">알람</th></tr></thead>
-            <tbody data-draw="eqtable"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="hg-card">
-        <h3>생산 Lot 품질 (Data 3)</h3>
-        <p class="hg-note">원본 습도 칸에 텍스트가 섞인 Lot이 불량 Lot과 같습니다(5위 pain point).</p>
-        <div class="hg-tablebox">
-          <table class="hg-table" data-source="lots" data-row-key="lot">
-            <thead><tr><th data-field="lot">Lot</th><th data-field="line">라인</th><th class="num" data-field="humidity">습도</th><th data-field="humidity_raw">원본 입력</th><th data-field="defect">불량 여부</th><th class="num" data-field="final_yield">수율</th></tr></thead>
-            <tbody data-draw="lottable"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="hg-card">
-        <h3>SOP 은어 사전 (Data 5)</h3>
-        <p class="hg-note">현장 표현을 센서 지표로 바꾸는 번역표입니다. 노이즈 항목은 판단에서 뺍니다(R-06).</p>
-        <div class="hg-tablebox">
-          <table class="hg-table" data-source="sop" data-row-key="sop_id">
-            <thead><tr><th data-field="sop_id">번호</th><th data-field="category">구분</th><th data-field="slang">현장 표현</th><th data-field="sensor">센서 지표</th><th data-field="threshold">임계치</th><th data-field="action">AI 행동 지침</th></tr></thead>
-            <tbody data-draw="soptable"></tbody>
-          </table>
+      <div id="panel-manual" role="tabpanel" aria-labelledby="tab-manual" hidden>
+        <div class="inputs-inner" style="display:grid;gap:12px">
+          <section class="box">
+            <h3>날씨 <span class="tag">Data 3</span></h3>
+            <div class="field">
+              <label for="in-hum">공장 습도 <output id="out-hum">45%</output></label>
+              <input type="range" id="in-hum" min="20" max="100" step="1" data-k="humidity">
+            </div>
+            <div class="field">
+              <span class="flab">습도 입력 형식</span>
+              <div class="seg">
+                <label><input type="radio" name="humfmt" id="in-humfmt-num" value="num" data-k="humFmt"> 숫자 (0.85)</label>
+                <label><input type="radio" name="humfmt" id="in-humfmt-text" value="text" data-k="humFmt"> 텍스트 ("85% (우천)")</label>
+              </div>
+            </div>
+          </section>
+          <section class="box">
+            <h3>설비 상태 <span class="tag">Data 2 · 3</span></h3>
+            <table class="mini">
+              <thead><tr><th>설비</th><th>온도(℃)</th><th>진동(mm/s)</th><th>펄프(%)</th></tr></thead>
+              <tbody>
+                <tr><td>EQ-01</td><td><input type="number" id="in-t1" min="40" max="130" step="1" data-k="eq.EQ-01.temp" aria-label="EQ-01 온도"></td><td><input type="number" id="in-v1" min="0" max="15" step="0.1" data-k="eq.EQ-01.vib" aria-label="EQ-01 진동"></td><td><input type="number" id="in-p1" min="5" max="25" step="0.5" data-k="eq.EQ-01.pulp" aria-label="EQ-01 펄프 농도"></td></tr>
+                <tr><td>EQ-02</td><td><input type="number" id="in-t2" min="40" max="130" step="1" data-k="eq.EQ-02.temp" aria-label="EQ-02 온도"></td><td><input type="number" id="in-v2" min="0" max="15" step="0.1" data-k="eq.EQ-02.vib" aria-label="EQ-02 진동"></td><td><input type="number" id="in-p2" min="5" max="25" step="0.5" data-k="eq.EQ-02.pulp" aria-label="EQ-02 펄프 농도"></td></tr>
+                <tr><td>EQ-03</td><td><input type="number" id="in-t3" min="40" max="130" step="1" data-k="eq.EQ-03.temp" aria-label="EQ-03 온도"></td><td><input type="number" id="in-v3" min="0" max="15" step="0.1" data-k="eq.EQ-03.vib" aria-label="EQ-03 진동"></td><td><input type="number" id="in-p3" min="5" max="25" step="0.5" data-k="eq.EQ-03.pulp" aria-label="EQ-03 펄프 농도"></td></tr>
+                <tr><td>EQ-04</td><td><input type="number" id="in-t4" min="40" max="130" step="1" data-k="eq.EQ-04.temp" aria-label="EQ-04 온도"></td><td><input type="number" id="in-v4" min="0" max="15" step="0.1" data-k="eq.EQ-04.vib" aria-label="EQ-04 진동"></td><td><input type="number" id="in-p4" min="5" max="25" step="0.5" data-k="eq.EQ-04.pulp" aria-label="EQ-04 펄프 농도"></td></tr>
+                <tr><td>EQ-05</td><td><input type="number" id="in-t5" min="40" max="130" step="1" data-k="eq.EQ-05.temp" aria-label="EQ-05 온도"></td><td><input type="number" id="in-v5" min="0" max="15" step="0.1" data-k="eq.EQ-05.vib" aria-label="EQ-05 진동"></td><td><input type="number" id="in-p5" min="5" max="25" step="0.5" data-k="eq.EQ-05.pulp" aria-label="EQ-05 펄프 농도"></td></tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="box">
+            <h3>현장 기록 <span class="tag">Data 1</span></h3>
+            <div class="field">
+              <label for="in-log">테스트 문장이 그대로 들어갑니다. 더 적어도 됩니다.</label>
+              <textarea id="in-log" data-k="log"></textarea>
+              <div class="phrases" aria-label="문장 추가">
+                <button type="button" data-add="2호기에서 쇳소리가 난다.">쇳소리</button>
+                <button type="button" data-add="펄프가 질척거린다.">질척거림</button>
+                <button type="button" data-add="1호기 화력 한 뼘 정도 돌려.">한 뼘 돌려</button>
+                <button type="button" data-add="기름 좀 쳐라.">기름 좀 쳐라</button>
+                <button type="button" data-add="소리가 경쾌하고 좋다.">소리 경쾌</button>
+                <button type="button" data-add="휴게실 에어컨 고쳐주세요.">에어컨</button>
+              </div>
+            </div>
+          </section>
+          <section class="box">
+            <h3>재고 · 수요 <span class="tag">Data 4</span></h3>
+            <table class="mini">
+              <thead><tr><th>제품(t)</th><th>전월</th><th>당월 예측</th><th>재고</th></tr></thead>
+              <tbody>
+                <tr><td>일반 감열지</td><td><input type="number" id="in-i1l" min="0" step="10" data-k="inv.일반 감열지.last" aria-label="일반 감열지 전월"></td><td><input type="number" id="in-i1f" min="0" step="10" data-k="inv.일반 감열지.fc" aria-label="일반 감열지 예측"></td><td><input type="number" id="in-i1s" min="0" step="10" data-k="inv.일반 감열지.stock" aria-label="일반 감열지 재고"></td></tr>
+                <tr><td>프리미엄 감열지</td><td><input type="number" id="in-i2l" min="0" step="10" data-k="inv.프리미엄 감열지.last" aria-label="프리미엄 감열지 전월"></td><td><input type="number" id="in-i2f" min="0" step="10" data-k="inv.프리미엄 감열지.fc" aria-label="프리미엄 감열지 예측"></td><td><input type="number" id="in-i2s" min="0" step="10" data-k="inv.프리미엄 감열지.stock" aria-label="프리미엄 감열지 재고"></td></tr>
+                <tr><td>친환경 포장재</td><td><input type="number" id="in-i3l" min="0" step="10" data-k="inv.친환경 포장재.last" aria-label="친환경 포장재 전월"></td><td><input type="number" id="in-i3f" min="0" step="10" data-k="inv.친환경 포장재.fc" aria-label="친환경 포장재 예측"></td><td><input type="number" id="in-i3s" min="0" step="5" data-k="inv.친환경 포장재.stock" aria-label="친환경 포장재 재고"></td></tr>
+                <tr><td>택배 라벨지</td><td><input type="number" id="in-i4l" min="0" step="10" data-k="inv.택배 라벨지.last" aria-label="택배 라벨지 전월"></td><td><input type="number" id="in-i4f" min="0" step="10" data-k="inv.택배 라벨지.fc" aria-label="택배 라벨지 예측"></td><td><input type="number" id="in-i4s" min="0" step="10" data-k="inv.택배 라벨지.stock" aria-label="택배 라벨지 재고"></td></tr>
+              </tbody>
+            </table>
+            <div class="field" style="margin-top:12px">
+              <label for="in-ordp">거래처 발주 변화 품목</label>
+              <select id="in-ordp" data-k="order.product">
+                <option>일반 감열지</option><option>프리미엄 감열지</option><option>친환경 포장재</option><option>택배 라벨지</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="in-ordc">주간 발주 변화 <output id="out-ordc">0%</output></label>
+              <input type="range" id="in-ordc" min="-80" max="60" step="5" data-k="order.change">
+            </div>
+            <div class="field">
+              <span class="flab">신호 경로</span>
+              <div class="seg">
+                <label><input type="radio" name="ordpath" id="in-ordpath-data" value="data" data-k="order.path"> 발주 데이터</label>
+                <label><input type="radio" name="ordpath" id="in-ordpath-msg" value="messenger" data-k="order.path"> 메신저·구두</label>
+              </div>
+            </div>
+          </section>
+          <section class="box">
+            <h3>인력 · 마스터 데이터 <span class="tag">Data 6 · 7</span></h3>
+            <div class="field">
+              <label for="in-ratio">출근 가능한 생산직 비율 <output id="out-ratio">100%</output></label>
+              <input type="range" id="in-ratio" min="0" max="100" step="5" data-k="ratio">
+            </div>
+            <div class="field">
+              <label for="in-subs">대체 인력(명)</label>
+              <input type="number" id="in-subs" min="0" max="12" step="1" data-k="subs">
+            </div>
+            <label class="check"><input type="checkbox" id="in-trained" data-k="trained"> 대체 인력 수치 SOP 교육 완료</label>
+            <label class="check" style="margin-top:6px"><input type="checkbox" id="in-eq05" data-k="eq05"> EQ-05(산업용 박리지) ERP 등록</label>
+          </section>
         </div>
       </div>
-    </div>
-  </section>
+    </aside>
 
-  <details class="hg-foot" id="notes">
-    <summary>가정과 제외한 데이터</summary>
-    <dl>
-      <dt>시뮬레이션 가정</dt><dd>실험 B의 수율, 위반 건수, 가동 라인 수, 수요 신호 주기는 규칙을 적용했을 때의 예상값입니다. 실험 A의 파업 중 배치는 라인별 평시 인원을 절반씩 줄인다고 가정했습니다.</dd>
-      <dt>제안 기준값</dt><dd>R-09의 재고 배수와 R-12의 발주 감소율은 데이터에 없는 제안값입니다.</dd>
-      <dt>판단 불가</dt><dd>EQ-05(산업용 박리지)는 ERP와 수요 데이터에 없어 인력 배치에서 뺐습니다. 프리미엄 감열지는 생산라인이 지정돼 있지 않습니다.</dd>
-      <dt>제외한 노이즈</dt><dd>휴게실 에어컨 수리, 산악회 지원금, 직원 식당 식재료, 단종된 A4 복사지, 조도와 소리에 관한 감각 표현은 생산 의사결정과 연결되지 않아 뺐습니다.</dd>
-    </dl>
-  </details>
+    <main class="results" aria-live="polite">
+      <section class="verdict" id="verdict">
+        <div class="vhead" id="vhead"></div>
+        <p class="vq" id="vq"></p>
+        <div class="answer" id="answer"></div>
+      </section>
+
+      <section class="box" id="sec-orders">
+        <h3>현장 작업 지시서 <span class="tag">SOP 수치 기준</span></h3>
+        <div class="orders" id="orders"></div>
+      </section>
+
+      <section class="box" id="sec-flow">
+        <h3>업무 흐름도 <span class="tag">이번 테스트가 지나간 경로</span></h3>
+        <ol class="flow" id="flow"></ol>
+      </section>
+
+      <div class="grid2">
+        <section class="box">
+          <h3>시뮬레이션 조건 <span class="tag">출처 표시</span></h3>
+          <div class="tbox">
+            <table class="tbl">
+              <thead><tr><th>항목</th><th>값</th><th>출처</th></tr></thead>
+              <tbody id="conds"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="box">
+          <h3>실험 A와 실험 B <span class="tag">추정 모델</span></h3>
+          <div class="legend-ab"><span><b class="la">빨강</b> 규칙 없이 현장 관행대로</span><span><b class="lb">초록</b> 키네틱 규칙 적용</span></div>
+          <div class="kpis" id="kpis"></div>
+        </section>
+      </div>
+
+      <section class="box">
+        <h3>온톨로지 사슬 <span class="tag">위험 감지 → 규칙 대응</span></h3>
+        <ol class="chain" id="chain"></ol>
+      </section>
+
+      <div class="grid2">
+        <section class="box">
+          <h3>발동한 규칙 <span class="tag" id="firedCount"></span></h3>
+          <ul class="fired" id="fired"></ul>
+        </section>
+        <section class="box">
+          <h3>라인별 운영 결정</h3>
+          <div class="tbox">
+            <table class="tbl">
+              <thead><tr><th>라인</th><th>품목</th><th>실험 B 결정</th><th>근거</th><th>실험 A</th></tr></thead>
+              <tbody id="lines"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="box">
+        <h3>인력 배치 <span class="tag">R-10 · R-17 · R-18</span></h3>
+        <div class="staff-legend"><span><i style="background:var(--line)"></i>필요 인원</span><span><i style="background:var(--bad)"></i>실험 A 배치</span><span><i style="background:var(--ok)"></i>실험 B 배치</span></div>
+        <div class="staff" id="staff"></div>
+        <p class="staff-sum" id="staffSum"></p>
+      </section>
+
+      <section class="box">
+        <h3>경영진 권고 <span class="tag">P-4 안전 조치만 자동 실행</span></h3>
+        <div class="dgrid" id="decisions"></div>
+      </section>
+
+      <details class="notes">
+        <summary>시뮬레이션 모델과 가정</summary>
+        <ul>
+          <li>판정 기준은 SOP(Data 5)와 키네틱 규칙 v2입니다. 우천 기준 습도 80% 이상, 건조 온도 상한 95℃, 진동 기준 5.0mm/s, 펄프 농도 기준 14%, 정상 RPM 1,000~1,200입니다.</li>
+          <li>문장 해석은 정해진 표현을 찾는 방식입니다. 호기·설비 번호, 습도·온도·진동·펄프 농도 수치, 비·맑음, 파업 비율, 대체 인력 수와 교육 여부, 제품별 재고·수요(톤), 발주 변화(반토막, N% 감소·증가)와 전달 경로를 읽습니다. 읽은 값과 기준 데이터 값은 조건 표에 출처로 구분해 보여줍니다.</li>
+          <li>비가 온다고만 하고 습도 수치가 없으면 10/14 실측 85%를, 맑다고 하면 평시 45%를 씁니다. 파업 비율이 없으면 Data 7의 50%를 씁니다.</li>
+          <li>재고 초과는 재고가 당월 예측의 1.5배 이상(R-09), 거래처 경보는 주간 발주 30% 이상 감소(R-12)로 정한 제안값입니다.</li>
+          <li>수율은 10/14 데이터로 만든 단순 추정입니다. 우천 중 95℃ 초과 운전 82%(L-102 실측), 진동 초과 90%, 펄프 농도 초과 93%, 그 밖에는 98%입니다.</li>
+          <li>라인별 필요 인원과 이익률은 ERP(Data 6) 값입니다. EQ-05는 ERP에 없어 등록했을 때만 필요 인원 3명, 이익률 10%로 가정합니다. 실험 A는 라인별 인원을 같은 비율로 줄이고 대체 인력을 교육 없이 투입하며, 수요 신호는 월별 파일로만 반영(30일)한다고 가정합니다.</li>
+          <li>승인·반려 상태는 이 화면에서만 바뀌며 저장되지 않습니다.</li>
+        </ul>
+      </details>
+    </main>
+  </div>
 </div>
 
 <script>
-window.dash = (() => {
-  const DATA = {"equipment": [{"eq_id": "EQ-01", "name": "제1 코팅기", "product": "일반 감열지", "age_years": 22, "temp_c": 85, "vibration": 3.2, "rpm": 1200, "alarm": "정상"}, {"eq_id": "EQ-02", "name": "제2 코팅기", "product": "일반 감열지", "age_years": 20, "temp_c": 98, "vibration": 5.8, "rpm": 1250, "alarm": "진동 경고"}, {"eq_id": "EQ-03", "name": "패키징 압출기", "product": "친환경 포장재", "age_years": 5, "temp_c": 65, "vibration": 1.5, "rpm": 800, "alarm": "정상"}, {"eq_id": "EQ-04", "name": "제1 라벨기", "product": "택배 라벨지", "age_years": 10, "temp_c": 72, "vibration": 2.1, "rpm": 1000, "alarm": "정상"}, {"eq_id": "EQ-05", "name": "박리 코팅기", "product": "산업용 박리지", "age_years": 15, "temp_c": 80, "vibration": 2.8, "rpm": 950, "alarm": "정상"}], "lots": [{"lot": "L-101", "line": "EQ-01", "product": "일반 감열지", "pulp": 0.12, "humidity": 0.45, "humidity_raw": "0.45", "defect": "정상", "final_yield": 0.98}, {"lot": "L-102", "line": "EQ-02", "product": "일반 감열지", "pulp": 0.12, "humidity": 0.85, "humidity_raw": "85% (우천)", "defect": "불량 (파단/찢어짐)", "final_yield": 0.82}, {"lot": "L-103", "line": "EQ-03", "product": "친환경 포장재", "pulp": 0.1, "humidity": 0.45, "humidity_raw": "0.45", "defect": "정상", "final_yield": 0.99}, {"lot": "L-104", "line": "EQ-04", "product": "택배 라벨지", "pulp": 0.14, "humidity": 0.45, "humidity_raw": "0.45", "defect": "정상", "final_yield": 0.96}, {"lot": "L-105", "line": "EQ-05", "product": "산업용 박리지", "pulp": 0.11, "humidity": 0.45, "humidity_raw": "0.45", "defect": "정상", "final_yield": 0.97}], "inventory": [{"product": "일반 감열지", "last_month_t": 500, "forecast_t": 380, "stock_t": 850, "status": "초과 (창고 포화)", "trend": "디지털 영수증 확산"}, {"product": "프리미엄 감열지", "last_month_t": 150, "forecast_t": 140, "stock_t": 100, "status": "적정", "trend": "수요 정체"}, {"product": "친환경 포장재", "last_month_t": 100, "forecast_t": 350, "stock_t": 15, "status": "심각한 부족", "trend": "ESG 및 플라스틱 규제"}, {"product": "택배 라벨지", "last_month_t": 300, "forecast_t": 320, "stock_t": 200, "status": "적정", "trend": "이커머스 호황"}], "sop": [{"sop_id": "S1", "category": "품질", "slang": "\"펄프가 질척거린다\"", "sensor": "펄프 농도 계측기", "threshold": "14% 초과", "action": "물 투입량 10% 증가 및 속도 감속"}, {"sop_id": "S2", "category": "안전", "slang": "\"기계에서 쇳소리가 난다\"", "sensor": "분당 진동수", "threshold": "5.0 mm/s 초과", "action": "즉시 가동 중지 및 베어링 윤활유 주입"}, {"sop_id": "S3", "category": "노이즈", "slang": "\"소리가 경쾌하고 좋다\"", "sensor": "설비 RPM", "threshold": "1,000 ~ 1,200", "action": "정상 가동 유지"}, {"sop_id": "S4", "category": "운영", "slang": "\"한 뼘 정도 돌려 (화력 UP)\"", "sensor": "건조기 세팅 온도", "threshold": "95℃ 초과 금지", "action": "우천 시(습도 80%↑) 95℃ 초과 임의 조작 차단"}, {"sop_id": "S5", "category": "노이즈", "slang": "\"색깔이 좀 탁해 보이네\"", "sensor": "공장 내 조도 센서", "threshold": "300 Lux 이하", "action": "천장 LED 조명 교체 요망"}], "events": [{"step": 1, "time": "10/14 08:30", "node": "날씨", "source": "Data 3 · Data 1", "fact": "우천, 공장 습도 85%", "outcome_a": "습도가 \"85% (우천)\" 텍스트로 입력돼 시스템이 수치로 읽지 못함", "outcome_b": "R-14가 습도를 0.85 수치로 저장시켜 R-01 트리거가 살아 있음", "log_a": "습도 텍스트 입력, 자동 판단 불가", "log_b": "습도 0.85 수치 저장", "rules_b": "R-14"}, {"step": 2, "time": "10/14 08:30", "node": "작업자", "source": "Data 1 · Data 5", "fact": "박만석 공장장이 EQ-02 건조 온도를 98℃로 수동 상향", "outcome_a": "\"감\"대로 한 조작이 그대로 반영됨 (SOP 95℃ 상한 위반)", "outcome_b": "R-01 온도 인터락이 98℃ 입력을 차단하고 설비관리팀에 알림", "log_a": "98℃ 설정 반영", "log_b": "98℃ 입력 차단", "rules_b": "R-01"}, {"step": 3, "time": "10/14 14:20", "node": "설비", "source": "Data 2 · Data 1", "fact": "EQ-02 진동 5.8mm/s, 일지에는 \"쇳소리\"로만 기록", "outcome_a": "기름만 치고 가동 계속", "outcome_b": "온도 차단으로 진동 경로가 생기지 않음. 진동이 생겨도 R-05가 센서를 조회해 R-02로 즉시 정지", "log_a": "쇳소리, 기름만 주입", "log_b": "은어 번역 후 즉시 정지 대기", "rules_b": "R-05, R-02, R-03"}, {"step": 4, "time": "10/14 14:20", "node": "품질", "source": "Data 3", "fact": "L-102 파단 불량, 수율 82%", "outcome_a": "불량 감열지가 생산되고 악성 재고에 더해짐", "outcome_b": "과건조 원인이 사라져 같은 날 EQ-01 수준 수율 유지 예상", "log_a": "L-102 수율 82%", "log_b": "불량 원인 차단", "rules_b": "R-03"}, {"step": 5, "time": "10/14 15:00", "node": "비즈니스", "source": "Data 1 · Data 4 · Data 6", "fact": "영업팀장: B마트 발주 반토막, 감열지 창고 포화", "outcome_a": "메신저로만 전달되고 생산은 감열지를 계속 생산", "outcome_b": "R-13이 미확인 수요 신호로 등록, R-12가 예측을 갱신, R-09가 감열지 신규 생산을 보류 (재고 850t, 수요 380t)", "log_a": "영업·생산 판단 충돌", "log_b": "감열지 신규 생산 보류", "rules_b": "R-13, R-12, R-09"}, {"step": 6, "time": "10/15 09:00", "node": "인력", "source": "Data 7", "fact": "생산직 50% 파업 돌입", "outcome_a": "대응 계획 없이 라인별 인원을 절반씩 줄여 모든 라인이 최소 인원 미달", "outcome_b": "R-17과 R-10에 따라 EQ-03, EQ-04 순으로 배치하고 감열지 라인은 휴지. R-18로 대체 인력 SOP 교육", "log_a": "전 라인 인원 미달 가동", "log_b": "EQ-03·EQ-04 우선 배치", "rules_b": "R-17, R-10, R-18"}, {"step": 7, "time": "10/15 09:00", "node": "최종 전략", "source": "키네틱 규칙", "fact": "EQ-02와 생산 자원의 처리 방향 결정", "outcome_a": "EQ-02 수리 후 재가동 시도. 감열지 악성 재고는 늘고 포장재 품절은 계속됨", "outcome_b": "EQ-02 가동 중지, 수리 보류. 인력과 원자재를 친환경 포장재 라인으로 전환 (경영진 승인)", "log_a": "EQ-02 수리·재가동", "log_b": "EQ-02 중지, 포장재 전환", "rules_b": "R-08, P-4"}], "kpi": [{"metric": "yield", "name": "EQ-02 수율", "unit": "%", "before": 82, "after": 98, "basis": "실험 B는 같은 날 EQ-01 수율을 기준으로 가정"}, {"metric": "sop", "name": "SOP 위반 상태 가동", "unit": "건", "before": 2, "after": 0, "basis": "95℃ 초과 운전, 진동 기준 초과 가동"}, {"metric": "thermal", "name": "재고 초과 감열지 가동 라인", "unit": "개", "before": 2, "after": 0, "basis": "R-08·R-09 적용"}, {"metric": "understaffed", "name": "파업 중 최소 인원 미달 가동 라인", "unit": "개", "before": 4, "after": 0, "basis": "R-17 적용, EQ-05 제외"}, {"metric": "signal", "name": "수요 신호 반영 주기", "unit": "일", "before": 30, "after": 7, "basis": "월별 파일에서 주간 거래처 경보(R-12)로 전환 가정"}], "staffing": [{"line": "EQ-01", "product": "일반 감열지", "need": 4, "shortage_t": 0, "margin": 0.05, "before_assign": 2, "after_assign": 0}, {"line": "EQ-02", "product": "일반 감열지", "need": 4, "shortage_t": 0, "margin": 0.05, "before_assign": 2, "after_assign": 0}, {"line": "EQ-03", "product": "친환경 포장재", "need": 2, "shortage_t": 335, "margin": 0.25, "before_assign": 1, "after_assign": 2}, {"line": "EQ-04", "product": "택배 라벨지", "need": 3, "shortage_t": 120, "margin": 0.12, "before_assign": 1, "after_assign": 3}], "painpoints": [{"rank": 1, "alt": "대안 2", "title": "영업·생산 데이터 불일치로 의사결정 혼선", "area": "영업·생산", "score": 0.2938, "status": "해결", "rules": "R-08 ~ R-11", "note": "재고·수요 데이터 하나로 생산 판단"}, {"rank": 2, "alt": "대안 5", "title": "거래처 실적이 월별 파일로 분절", "area": "영업", "score": 0.2026, "status": "부분 해결", "rules": "R-12, R-13", "note": "거래처 주간 발주 데이터 구축 필요"}, {"rank": 3, "alt": "대안 4", "title": "비정형 종이·PDF 문서 검색 불가", "area": "전략기획", "score": 0.1772, "status": "해결", "rules": "R-05 ~ R-07", "note": "SOP 사전으로 은어를 센서값에 연결"}, {"rank": 4, "alt": "대안 1", "title": "소리·진동 등 설비 상태를 감으로 판단", "area": "생산", "score": 0.1641, "status": "해결", "rules": "R-01 ~ R-04", "note": "온도 인터락과 진동 정지 기준 강제"}, {"rank": 5, "alt": "대안 3", "title": "수기 자료 재입력과 정합성 검증 지연", "area": "경영기획", "score": 0.1623, "status": "부분 해결", "rules": "R-14 ~ R-16", "note": "마스터 데이터(EQ-05 등) 정비 필요"}], "rules": [{"id": "P-1", "pp": "원칙", "if_text": "모든 판단", "then_text": "우선순위는 안전 > 품질 > 수익 > 효율. 충돌 시 상위 기준을 따른다"}, {"id": "P-2", "pp": "원칙", "if_text": "감, 은어, 서술형 표현이 들어옴", "then_text": "SOP 사전으로 센서 수치로 바꾼 뒤에만 판단 근거로 쓴다"}, {"id": "P-3", "pp": "원칙", "if_text": "지시를 낼 때", "then_text": "근거 데이터(Data 번호, 측정값, 시각)와 규칙 ID를 붙인다"}, {"id": "P-4", "pp": "원칙", "if_text": "라인 전환, 감산, 인력 재배치", "then_text": "권고까지만 하고 경영진 승인 후 실행. 안전 정지는 즉시 실행"}, {"id": "P-5", "pp": "원칙", "if_text": "인사와 관련된 판단", "then_text": "징계, 평가, 감축은 판단하지 않는다. AI 조치는 작업자 안전 보조로 기록"}, {"id": "R-01", "pp": "4위", "if_text": "습도 ≥ 80% AND 건조기 설정 온도 > 95℃", "then_text": "입력 차단(공장장도 해제 불가), 설비관리팀 알림, 조작 이력 기록"}, {"id": "R-02", "pp": "4위", "if_text": "설비 진동 > 5.0mm/s", "then_text": "즉시 가동 중지, 베어링 윤활, 점검 기록 전까지 재가동 잠금"}, {"id": "R-03", "pp": "4위", "if_text": "R-02 발동 직전 4시간 안에 R-01 위반 이력", "then_text": "원인을 운전 조건 이탈로 분류하고 운전 기준 교정을 수리보다 먼저"}, {"id": "R-04", "pp": "4위", "if_text": "RPM 1,000~1,200 AND 진동 ≤ 5.0 AND 온도 상한 이내", "then_text": "정상 가동 유지. 감각 표현은 판단에 쓰지 않음"}, {"id": "R-05", "pp": "3위", "if_text": "일지·메신저에 SOP 키워드(\"쇳소리\", \"질척\", \"한 뼘\")", "then_text": "센서값 자동 조회, 임계치 초과 시 SOP 조치 실행, 아니면 기록만"}, {"id": "R-06", "pp": "3위", "if_text": "SOP 사전상 노이즈 키워드(\"경쾌\", \"탁해\")", "then_text": "생산 의사결정에서 제외, 시설 요청으로만 넘김"}, {"id": "R-07", "pp": "3위", "if_text": "수치 없는 지시(\"기름 좀 쳐라\")", "then_text": "그대로 실행하지 않고 SOP 수치 기준으로 되묻는다"}, {"id": "R-08", "pp": "1위", "if_text": "재고 초과 AND 수요 하락 AND 불량·설비 이상", "then_text": "해당 라인 가동·수리 보류, 인력·원자재를 수요 급증 라인으로 전환 권고"}, {"id": "R-09", "pp": "1위", "if_text": "재고 ≥ 당월 예측수요 × 1.5 (제안값)", "then_text": "신규 생산 보류, 증산은 영업팀장 승인, 원자재 감축 권고"}, {"id": "R-10", "pp": "1위", "if_text": "가용 인력 < 전 라인 필요 인력", "then_text": "(부족량 × 이익률) ÷ 필요 인력이 큰 라인부터 배치"}, {"id": "R-11", "pp": "1위", "if_text": "영업과 생산 판단이 다름", "then_text": "재고·수요 데이터를 유일한 기준으로, 공동 생산계획 회의에서 결정"}, {"id": "R-12", "pp": "2위", "if_text": "거래처 주간 발주가 4주 평균 대비 30% 이상 감소 (제안값)", "then_text": "수요예측 즉시 갱신, 영업·생산 동시 알림, R-09 재평가"}, {"id": "R-13", "pp": "2위", "if_text": "메신저 등 비정형 경로의 수요 변화 신호", "then_text": "미확인 신호로 등록, R-12 잠정 적용, 48시간 안에 실제 발주 데이터 입력 요청"}, {"id": "R-14", "pp": "5위", "if_text": "수치 필드에 텍스트·단위 혼재", "then_text": "저장 거부, 숫자(0~1) 표준 형식으로 재입력, 부가 정보는 비고란"}, {"id": "R-15", "pp": "5위", "if_text": "설비ID·제품이 ERP 마스터에 없음 또는 생산라인 미지정", "then_text": "자동 판단에서 제외, 판단 불가 표시, 경영기획팀에 등록 요청"}, {"id": "R-16", "pp": "5위", "if_text": "단종 품목, 생산과 무관한 항목", "then_text": "생산 의사결정 데이터 세트에서 제외"}, {"id": "R-17", "pp": "비상", "if_text": "가용 생산 인력 < 평시의 70%", "then_text": "R-10 배치, 최소 인원 미달 라인은 가동 금지, 재고 초과 라인 휴지"}, {"id": "R-18", "pp": "비상", "if_text": "비숙련·대체 인력 투입", "then_text": "R-01·R-02·R-05 수치 SOP 교육 후에만 설비 조작 허용"}], "decisions": [{"id": "D1", "title": "EQ-02 즉시 가동 중지, 재가동 잠금", "detail": "진동이 SOP 기준을 넘었고 온도 조작 이력이 있다. 수리는 보류하고 안전 점검만 한다.", "rules": "R-02, R-01, R-03", "owner": "생산팀 · 설비관리팀", "deadline": "즉시", "mode": "자동 실행"}, {"id": "D2", "title": "감열지 라인(EQ-01·02) 휴지", "detail": "감열지 재고가 예측수요의 두 배를 넘는다. 신규 생산을 보류하고 펄프 발주를 줄인다.", "rules": "R-08, R-09", "owner": "공장장 · 영업팀장", "deadline": "10/15 09시 전", "mode": "승인 필요"}, {"id": "D3", "title": "파업 중 인력을 EQ-03, EQ-04 순으로 배치", "detail": "인력 1명당 가치가 가장 큰 친환경 포장재부터 채우고 택배 라벨지를 그다음에 둔다.", "rules": "R-10, R-17", "owner": "공장장 · 경영진", "deadline": "10/15 09시 전", "mode": "승인 필요"}, {"id": "D4", "title": "수치 SOP 지침 배포와 대체 인력 교육", "detail": "\"쇳소리\"는 진동 기준 초과, \"화력 UP\"은 온도 상한처럼 은어를 수치로 바꿔 배포한다.", "rules": "R-05, R-07, R-18", "owner": "생산팀 · 안전관리", "deadline": "10/15 09시 전", "mode": "승인 필요"}, {"id": "D5", "title": "노조에 AI 조치 취지 설명", "detail": "이번 조치는 인력 대체가 아니라 작업자 안전 장치임을 정지훈 사원 면담 내용과 함께 설명한다.", "rules": "P-5", "owner": "경영진", "deadline": "10/15 09시 전", "mode": "승인 필요"}, {"id": "D6", "title": "거래처 주간 발주 공유 시트 운영", "detail": "B마트 등 주요 거래처의 주간 발주를 영업과 생산이 함께 본다.", "rules": "R-12, R-13", "owner": "영업팀", "deadline": "1주 내", "mode": "승인 필요"}, {"id": "D7", "title": "입력 형식 통일과 마스터 데이터 정비", "detail": "습도·의존도 열을 숫자로 통일하고 EQ-05와 프리미엄 감열지 생산라인을 등록한다.", "rules": "R-14, R-15", "owner": "경영기획팀", "deadline": "1주 내", "mode": "승인 필요"}]};
-  const calcs = {}, draws = {};
-  const data = (id) => {
-    if (id in DATA) return { status: 'ok', data: DATA[id] };
-    if (id in calcs) { const c = calcs[id]; return { status: 'ok', data: c.fn(...c.inputs.map((i) => data(i).data)) }; }
-    return { status: 'missing', data: [] };
+(() => {
+  const LINES = [
+    { id: 'EQ-01', name: '제1 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1200 },
+    { id: 'EQ-02', name: '제2 코팅기', product: '일반 감열지', need: 4, margin: 0.05, rpm: 1250 },
+    { id: 'EQ-03', name: '패키징 압출기', product: '친환경 포장재', need: 2, margin: 0.25, rpm: 800 },
+    { id: 'EQ-04', name: '제1 라벨기', product: '택배 라벨지', need: 3, margin: 0.12, rpm: 1000 },
+    { id: 'EQ-05', name: '박리 코팅기', product: '산업용 박리지', need: 3, margin: 0.10, rpm: 950 },
+  ];
+  const LINE = Object.fromEntries(LINES.map((l) => [l.id, l]));
+  const PRODUCTS = ['일반 감열지', '프리미엄 감열지', '친환경 포장재', '택배 라벨지'];
+  const RAIN = 80, TEMP_MAX = 95, VIB_MAX = 5.0, PULP_MAX = 14, RPM_LOW = 1000, RPM_HIGH = 1200, SURPLUS_X = 1.5, ORDER_ALERT = -30, EMERGENCY = 70;
+  const PEOPLE = { '정지훈': '사원', '박만석': '공장장', '최강철': '노조위원장', '김미나': '영업팀장' };
+
+  const RULES = {
+    'R-01': { g: 'safety', t: '온도 인터락', a: '95℃ 초과 입력 차단, 설비관리팀 알림, 조작 이력 기록' },
+    'R-02': { g: 'safety', t: '진동 즉시 정지', a: '가동 중지, 베어링 윤활, 점검 기록 전까지 재가동 잠금' },
+    'R-03': { g: 'safety', t: '근본 원인 추적', a: '원인을 운전 조건 이탈로 분류, 운전 기준 교정을 수리보다 먼저' },
+    'SOP-S1': { g: 'safety', t: '펄프 농도 초과 (SOP 품질)', a: '물 투입량 10% 증가, 라인 속도 감속' },
+    'R-14': { g: 'data', t: '입력 형식 검증', a: '저장 거부, 숫자(0~1)로 다시 입력하게 해 R-01이 판정할 수 있게 함' },
+    'R-15': { g: 'data', t: '마스터 정합', a: '자동 판단에서 제외하고 판단 불가 표시, 경영기획팀에 등록 요청' },
+    'R-16': { g: 'data', t: '무관 데이터 배제', a: '생산 의사결정 데이터에서 제외' },
+    'R-08': { g: 'opt', t: '전사 최적화', a: '해당 라인 가동·수리 보류, 인력과 원자재를 수요 급증 라인으로 전환 권고' },
+    'R-09': { g: 'opt', t: '재고 기반 감산', a: '신규 생산 보류, 증산은 영업팀장 승인, 원자재 발주 감축 권고' },
+    'R-10': { g: 'opt', t: '자원 배분 우선순위', a: '(부족량 × 이익률) ÷ 필요 인원이 큰 라인부터 필요 인원을 채움' },
+    'R-11': { g: 'opt', t: '단일 데이터 기준', a: '재고·수요 데이터를 기준으로 영업·생산 공동 생산계획 회의에서 결정' },
+    'R-12': { g: 'demand', t: '거래처 조기경보', a: '수요예측 즉시 갱신, 영업·생산 동시 알림, R-09 재평가' },
+    'R-13': { g: 'demand', t: '비정형 수요 신호', a: '미확인 신호로 등록, R-12 잠정 적용, 48시간 안에 발주 데이터 입력 요청' },
+    'R-05': { g: 'field', t: '은어 번역', a: '대응 센서값 조회, 기준 초과면 SOP 조치 실행, 아니면 기록만' },
+    'R-06': { g: 'field', t: '노이즈 분리', a: '생산 판단에서 제외, 시설 요청으로만 넘김' },
+    'R-07': { g: 'field', t: '지시 수치화', a: '그대로 실행하지 않고 SOP 수치 기준으로 다시 확인' },
+    'R-17': { g: 'emer', t: '비상 인력 운영', a: 'R-10으로 배치, 최소 인원 미달 라인은 가동 금지, 재고 초과 라인 휴지' },
+    'R-18': { g: 'emer', t: '대체 인력 안전', a: '수치 SOP 교육 전에는 설비 조작 금지, 배치 인원에서 제외' },
+    'R-04': { g: 'normal', t: '정상 판정', a: '정상 가동 유지, 감각 표현은 판단에 쓰지 않음' },
   };
-  const run = (name) => document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => draws[name](el));
-  let w = window.innerWidth;
-  window.addEventListener('resize', () => { if (Math.abs(window.innerWidth - w) < 8) return; w = window.innerWidth; Object.keys(draws).forEach(run); });
-  return {
-    colors: ['var(--series-0)', 'var(--series-1)'],
-    data,
-    calc: (id, spec) => { calcs[id] = spec; },
-    draw: (name, fn) => { if (fn) draws[name] = fn; if (draws[name]) run(name); },
+  const ORDER = ['R-01', 'R-02', 'R-03', 'SOP-S1', 'R-14', 'R-15', 'R-16', 'R-08', 'R-09', 'R-10', 'R-11', 'R-12', 'R-13', 'R-05', 'R-06', 'R-07', 'R-17', 'R-18', 'R-04'];
+
+  const INV = () => ({
+    '일반 감열지': { last: 500, fc: 380, stock: 850 }, '프리미엄 감열지': { last: 150, fc: 140, stock: 100 },
+    '친환경 포장재': { last: 100, fc: 350, stock: 15 }, '택배 라벨지': { last: 300, fc: 320, stock: 200 },
+  });
+  const BASES = {
+    normal: () => ({
+      humidity: 45, humFmt: 'num', log: '',
+      eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 85, vib: 3.0, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
+      inv: INV(), order: { product: '일반 감열지', change: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+    }),
+    actual: () => ({
+      humidity: 85, humFmt: 'text', log: '',
+      eq: { 'EQ-01': { temp: 85, vib: 3.2, pulp: 12 }, 'EQ-02': { temp: 98, vib: 5.8, pulp: 12 }, 'EQ-03': { temp: 65, vib: 1.5, pulp: 10 }, 'EQ-04': { temp: 72, vib: 2.1, pulp: 14 }, 'EQ-05': { temp: 80, vib: 2.8, pulp: 11 } },
+      inv: INV(), order: { product: '일반 감열지', change: 0, path: 'data' }, ratio: 100, subs: 0, trained: false, eq05: false,
+    }),
   };
+
+  const TESTS = {
+    t1: '[자체 테스트 1: 현장 통제 상황]\n오늘은 비가 오지 않는 맑은 날씨야. 그런데 1호기(EQ-01)의 펄프 농도가 갑자기 15%로 치솟았고, 현장의 정지훈 사원은 "펄프가 질척거린다"고 보고하며 패닉에 빠졌어.\n네가 학습한 데이터와 우리 조가 입력한 키네틱 비즈니스 룰을 바탕으로, 지금 당장 정지훈 사원이 1호기(EQ-01)에 대해 취해야 할 행동을 수치에 근거하여 구체적으로 지시해 줘.',
+    t2: '[자체 테스트 2: 우천 사고 재현]\n비가 많이 와서 공장 습도가 85%야. 박만석 공장장이 감대로 2호기 건조 온도를 98도로 올렸고, 오후에 2호기에서 쇳소리가 나며 진동이 5.8mm/s까지 올랐어. 공장장은 기름 좀 치라고만 했어.\n지금 2호기에 대해 취해야 할 조치를 수치에 근거해 지시해 줘.',
+    t3: '[자체 테스트 3: 파업 비상운영]\n내일 오전 9시부터 생산직 50%가 파업에 들어가. 협력사 대체 인력 2명이 오는데 아직 SOP 교육은 안 받았어. 친환경 포장재 수요는 500톤으로 늘었어.\n라인별 인력을 어떻게 배치하고 어떤 라인을 멈춰야 하는지 지시해 줘.',
+    t4: '[자체 테스트 4: 수요 급감 신호]\n영업팀장이 메신저로 B마트 감열지 발주가 반토막 났다고 알려왔어. 감열지 재고는 850톤이야. 생산팀은 1호기와 2호기를 계속 돌리고 있어.\n생산과 영업은 각각 무엇을 해야 해?',
+    t5: '[자체 테스트 5: 입력 오류와 노이즈]\n습도가 "82% (우천)" 텍스트로 입력됐어. 1호기 온도를 97도로 한 뼘 돌렸다는 일지가 있고, 색깔이 좀 탁해 보인다는 말도 있어. 휴게실 에어컨도 고쳐달래.\n무엇부터 처리해야 하는지 우선순위대로 지시해 줘.',
+  };
+
+  let S = BASES.normal();
+  let ctx = { mentioned: [], who: null, question: '', parsed: new Set(), manual: new Set(), notes: {}, count: 0 };
+  const decide = {};
+  const $ = (id) => document.getElementById(id);
+  const mk = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; };
+  const f0 = (v) => Math.round(v).toLocaleString('ko-KR');
+  const pct = (v) => Math.round(v * 100) + '%';
+  const signed = (v) => (v > 0 ? '+' : '') + v;
+  const fv = (v) => Number(v).toFixed(1);
+  const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+  const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; };
+  const lineRe = () => /EQ-?0?([1-5])|([1-5])\s*호기/gi;
+  const productOf = (c) => (/프리미엄/.test(c) ? '프리미엄 감열지' : /포장재|친환경/.test(c) ? '친환경 포장재' : /라벨/.test(c) ? '택배 라벨지' : /감열지|영수증/.test(c) ? '일반 감열지' : null);
+
+  function parseTest(text, baseKey) {
+    const st = BASES[baseKey]();
+    const parsed = new Set(), notes = {};
+    const note = (key, how) => { parsed.add(key); if (how) notes[key] = how; };
+    const t = text.replace(/\s+/g, ' ');
+    const noRain = /비가?\s*(오지|안\s*오|그쳤|없)|맑/.test(t);
+    const rainy = !noRain && /비가|비 |비로|우천|폭우|장마|소나기|눅눅/.test(t);
+    const hm = t.match(/습도[^0-9]{0,12}(\d{1,3})\s*%/);
+    if (hm) { st.humidity = Math.min(100, +hm[1]); note('humidity'); }
+    else if (rainy) { st.humidity = 85; note('humidity', '우천 언급 → 10/14 실측 85%'); }
+    else if (noRain) { st.humidity = 45; note('humidity', '맑음 → 평시 45%'); }
+    if (/텍스트/.test(t) || /["'“‘]\s*\d{1,3}\s*%\s*\(우천\)/.test(t)) { st.humFmt = 'text'; note('humFmt'); }
+    else if (hm || rainy || noRain) { st.humFmt = 'num'; }
+
+    const clauses = text.split(/\.(?!\d)|,(?!\d)|[\n!?]|그런데|그리고/).map((s) => s.trim()).filter(Boolean);
+    let last = null;
+    const mentioned = new Set();
+    const ATTR = [['pulp', /펄프\s*농도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*%/], ['temp', /온도[^0-9]{0,15}(\d+(?:\.\d+)?)\s*(?:도|℃)/], ['vib', /진동[^0-9]{0,15}(\d+(?:\.\d+)?)/]];
+    clauses.forEach((c) => {
+      const ls = [...new Set([...c.matchAll(lineRe())].map((m) => 'EQ-0' + (m[1] || m[2])))];
+      ls.forEach((l) => mentioned.add(l));
+      const targets = ls.length ? ls : last ? [last] : null;
+      if (ls.length) last = ls[ls.length - 1];
+      ATTR.forEach(([k, re]) => {
+        const m = c.match(re);
+        if (!m) return;
+        (targets || LINES.map((l) => l.id)).forEach((id) => { st.eq[id][k] = +m[1]; note(`eq.${id}.${k}`, targets ? null : '라인 미지정 → 전체 적용'); });
+      });
+      const prod = productOf(c);
+      if (prod && PRODUCTS.includes(prod)) {
+        const fm = c.match(/(?:수요|예측)[^0-9]{0,12}(\d+)\s*(?:톤|t)/); if (fm) { st.inv[prod].fc = +fm[1]; note(`inv.${prod}.fc`); }
+        const sm = c.match(/재고[^0-9]{0,12}(\d+)\s*(?:톤|t)/); if (sm) { st.inv[prod].stock = +sm[1]; note(`inv.${prod}.stock`); }
+        const lm = c.match(/전월[^0-9]{0,12}(\d+)\s*(?:톤|t)/); if (lm) { st.inv[prod].last = +lm[1]; note(`inv.${prod}.last`); }
+      }
+      if (/발주|주문/.test(c)) {
+        const p = prod && PRODUCTS.includes(prod) ? prod : st.order.product;
+        let ch = null;
+        const dn = c.match(/(\d+)\s*%\s*(?:감소|줄|하락|빠|떨어)/), up = c.match(/(\d+)\s*%\s*(?:증가|늘|상승|급증|올)/);
+        if (/반토막|절반/.test(c)) ch = -50; else if (dn) ch = -dn[1]; else if (up) ch = +up[1]; else if (/급감/.test(c)) ch = -50; else if (/급증/.test(c)) ch = 50;
+        if (ch !== null) { st.order.product = p; st.order.change = Math.max(-80, Math.min(60, ch)); note('order.change', /반토막|절반/.test(c) ? '반토막 → -50%' : null); note('order.product'); }
+        st.order.path = /메신저|구두|전화|말로|카톡|문자/.test(c) ? 'messenger' : 'data'; note('order.path');
+      }
+    });
+    const s1 = t.match(/(\d{1,3})\s*%\s*(?:가|이)?\s*(?:파업|결근)/) || t.match(/(?:파업|결근)[^0-9]{0,10}(\d{1,3})\s*%/);
+    const s2 = t.match(/(?:출근|가용\s*인력)[^0-9]{0,8}(\d{1,3})\s*%/);
+    if (s1) { st.ratio = Math.max(0, 100 - +s1[1]); note('ratio', `${s1[1]}% 파업 → 출근 ${st.ratio}%`); }
+    else if (s2) { st.ratio = +s2[1]; note('ratio'); }
+    else if (/파업/.test(t)) { st.ratio = 50; note('ratio', '파업 언급 → Data 7 기준 50%'); }
+    const sb = t.match(/대체\s*인력[^0-9]{0,8}(\d+)\s*명/); if (sb) { st.subs = +sb[1]; note('subs'); }
+    if (/교육[^.\n]{0,10}(안\s|않|미이수|미완료|못)/.test(t)) { st.trained = false; note('trained'); }
+    else if (/교육[^.\n]{0,8}(완료|받았|이수|마쳤)/.test(t)) { st.trained = true; note('trained'); }
+    if (/EQ-?0?5[^.\n]{0,12}등록/.test(t)) { st.eq05 = !/미등록|안 됐|안됐/.test(t); note('eq05'); }
+    st.log = text;
+    const whoM = t.match(/(정지훈|박만석|최강철|김미나)/g) || [];
+    const ask = text.split(/\n/).map((s) => s.trim()).filter((s) => /해\s*줘|해야|지시|어떻게|무엇/.test(s)).pop() || '';
+    const askWho = (ask.match(/(정지훈|박만석|최강철|김미나)/) || [])[1];
+    const askLines = [...new Set([...ask.matchAll(lineRe())].map((m) => 'EQ-0' + (m[1] || m[2])))];
+    return { st, ctx: { mentioned: askLines.length ? askLines : [...mentioned], allMentioned: [...mentioned], who: askWho || whoM[0] || null, question: ask, parsed, manual: new Set(), notes, count: parsed.size } };
+  }
+
+  function evaluate(S, ctx) {
+    const fired = [];
+    const fire = (id, ev, extra = {}) => fired.push({ id, ev, ...extra });
+    const has = (id) => fired.some((f) => f.id === id);
+    const rain = S.humidity >= RAIN;
+    const text = S.log || '';
+    const found = (arr) => arr.filter((k) => text.includes(k));
+    const mentioned = new Set([...text.matchAll(lineRe())].map((m) => 'EQ-0' + (m[1] || m[2])));
+    const active = LINES.filter((L) => L.id !== 'EQ-05' || S.eq05);
+
+    if (S.humFmt === 'text') fire('R-14', `습도가 "${S.humidity}% (우천)" 텍스트로 입력됨`);
+    fire('R-15', S.eq05 ? '프리미엄 감열지 생산라인 미지정' : 'EQ-05가 ERP 마스터에 없음, 프리미엄 감열지 생산라인 미지정');
+    const unrelated = found(['에어컨', '동호회', '산악회', '식당', 'A4', '복사지']);
+    if (unrelated.length) fire('R-16', '무관 항목: ' + unrelated.join(', '));
+
+    const safe = {};
+    LINES.forEach((L) => {
+      const e = S.eq[L.id];
+      const r01 = rain && e.temp > TEMP_MAX, r02 = e.vib > VIB_MAX, pulp = e.pulp > PULP_MAX;
+      safe[L.id] = { r01, r02, pulp };
+      if (r01) fire('R-01', `${L.id} 습도 ${S.humidity}%에서 설정 ${e.temp}℃ (상한 ${TEMP_MAX}℃)`, { line: L.id });
+      if (r02) fire('R-02', `${L.id} 진동 ${fv(e.vib)}mm/s (기준 ${VIB_MAX.toFixed(1)}mm/s)`, { line: L.id });
+      if (r01 && r02) fire('R-03', `${L.id} 온도 조작 뒤 진동 발생`, { line: L.id });
+      if (pulp && !(L.id === 'EQ-05' && !S.eq05)) fire('SOP-S1', `${L.id} 펄프 농도 ${e.pulp}% (기준 ${PULP_MAX}%)`, { line: L.id });
+    });
+
+    const slang = [
+      { k: ['쇳소리', '덜덜', '끼익'], what: '진동', check: (id) => S.eq[id].vib > VIB_MAX, val: (id) => S.eq[id].vib + 'mm/s' },
+      { k: ['질척'], what: '펄프 농도', check: (id) => S.eq[id].pulp > PULP_MAX, val: (id) => S.eq[id].pulp + '%' },
+      { k: ['한 뼘', '화력', '온도를 올', '확 올'], what: '건조 온도', check: (id) => rain && S.eq[id].temp > TEMP_MAX, val: (id) => S.eq[id].temp + '℃' },
+    ];
+    slang.forEach((s) => {
+      const hit = found(s.k);
+      if (!hit.length) return;
+      const targets = mentioned.size ? [...mentioned] : LINES.map((l) => l.id);
+      const over = targets.filter(s.check);
+      fire('R-05', `"${hit[0]}" → ${s.what} 조회: ` + (over.length ? over.map((id) => `${id} ${s.val(id)}`).join(', ') + ' 기준 초과' : targets.join(', ') + ' 기준 이내, 기록만'));
+    });
+    const noise = found(['경쾌', '탁해', '색깔']);
+    if (noise.length) fire('R-06', '노이즈 표현: ' + noise.join(', '));
+    const vague = found(['기름 좀', '확 올', '대충', '알아서', '감대로', '감으로', '적당히']);
+    if (vague.length) fire('R-07', '수치 없는 지시: ' + vague.join(', '));
+
+    const fcB = {};
+    PRODUCTS.forEach((p) => { fcB[p] = S.inv[p].fc; });
+    const ch = S.order.change, op = S.order.product;
+    if (ch <= ORDER_ALERT) {
+      fcB[op] = Math.round(S.inv[op].fc * (1 + ch / 100));
+      fire('R-12', `${op} 주간 발주 ${ch}% → 예측 ${f0(S.inv[op].fc)}t를 ${f0(fcB[op])}t로 갱신`);
+    }
+    if (ch !== 0 && S.order.path === 'messenger') fire('R-13', `${op} 발주 ${signed(ch)}% 신호가 메신저로만 들어옴`);
+    const surplus = {}, falling = {};
+    PRODUCTS.forEach((p) => {
+      const v = S.inv[p];
+      surplus[p] = fcB[p] > 0 ? v.stock >= fcB[p] * SURPLUS_X : v.stock > 0;
+      falling[p] = fcB[p] < v.last;
+      if (surplus[p] && LINES.some((L) => L.product === p)) fire('R-09', `${p} 재고 ${f0(v.stock)}t ≥ 예측 ${f0(fcB[p])}t × ${SURPLUS_X}`, { product: p });
+    });
+    const r08 = new Set();
+    PRODUCTS.forEach((p) => {
+      if (!(surplus[p] && falling[p])) return;
+      const bad = LINES.filter((L) => L.product === p && (safe[L.id].r01 || safe[L.id].r02));
+      if (bad.length) { bad.forEach((b) => r08.add(b.id)); fire('R-08', `${p} 재고 초과·수요 하락 상태에서 ${bad.map((b) => b.id).join(', ')} 이상`); }
+    });
+    if (has('R-09') || has('R-13')) fire('R-11', '영업 신호와 생산 계획이 엇갈림');
+
+    const status = {};
+    LINES.forEach((L) => {
+      const s = safe[L.id];
+      let st, why, run = false, tone = 'ok';
+      if (L.id === 'EQ-05' && !S.eq05) { st = '판단 불가'; why = 'R-15'; tone = 'mute'; }
+      else if (s.r02) { st = r08.has(L.id) ? '정지 · 수리 보류' : '정지 · 점검 후 재가동'; why = r08.has(L.id) ? 'R-02 R-08' : 'R-02'; tone = 'bad'; }
+      else if (surplus[L.product]) { st = '휴지 · 재고 초과'; why = r08.has(L.id) ? 'R-08 R-09' : 'R-09'; tone = 'warn'; }
+      else { run = true; st = s.r01 ? '가동 · 온도 차단' : s.pulp ? '가동 · 공정 조정' : '가동'; why = s.r01 ? 'R-01' : s.pulp ? 'SOP-S1' : 'R-04'; tone = s.r01 || s.pulp ? 'warn' : 'ok'; }
+      status[L.id] = { st, why, run, tone };
+    });
+
+    const totalNeed = active.reduce((a, L) => a + L.need, 0);
+    const regular = Math.floor(totalNeed * S.ratio / 100);
+    const usableB = regular + (S.trained ? S.subs : 0);
+    const usableA = regular + S.subs;
+    if (S.ratio < EMERGENCY) fire('R-17', `출근 가능 ${S.ratio}% · 평시 ${totalNeed}명 중 ${regular}명`);
+    if (S.subs > 0 && !S.trained) fire('R-18', `대체 인력 ${S.subs}명 SOP 교육 미완료`);
+    const shortage = (p) => (p in fcB ? Math.max(0, fcB[p] - S.inv[p].stock) : 0);
+    const value = (L) => shortage(L.product) * L.margin / L.need;
+    const elig = active.filter((L) => status[L.id].run).sort((a, b) => value(b) - value(a) || b.margin - a.margin);
+    const asgB = {}, asgA = {};
+    active.forEach((L) => { asgB[L.id] = 0; asgA[L.id] = Math.min(L.need, Math.floor(L.need * usableA / totalNeed)); });
+    let left = usableB;
+    elig.forEach((L) => { if (left >= L.need) { asgB[L.id] = L.need; left -= L.need; } });
+    const needElig = elig.reduce((a, L) => a + L.need, 0);
+    if (usableB < needElig) fire('R-10', `가용 ${usableB}명 < 가동 대상 필요 ${needElig}명`);
+    elig.forEach((L) => { if (!asgB[L.id]) status[L.id] = { st: '대기 · 인력 부족', why: 'R-10' + (S.ratio < EMERGENCY ? ' R-17' : ''), run: false, tone: 'warn' }; });
+    const normal = active.filter((L) => status[L.id].run && status[L.id].why === 'R-04').map((L) => L.id);
+    if (normal.length) fire('R-04', normal.join(', ') + ' 정상 범위');
+
+    const yieldOf = (L, ruled) => {
+      const e = S.eq[L.id];
+      const temp = ruled && rain ? Math.min(e.temp, TEMP_MAX) : e.temp;
+      let y = rain && temp > TEMP_MAX ? 0.82 : e.vib > VIB_MAX ? 0.90 : 0.98;
+      if (!ruled && e.pulp > PULP_MAX) y = Math.min(y, 0.93);
+      return y;
+    };
+    const runA = active.filter((L) => asgA[L.id] > 0);
+    const runB = active.filter((L) => asgB[L.id] > 0);
+    const yA = runA.length ? Math.min(...runA.map((L) => yieldOf(L, false))) : null;
+    const yB = runB.length ? Math.min(...runB.map((L) => yieldOf(L, true))) : null;
+    const sopA = runA.filter((L) => (rain && S.eq[L.id].temp > TEMP_MAX) || S.eq[L.id].vib > VIB_MAX || S.eq[L.id].pulp > PULP_MAX).length;
+    const surplusA = (p) => S.inv[p] && S.inv[p].fc > 0 && S.inv[p].stock >= S.inv[p].fc * SURPLUS_X;
+    const kpis = [
+      { k: '최저 라인 수율 (추정)', a: yA == null ? '—' : pct(yA), b: yB == null ? '—' : pct(yB), u: '' },
+      { k: 'SOP 위반 상태 가동', a: sopA, b: 0, u: '라인' },
+      { k: '재고 초과 품목 가동 라인', a: runA.filter((L) => surplusA(L.product)).length, b: runB.filter((L) => surplus[L.product]).length, u: '개' },
+      { k: '최소 인원 미달 가동 라인', a: runA.filter((L) => asgA[L.id] < L.need).length, b: 0, u: '개' },
+      { k: '수요 신호 반영까지', a: 30, b: ch !== 0 && S.order.path === 'messenger' ? 2 : 7, u: '일' },
+    ];
+
+    const D = [];
+    fired.filter((f) => f.id === 'R-02').forEach((f) => D.push({ id: 'stop-' + f.line, auto: true, t: `${f.line} 즉시 가동 중지, 재가동 잠금`, r: 'R-02' + (has('R-03') ? ', R-03' : ''), o: '생산팀 · 설비관리팀', d: '즉시' }));
+    fired.filter((f) => f.id === 'R-01').forEach((f) => D.push({ id: 'temp-' + f.line, auto: true, t: `${f.line} 95℃ 초과 입력 차단`, r: 'R-01', o: '설비관리팀', d: '즉시' }));
+    fired.filter((f) => f.id === 'SOP-S1').forEach((f) => D.push({ id: 'pulp-' + f.line, auto: true, t: `${f.line} 물 투입 10% 증가, 라인 감속`, r: 'SOP-S1', o: '생산팀', d: '즉시' }));
+    const held = LINES.filter((L) => /휴지|수리 보류/.test(status[L.id].st)).map((L) => L.id);
+    if (held.length) D.push({ id: 'hold-' + held.join(''), t: `${held.join(', ')} 휴지·수리 보류, 자원 전환`, r: [has('R-08') && 'R-08', has('R-09') && 'R-09'].filter(Boolean).join(', '), o: '공장장 · 영업팀장', d: '당일' });
+    if (has('R-10') || has('R-17')) D.push({ id: 'staff', t: '인력 배치안: ' + (runB.length ? runB.map((L) => `${L.id} ${asgB[L.id]}명`).join(', ') : '가동 라인 없음'), r: ['R-10', has('R-17') && 'R-17'].filter(Boolean).join(', '), o: '공장장 · 경영진', d: '교대 전' });
+    if (has('R-18')) D.push({ id: 'subs', t: `대체 인력 ${S.subs}명 수치 SOP 교육 후 투입`, r: 'R-18', o: '안전관리', d: '투입 전' });
+    if (has('R-17')) D.push({ id: 'union', t: '노조에 AI 조치 취지 설명 (안전 보조)', r: 'P-5', o: '경영진', d: '당일' });
+    if (has('R-12') || has('R-13')) D.push({ id: 'demand', t: `${op} 수요예측 갱신, 영업·생산 공동 회의`, r: [has('R-12') && 'R-12', has('R-13') && 'R-13', has('R-11') && 'R-11'].filter(Boolean).join(', '), o: '영업팀 · 생산팀', d: has('R-13') ? '48시간 내' : '1주 내' });
+    if (has('R-07')) D.push({ id: 'vague', t: '수치 없는 현장 지시 재확인', r: 'R-07', o: '생산팀', d: '즉시' });
+    if (has('R-14') || !S.eq05) D.push({ id: 'data', t: '입력 형식 통일, 마스터 데이터 등록', r: [has('R-14') && 'R-14', 'R-15'].filter(Boolean).join(', '), o: '경영기획팀', d: '1주 내' });
+
+    const g = (ids) => ids.filter(has);
+    const anyPulp = LINES.some((L) => safe[L.id].pulp);
+    const chain = [
+      { n: '날씨', d: `습도 ${S.humidity}%` + (rain ? ' 우천' : ' 맑음') + (S.humFmt === 'text' ? ', 텍스트 입력' : ''), risk: rain || S.humFmt === 'text', rules: g(['R-14']) },
+      { n: '작업자', d: has('R-01') ? '우천 중 상한 초과 설정' : has('R-07') ? '수치 없는 지시' : '설정 이상 없음', risk: has('R-01') || has('R-07'), rules: g(['R-01', 'R-07']) },
+      { n: '설비', d: has('R-02') ? fired.filter((f) => f.id === 'R-02').map((f) => f.line).join(', ') + ' 진동 초과' : anyPulp ? '펄프 농도 초과' : '센서 정상', risk: has('R-02') || anyPulp, rules: g(['R-02', 'R-03', 'R-05', 'SOP-S1']) },
+      { n: '품질', d: yA != null && yA < 0.95 ? `규칙 없으면 수율 ${pct(yA)}` : '불량 위험 낮음', risk: yA != null && yA < 0.95, rules: g(['SOP-S1', 'R-03', 'R-01']) },
+      { n: '비즈니스', d: PRODUCTS.filter((p) => surplus[p]).length ? PRODUCTS.filter((p) => surplus[p]).join(', ') + ' 재고 초과' : '재고 균형', risk: PRODUCTS.some((p) => surplus[p]) || has('R-13'), rules: g(['R-08', 'R-09', 'R-12', 'R-13', 'R-11']) },
+      { n: '인력', d: `출근 ${S.ratio}%` + (S.subs ? ` · 대체 ${S.subs}명` : ''), risk: S.ratio < EMERGENCY || (S.subs > 0 && !S.trained), rules: g(['R-17', 'R-10', 'R-18']) },
+    ];
+
+    const sensorHits = [];
+    LINES.forEach((L) => {
+      const e = S.eq[L.id];
+      if (e.vib > VIB_MAX) sensorHits.push(`${L.id} 진동 ${e.vib} > ${VIB_MAX.toFixed(1)}mm/s`);
+      if (rain && e.temp > TEMP_MAX) sensorHits.push(`${L.id} 온도 ${e.temp} > ${TEMP_MAX}℃ (우천)`);
+      if (e.pulp > PULP_MAX) sensorHits.push(`${L.id} 펄프 ${e.pulp} > ${PULP_MAX}%`);
+    });
+    const autoN = D.filter((d) => d.auto).length, apprN = D.length - autoN;
+    const flow = [
+      { n: '상황 입력', d: ctx.count ? `테스트 문장에서 조건 ${ctx.count}개를 읽고 나머지는 기준 데이터로 채움` : '입력된 조건으로 시작', rules: [], st: 'pass' },
+      { n: '데이터 정규화', d: has('R-14') ? '습도 텍스트 입력을 숫자로 바꿈' : '수치 형식 이상 없음', rules: ['R-14', 'R-15', 'R-16'] },
+      { n: '현장 언어 번역', d: g(['R-05', 'R-06', 'R-07']).length ? fired.filter((f) => ['R-05', 'R-06', 'R-07'].includes(f.id)).map((f) => f.ev).join(' / ') : '번역할 현장 표현 없음', rules: ['R-05', 'R-06', 'R-07'] },
+      { n: '센서 판정 (SOP)', d: sensorHits.length ? sensorHits.join(' · ') : '모든 센서가 SOP 기준 이내', rules: [], st: sensorHits.length ? 'alert' : 'pass' },
+      { n: '안전 조치', d: g(['R-01', 'R-02', 'R-03', 'SOP-S1']).length ? '즉시 실행 조치 발동' : '안전 조치 필요 없음', rules: ['R-01', 'R-02', 'R-03', 'SOP-S1'] },
+      { n: '전사 최적화', d: g(['R-08', 'R-09', 'R-12', 'R-13']).length ? fired.filter((f) => ['R-08', 'R-09', 'R-12', 'R-13'].includes(f.id)).map((f) => f.ev).join(' / ') : '재고·수요 균형, 조정 없음', rules: ['R-08', 'R-09', 'R-11', 'R-12', 'R-13'] },
+      { n: '인력 배치', d: runB.length ? `가동 ${runB.map((L) => `${L.id} ${asgB[L.id]}명`).join(', ')}` + (left ? ` · 예비 ${left}명` : '') : '가동 라인 없음', rules: ['R-17', 'R-10', 'R-18'] },
+      { n: '지시 · 승인', d: `자동 실행 ${autoN}건 · 경영진 승인 ${apprN}건`, rules: [], st: autoN ? 'alert' : apprN ? 'hit' : 'pass' },
+    ].map((s) => ({ ...s, fired: s.rules.filter(has), st: s.st || (s.rules.some(has) ? (s.rules.filter(has).some((r) => RULES[r].g === 'safety' || RULES[r].g === 'emer') ? 'alert' : 'hit') : 'pass') }));
+
+    function orderFor(L) {
+      const e = S.eq[L.id];
+      const steps = [], ok = [], mgmt = [];
+      let verdict, tone;
+      if (L.id === 'EQ-05' && !S.eq05) {
+        return { L, verdict: '자동 판단 불가', tone: 'mute', steps: [{ s: '설비관리팀에 수동 점검을 요청합니다.', w: 'EQ-05는 ERP 마스터에 없어 에이전트가 수치 판단을 할 수 없습니다 (R-15).' }], ok, mgmt, e };
+      }
+      if (e.vib > VIB_MAX) {
+        steps.push({ s: `${L.id} 가동을 즉시 멈춥니다.`, w: `진동 ${fv(e.vib)}mm/s가 기준 ${VIB_MAX.toFixed(1)}mm/s를 넘었습니다 (SOP 안전, R-02).` });
+        steps.push({ s: '베어링에 윤활유를 주입합니다.', w: 'SOP 안전 조치의 두 번째 단계입니다.' });
+        steps.push({ s: '설비관리팀이 점검 기록을 남기기 전에는 다시 켜지 않습니다.', w: '재가동은 시스템에서 잠겨 있습니다.' });
+      } else ok.push(`가동 중지 불필요: 진동 ${fv(e.vib)}mm/s ≤ ${VIB_MAX.toFixed(1)}mm/s`);
+      if (rain && e.temp > TEMP_MAX) {
+        steps.push({ s: `건조 온도 설정을 ${e.temp}℃에서 ${TEMP_MAX}℃ 이하로 되돌립니다.`, w: `습도 ${S.humidity}%(우천 기준 ${RAIN}% 이상)에서는 ${TEMP_MAX}℃ 초과가 금지입니다 (R-01). 추가 상향은 시스템이 차단합니다.` });
+        if (e.vib > VIB_MAX) steps.push({ s: '원인을 운전 조건 이탈로 기록합니다.', w: '온도 조작 뒤 진동이 생긴 경우 수리보다 운전 기준 교정이 먼저입니다 (R-03).' });
+      } else ok.push(rain ? `온도 조정 불필요: 설정 ${e.temp}℃ ≤ ${TEMP_MAX}℃` : `온도 조정 불필요: 비가 오지 않음(습도 ${S.humidity}%), 설정 ${e.temp}℃`);
+      if (e.pulp > PULP_MAX) {
+        const lowTo = L.rpm > RPM_LOW ? `${f0(L.rpm)} RPM에서 정상 범위 하한 ${f0(RPM_LOW)} RPM 쪽으로` : `현재 ${f0(L.rpm)} RPM보다 낮게`;
+        steps.push({ s: '물 투입량을 지금보다 10% 늘립니다.', w: `펄프 농도 ${e.pulp}%가 기준 ${PULP_MAX}%를 넘었습니다 (SOP 품질).` });
+        steps.push({ s: `라인 속도를 ${lowTo} 낮춥니다.`, w: `SOP 품질 조치는 물 투입과 감속을 함께 합니다. 정상 RPM 범위는 ${f0(RPM_LOW)}~${f0(RPM_HIGH)}입니다.` });
+        steps.push({ s: `펄프 농도를 다시 측정해 ${PULP_MAX}% 이하가 되면 원래 속도로 돌립니다.`, w: `여전히 ${PULP_MAX}%를 넘으면 물 투입 10% 증가를 한 번 더 하고 공장장에게 보고합니다.` });
+      } else ok.push(`펄프 조정 불필요: 농도 ${e.pulp}% ≤ ${PULP_MAX}%`);
+      const anomaly = steps.length > 0;
+      if (anomaly && (/패닉|당황|무섭|겁|불안/.test(text) || has('R-07'))) {
+        steps.push({ s: '감이나 구두 표현 대신 위 수치로만 조치하고, 조치 전후 측정값을 일지에 숫자로 남깁니다.', w: '"질척", "쇳소리" 같은 표현은 센서 수치로 바꿔 판단합니다 (P-2, R-07).' });
+      }
+      if (anomaly) steps.push({ s: '조치가 끝나면 공장장과 설비관리팀에 측정값으로 보고합니다.', w: '모든 지시에는 근거 수치와 규칙 ID를 남깁니다 (P-3).' });
+      if (e.vib > VIB_MAX) { verdict = '즉시 정지'; tone = 'bad'; }
+      else if (rain && e.temp > TEMP_MAX) { verdict = '온도 복귀 후 가동'; tone = 'warn'; }
+      else if (e.pulp > PULP_MAX) { verdict = '가동 유지 · 공정 조정'; tone = 'warn'; }
+      else if (surplus[L.product]) {
+        verdict = '신규 생산 보류'; tone = 'warn';
+        const to = runB.filter((x) => x.id !== L.id).map((x) => x.id);
+        steps.push({ s: '지금 돌고 있는 Lot까지만 마무리하고 신규 생산은 시작하지 않습니다.', w: `센서는 모두 SOP 기준 이내지만 ${L.product} 재고 ${f0(S.inv[L.product].stock)}t가 예측 ${f0(fcB[L.product])}t의 ${SURPLUS_X}배 이상입니다 (R-09). 경영진 승인 후 확정됩니다.` });
+        if (to.length) steps.push({ s: `이 라인 인력 ${L.need}명은 승인 즉시 ${to.join(', ')}로 옮길 준비를 합니다.`, w: '인력 1명당 가치가 큰 라인부터 채웁니다 (R-08, R-10).' });
+      }
+      else { verdict = '정상 가동 유지'; tone = 'ok'; steps.push({ s: '현재 설정 그대로 가동합니다.', w: '모든 센서가 SOP 기준 이내입니다 (R-04).' }); }
+      if (surplus[L.product] && verdict !== '신규 생산 보류') mgmt.push(`${L.product} 재고가 예측수요의 ${SURPLUS_X}배 이상이라 이 라인은 경영진 승인 후 휴지 대상입니다 (R-09). 현장 조치와 별개로 공장장 결정을 기다립니다.`);
+      if (status[L.id].st.startsWith('대기')) mgmt.push('파업으로 인력이 부족해 이 라인은 배치 순위에서 밀렸습니다 (R-10, R-17).');
+      if (S.subs > 0 && !S.trained) mgmt.push(`대체 인력 ${S.subs}명은 수치 SOP 교육 전이라 이 라인 설비를 조작할 수 없습니다 (R-18).`);
+      return { L, verdict, tone, steps, ok, mgmt, e };
+    }
+    const askLines = (ctx.mentioned || []).filter((id) => LINE[id]);
+    const anomalyLines = LINES.filter((L) => safe[L.id].r01 || safe[L.id].r02 || safe[L.id].pulp).map((L) => L.id);
+    const targetIds = askLines.length ? askLines : anomalyLines;
+    const orders = targetIds.map((id) => orderFor(LINE[id]));
+
+    const stopped = LINES.filter((L) => status[L.id].tone === 'bad').map((L) => L.id);
+    const level = has('R-01') || has('R-02') || has('SOP-S1') ? 'bad' : ['R-08', 'R-09', 'R-17', 'R-18', 'R-12', 'R-13', 'R-14', 'R-07', 'R-10'].some(has) ? 'warn' : 'ok';
+    const parts = [];
+    const heldOnly = held.filter((id) => !stopped.includes(id));
+    if (stopped.length) parts.push(`안전 정지 ${stopped.join(', ')}`);
+    if (heldOnly.length) parts.push(`재고 초과로 휴지 ${heldOnly.join(', ')}`);
+    if (runB.length) parts.push(`가동 ${runB.map((L) => `${L.id}(${asgB[L.id]}명)`).join(' → ')}`);
+    else parts.push('가동할 수 있는 라인 없음');
+    if (left > 0 && runB.length) parts.push(`남는 인력 ${left}명은 교대 보강과 SOP 교육`);
+
+    const waiting = LINES.filter((L) => status[L.id].st.startsWith('대기')).map((L) => L.id);
+    return { fired, has, status, asgA, asgB, active, kpis, D, chain, flow, orders, level, parts, usableB, regular, left, value, totalNeed, rain, fcB, op, ch, runB, held, waiting, unrelated, noise };
+  }
+
+  function answerText(R) {
+    const who = ctx.who ? `${ctx.who} ${PEOPLE[ctx.who] || ''}`.trim() : null;
+    const out = [];
+    const headOf = { '즉시 정지': '지금 바로 멈춰야 합니다', '정상 가동 유지': '정상 범위라 그대로 가동하면 됩니다', '자동 판단 불가': '데이터가 없어 자동 판단을 할 수 없습니다', '온도 복귀 후 가동': '온도를 되돌린 뒤 가동할 수 있습니다', '가동 유지 · 공정 조정': '멈출 필요는 없고 공정만 조정하면 됩니다', '신규 생산 보류': '센서는 정상이지만 재고 초과로 신규 생산을 멈춰야 합니다' };
+    R.orders.forEach((o, idx) => {
+      const head = `${who && idx === 0 ? who + '님, ' : ''}${o.L.id}(${o.L.name})는 ${headOf[o.verdict] || o.verdict}.`;
+      const why = o.ok.length && o.verdict !== '즉시 정지' && o.verdict !== '신규 생산 보류' ? ' ' + o.ok.slice(0, 2).map((s) => s.replace(/^[^:]+:\s*/, '')).join(', ') + '이므로 다른 조치는 필요 없습니다.' : '';
+      const steps = o.steps.filter((s) => !/보고합니다|일지에/.test(s.s)).map((s, i) => `${'①②③④⑤⑥'[i] || ''} ${s.s}`).join(' ');
+      out.push({ l: '현장 조치', t: head + why + (steps ? ' 지금 할 일은 ' + steps : '') });
+    });
+    if (!R.orders.length) out.push({ l: '현장 조치', t: '설비 센서는 모두 SOP 기준 이내입니다. 현장에서 바로 멈추거나 조정할 설비는 없습니다.' });
+    const dataBits = [];
+    if (R.has('R-14')) dataBits.push(`습도 "${S.humidity}% (우천)" 텍스트 입력은 저장을 거부하고 숫자 ${(S.humidity / 100).toFixed(2)}로 다시 입력합니다(R-14). 그래야 온도 인터락(R-01)이 작동합니다.`);
+    if (R.noise.length) dataBits.push(`"${R.noise.join('", "')}" 같은 표현은 생산 판단에서 빼고 시설 요청으로만 넘깁니다(R-06).`);
+    if (R.unrelated.length) dataBits.push(`${R.unrelated.join(', ')} 건은 생산 의사결정과 무관해 제외합니다(R-16).`);
+    if (dataBits.length) out.push({ l: '데이터 정비', t: dataBits.join(' ') });
+    if (R.has('R-12') || R.has('R-13')) {
+      const msg = S.order.path === 'messenger';
+      out.push({ l: '수요 대응', t: `${R.op} 발주 ${signed(R.ch)}% 신호가 ${msg ? '메신저로만' : '발주 데이터로'} 들어왔습니다. ` + (R.has('R-12') ? `예측을 ${f0(S.inv[R.op].fc)}t에서 ${f0(R.fcB[R.op])}t로 낮추고(R-12) ` : '') + (msg ? '영업팀은 48시간 안에 실제 발주 데이터를 입력합니다(R-13). ' : '') + '영업과 생산은 이 숫자로 공동 생산계획을 정합니다(R-11).' });
+    }
+    if (R.has('R-17') || R.has('R-10') || R.has('R-18')) {
+      let t = `출근 ${S.ratio}%로 평시 ${R.totalNeed}명 중 ${R.regular}명이 가용합니다.`;
+      if (S.subs > 0) t += S.trained ? ` 교육을 마친 대체 인력 ${S.subs}명을 더합니다.` : ` 대체 인력 ${S.subs}명은 수치 SOP 교육 전이라 설비를 맡기지 않습니다(R-18).`;
+      if (R.runB.length) t += ` 인력 1명당 가치 순으로 ${R.runB.map((L) => `${L.id} ${R.asgB[L.id]}명(가치 ${R.value(L).toFixed(1)})`).join(' → ')}을 채웁니다(R-10).`;
+      const hb = R.held.filter((id) => R.status[id].tone !== 'bad');
+      if (hb.length) t += ` ${hb.join(', ')}는 재고 초과로 휴지합니다(R-09).`;
+      if (R.waiting.length) t += ` ${R.waiting.join(', ')}는 최소 인원을 채울 수 없어 가동하지 않습니다(R-17).`;
+      if (R.left) t += ` 남는 ${R.left}명은 교대 보강과 대체 인력 교육을 맡습니다.`;
+      out.push({ l: '인력 배치', t });
+    }
+    const mg = R.D.filter((d) => !d.auto);
+    if (mg.length) out.push({ l: '경영진 승인', t: mg.slice(0, 4).map((d) => d.t).join(' / ') + (mg.length > 4 ? ` 외 ${mg.length - 4}건` : '') + '.', sum: true });
+    out.push({ l: '전사 운영', t: R.parts.join(', ') + '.', sum: true });
+    return out;
+  }
+
+  function render() {
+    const R = evaluate(S, ctx);
+    const order = (id) => ORDER.indexOf(id);
+    const sorted = [...R.fired].sort((a, b) => order(a.id) - order(b.id));
+    const ids = [...new Set(sorted.map((f) => f.id))].filter((id) => id !== 'R-04');
+
+    $('verdict').className = 'verdict lv-' + R.level;
+    $('vhead').replaceChildren(mk('span', 'chip ' + R.level, { bad: '위험 · 즉시 조치', warn: '주의 · 승인 필요', ok: '정상 운영' }[R.level]), mk('span', 'chip info', `규칙 ${ids.length}개 발동`), mk('span', 'chip mute', `자동 실행 ${R.D.filter((d) => d.auto).length} · 승인 대기 ${R.D.filter((d) => !d.auto && !decide[d.id]).length}`));
+    $('vq').textContent = ctx.question ? '질문: ' + ctx.question : '';
+    $('vq').hidden = !ctx.question;
+    $('answer').replaceChildren(...answerText(R).map((a) => { const p = mk('p', a.sum ? 'sum' : ''); p.append(mk('b', 'al', a.l), document.createTextNode(a.t)); return p; }));
+
+    $('sec-orders').hidden = !R.orders.length;
+    $('orders').replaceChildren(...R.orders.map((o) => {
+      const c = mk('article', 'order');
+      const h = mk('div', 'oh');
+      const tt = mk('div', 'ot', o.L.id); tt.append(mk('small', '', `${o.L.name} · ${o.L.product}`));
+      h.append(tt, mk('span', 'chip ' + o.tone, o.verdict));
+      const rd = mk('div', 'readings');
+      [['건조 온도', o.e.temp + '℃', R.rain ? `상한 ${TEMP_MAX}℃` : '우천 아님', R.rain && o.e.temp > TEMP_MAX], ['진동', fv(o.e.vib) + 'mm/s', `기준 ${VIB_MAX.toFixed(1)}`, o.e.vib > VIB_MAX], ['펄프 농도', o.e.pulp + '%', `기준 ${PULP_MAX}%`, o.e.pulp > PULP_MAX]].forEach(([k, v, l, over]) => {
+        const b = mk('div', 'rd' + (over ? ' over' : '')); b.append(mk('span', 'rk', k), mk('span', 'rv', v), mk('span', 'rl', l)); rd.append(b);
+      });
+      const ol = mk('ol', 'steps');
+      o.steps.forEach((s) => { const li = mk('li'); li.append(document.createTextNode(s.s), mk('span', 'why', s.w)); ol.append(li); });
+      c.append(h, rd, ol);
+      if (o.ok.length) { const ul = mk('ul', 'notneed'); o.ok.forEach((s) => ul.append(mk('li', '', s))); c.append(ul); }
+      if (o.mgmt.length) { const m = mk('div', 'mgmt'); o.mgmt.forEach((s) => { const p = mk('div'); p.append(mk('b', '', '경영 판단 '), document.createTextNode(s)); m.append(p); }); c.append(m); }
+      return c;
+    }));
+
+    $('flow').replaceChildren(...R.flow.map((s, i) => {
+      const li = mk('li', s.st);
+      const body = mk('div', 'fbody');
+      const h = mk('div', 'fh'); h.append(mk('span', 'fn', s.n), mk('span', 'chip ' + { pass: 'ok', hit: 'info', alert: 'bad' }[s.st], { pass: '통과', hit: '규칙 발동', alert: '조치' }[s.st]));
+      body.append(h, mk('div', 'fd', s.d));
+      if (s.rules.length) { const fr = mk('div', 'fr'); s.rules.forEach((r) => fr.append(mk('span', 'chip rid ' + (s.fired.includes(r) ? 'info' : 'off'), r))); body.append(fr); }
+      li.append(mk('span', 'dot', i + 1), body);
+      return li;
+    }));
+
+    const src = (keys) => {
+      if (keys.some((k) => ctx.manual.has(k))) return ['직접 조정', 'warn'];
+      const hit = keys.find((k) => ctx.parsed.has(k));
+      if (hit) return [ctx.notes[hit] ? '테스트 문장 · ' + ctx.notes[hit] : '테스트 문장', 'info'];
+      return ['기준 데이터', 'mute'];
+    };
+    const rows = [
+      ['습도', `${S.humidity}% (${S.humidity >= RAIN ? '우천' : '맑음'})`, ['humidity']],
+      ['습도 입력 형식', S.humFmt === 'text' ? '텍스트' : '숫자', ['humFmt']],
+      ...LINES.map((L) => [`${L.id} 온도·진동·펄프`, `${S.eq[L.id].temp}℃ · ${fv(S.eq[L.id].vib)}mm/s · ${S.eq[L.id].pulp}%`, ['temp', 'vib', 'pulp'].map((k) => `eq.${L.id}.${k}`)]),
+      ...PRODUCTS.map((p) => [`${p} 재고/예측`, `${f0(S.inv[p].stock)}t / ${f0(S.inv[p].fc)}t`, ['stock', 'fc', 'last'].map((k) => `inv.${p}.${k}`)]),
+      ['거래처 발주 변화', S.order.change ? `${S.order.product} ${signed(S.order.change)}% · ${S.order.path === 'messenger' ? '메신저' : '발주 데이터'}` : '변화 없음', ['order.change', 'order.path', 'order.product']],
+      ['출근 가능 비율', S.ratio + '%', ['ratio']],
+      ['대체 인력', S.subs ? `${S.subs}명 · ${S.trained ? '교육 완료' : '교육 전'}` : '없음', ['subs', 'trained']],
+      ['EQ-05 ERP 등록', S.eq05 ? '등록' : '미등록', ['eq05']],
+    ];
+    $('conds').replaceChildren(...rows.map(([k, v, keys]) => {
+      const [s, tone] = src(keys);
+      const tr = mk('tr'); const sc = mk('td'); sc.append(mk('span', 'chip ' + tone, s));
+      tr.append(mk('td', '', k), mk('td', 'c-v', v), sc); return tr;
+    }));
+
+    $('kpis').replaceChildren(...R.kpis.map((k) => {
+      const c = mk('div', 'kpi'); const v = mk('div', 'v');
+      v.append(mk('span', 'a' + (String(k.a) === String(k.b) ? ' same' : ''), k.a), mk('span', 'arw', '→'), mk('span', 'b', k.b), mk('span', 'u', k.u));
+      c.append(mk('span', 'k', k.k), v); return c;
+    }));
+
+    $('chain').replaceChildren(...R.chain.map((n) => {
+      const li = mk('li', 'node' + (n.risk ? ' risk' : '') + (n.risk && n.rules.length ? ' handled' : ''));
+      const t = mk('div', 'nt'); t.append(mk('span', '', n.n), mk('span', 'chip ' + (n.risk ? (n.rules.length ? 'ok' : 'bad') : 'mute'), n.risk ? (n.rules.length ? '대응' : '위험') : '정상'));
+      li.append(t, mk('div', 'nd', n.d));
+      if (n.rules.length) { const rr = mk('div', 'nr'); n.rules.forEach((r) => rr.append(mk('span', 'chip info rid', r))); li.append(rr); }
+      return li;
+    }), (() => {
+      const li = mk('li', 'node risk handled');
+      const t = mk('div', 'nt'); t.append(mk('span', '', '최종 전략'), mk('span', 'chip ' + R.level, { bad: '긴급', warn: '조정', ok: '유지' }[R.level]));
+      li.append(t, mk('div', 'nd', R.parts[0] || '현 운영 유지')); return li;
+    })());
+
+    $('firedCount').textContent = `${sorted.length}건`;
+    $('fired').replaceChildren(...(sorted.length ? sorted.map((f) => {
+      const m = RULES[f.id]; const li = mk('li');
+      li.append(mk('span', 'fid g-' + m.g, f.id));
+      const body = mk('div'); body.append(mk('div', 'ft', m.t), mk('div', 'fe', f.ev));
+      li.append(body, mk('div', 'fa', m.a)); return li;
+    }) : [mk('p', 'empty', '발동한 규칙이 없습니다.')]));
+
+    $('lines').replaceChildren(...LINES.map((L) => {
+      const s = R.status[L.id]; const tr = mk('tr'); const st = mk('td'); st.append(mk('span', 'chip ' + s.tone, s.st));
+      const inA = R.active.includes(L);
+      const a = !inA ? '판단 불가' : R.asgA[L.id] > 0 ? (R.asgA[L.id] < L.need ? `인원 미달 가동 (${R.asgA[L.id]}/${L.need})` : '가동') : '인력 없음';
+      tr.append(mk('td', 'c-id', L.id), mk('td', '', L.product), st, mk('td', 'c-why', s.why), mk('td', '', a)); return tr;
+    }));
+
+    const maxN = Math.max(...R.active.map((L) => L.need), 1);
+    $('staff').replaceChildren(...R.active.map((L) => {
+      const row = mk('div', 'srow');
+      const lab = mk('div', 'sl'); lab.append(document.createTextNode(`${L.id} ${L.product}`), mk('small', '', `1명당 가치 ${R.value(L).toFixed(1)}`));
+      const bars = mk('div', 'bars');
+      [['need', L.need, '필요'], ['ta', R.asgA[L.id], 'A'], ['tb', R.asgB[L.id], 'B']].forEach(([cls, val, nm]) => {
+        const b = mk('div', 'bar'); const tr = mk('div', 'track'); const sp = mk('span', cls); sp.style.width = (val / maxN * 100) + '%'; tr.append(sp);
+        b.setAttribute('aria-label', `${nm} ${val}명`); b.append(tr, mk('span', 'bv', `${nm} ${val}명`)); bars.append(b);
+      });
+      row.append(lab, bars); return row;
+    }));
+    $('staffSum').textContent = `평시 필요 ${R.totalNeed}명 · 출근 ${R.regular}명` + (S.subs ? ` · 대체 인력 ${S.subs}명(${S.trained ? '교육 완료, B에 포함' : '교육 전, B에서 제외'})` : '') + ` · 실험 B 배치 ${R.usableB - R.left}명, 예비 ${R.left}명`;
+
+    $('decisions').replaceChildren(...(R.D.length ? R.D.map((d) => {
+      const st = d.auto ? 'auto' : decide[d.id] || 'pending';
+      const c = mk('article', 'dcard st-' + st); const h = mk('div', 'dh');
+      h.append(mk('span', 'rid dm', d.r), mk('span', 'chip ' + { auto: 'ok', approved: 'ok', rejected: 'bad', pending: 'warn' }[st], { auto: '자동 실행', approved: '승인됨', rejected: '반려됨', pending: '승인 대기' }[st]));
+      c.append(h, mk('div', 'dt', d.t), mk('div', 'dm', `${d.o} · ${d.d}`));
+      if (!d.auto) {
+        const acts = mk('div', 'da');
+        const btn = (label, val) => { const b = mk('button', '', label); b.type = 'button'; b.addEventListener('click', () => { if (val) decide[d.id] = val; else delete decide[d.id]; render(); }); return b; };
+        if (st === 'pending') acts.append(btn('승인', 'approved'), btn('반려', 'rejected')); else acts.append(btn('되돌리기', null));
+        c.append(acts);
+      }
+      return c;
+    }) : [mk('p', 'empty', '권고할 조치가 없습니다. 현 운영을 유지합니다.')]));
+  }
+
+  const bound = [...document.querySelectorAll('[data-k]')];
+  function syncInputs() {
+    bound.forEach((el) => {
+      const v = getPath(S, el.dataset.k);
+      if (el.type === 'radio') el.checked = el.value === v; else if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
+    });
+    syncOutputs();
+  }
+  function syncOutputs() {
+    $('out-hum').textContent = S.humidity + '%';
+    $('out-ordc').textContent = signed(S.order.change) + '%';
+    $('out-ratio').textContent = S.ratio + '%';
+  }
+  bound.forEach((el) => {
+    const ev = el.tagName === 'TEXTAREA' || el.type === 'range' || el.type === 'number' ? 'input' : 'change';
+    el.addEventListener(ev, () => {
+      let v;
+      if (el.type === 'checkbox') v = el.checked;
+      else if (el.type === 'radio') { if (!el.checked) return; v = el.value; }
+      else if (el.type === 'range' || el.type === 'number') { v = parseFloat(el.value); if (Number.isNaN(v)) return; }
+      else v = el.value;
+      setPath(S, el.dataset.k, v);
+      if (el.dataset.k !== 'log') ctx.manual.add(el.dataset.k);
+      syncOutputs(); render();
+    });
+  });
+  document.querySelectorAll('[data-add]').forEach((b) => b.addEventListener('click', () => {
+    S.log = (S.log ? S.log.replace(/\s*$/, '') + '\n' : '') + b.dataset.add;
+    $('in-log').value = S.log; render();
+  }));
+
+  function runTest() {
+    const text = $('test-text').value.trim();
+    if (!text) { $('test-err').hidden = false; $('test-text').focus(); return; }
+    $('test-err').hidden = true;
+    const P = parseTest(text, $('base').value);
+    S = P.st; ctx = P.ctx;
+    Object.keys(decide).forEach((k) => delete decide[k]);
+    syncInputs(); render();
+    $('parse-hint').textContent = `문장에서 조건 ${ctx.count}개를 읽었습니다. 나머지는 기준 데이터를 씁니다. "조건 직접 조정"에서 값을 바꾸면 결과가 바로 다시 계산됩니다.`;
+  }
+  $('run').addEventListener('click', runTest);
+  $('test-text').addEventListener('input', () => { $('test-err').hidden = true; document.querySelectorAll('#tests button').forEach((b) => b.setAttribute('aria-pressed', 'false')); });
+  $('test-text').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runTest(); } });
+  $('base').addEventListener('change', runTest);
+  document.querySelectorAll('#tests button').forEach((b) => b.addEventListener('click', () => {
+    $('test-text').value = TESTS[b.dataset.t];
+    document.querySelectorAll('#tests button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    runTest();
+  }));
+  const tabs = [['tab-test', 'panel-test'], ['tab-manual', 'panel-manual']];
+  tabs.forEach(([t, p]) => $(t).addEventListener('click', () => { tabs.forEach(([t2, p2]) => { $(t2).setAttribute('aria-selected', String(t2 === t)); $(p2).hidden = p2 !== p; }); }));
+
+  $('test-text').value = TESTS.t1;
+  runTest();
 })();
 </script>
-<script>
-window.hg = window.hg || { mode: 'B', step: null, timer: null, decide: {}, ruleFilter: '' };
-window.hgF = { f0: d3.format(','), f1: d3.format('.1f'), pct0: d3.format('.0%'), pct2: d3.format('.2%') };
-window.hgMk = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; };
-window.hgRow = (el) => {
-  const g = dash.data(el.dataset.source);
-  if (g.status !== 'ok') return null;
-  const ws = [...new URLSearchParams(el.dataset.where || '').entries()];
-  return g.data.find((r) => ws.every(([k, v]) => String(r[k]) === v)) || null;
-};
-window.hgCell = (fmt) => (el) => { const r = hgRow(el); el.textContent = r ? fmt(r[el.dataset.field]) : '—'; };
-window.hgBars = (el, rows, labelOf, series, fmt) => {
-  el.replaceChildren();
-  const W = Math.max(260, el.clientWidth || 560);
-  const svg = d3.select(el).append('svg').attr('width', '100%').style('display', 'block').style('font-family', 'var(--font-anthropic-sans)');
-  const probe = svg.append('g').attr('font-size', 12);
-  let lw = 0, vw = 0;
-  rows.forEach((r) => {
-    lw = Math.max(lw, probe.append('text').text(labelOf(r)).node().getComputedTextLength());
-    series.forEach((s) => { vw = Math.max(vw, probe.append('text').text(fmt(r[s.key])).node().getComputedTextLength()); });
-  });
-  probe.remove();
-  const m = { l: Math.ceil(lw) + 16, r: Math.ceil(vw) + 12, t: 6, b: 6 };
-  const barH = 12, gap = 4, pad = 18;
-  const gH = series.length * barH + (series.length - 1) * gap;
-  const H = m.t + m.b + rows.length * gH + (rows.length - 1) * pad;
-  svg.attr('viewBox', `0 0 ${W} ${H}`);
-  const max = d3.max(rows, (r) => d3.max(series, (s) => +r[s.key])) || 1;
-  const x = d3.scaleLinear([0, max], [m.l, W - m.r]);
-  x.ticks(4).forEach((t) => svg.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', 0).attr('y2', H).style('stroke', 'var(--cds-chart-grid)'));
-  svg.append('line').attr('x1', m.l).attr('x2', m.l).attr('y1', 0).attr('y2', H).style('stroke', 'var(--cds-chart-axis)');
-  const tip = hgMk('div', 'hg-tip'); tip.hidden = true; el.appendChild(tip);
-  rows.forEach((r, i) => {
-    const y0 = m.t + i * (gH + pad);
-    const g = svg.append('g');
-    g.append('text').attr('x', m.l - 10).attr('y', y0 + gH / 2).attr('text-anchor', 'end').attr('dominant-baseline', 'central').attr('font-size', 12).style('fill', 'var(--color-fg)').text(labelOf(r));
-    series.forEach((s, j) => {
-      const y = y0 + j * (barH + gap), v = +r[s.key];
-      g.append('rect').attr('x', m.l).attr('y', y).attr('width', Math.max(0, x(v) - m.l)).attr('height', barH).attr('rx', 2).style('fill', s.color);
-      g.append('text').attr('x', x(v) + 6).attr('y', y + barH / 2).attr('dominant-baseline', 'central').attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text(fmt(v));
-    });
-    g.append('rect').attr('x', 0).attr('y', y0 - pad / 2).attr('width', W).attr('height', gH + pad).style('fill', 'transparent')
-      .on('mousemove', (ev) => {
-        tip.replaceChildren(hgMk('div', 'hg-tip-h', labelOf(r)));
-        series.forEach((s) => { const line = hgMk('div', 'hg-tip-l'); const sw = hgMk('span', 'hg-sw'); sw.style.background = s.color; line.append(sw, document.createTextNode(`${s.name} ${fmt(r[s.key])}`)); tip.append(line); });
-        tip.hidden = false;
-        const [px, py] = d3.pointer(ev, el);
-        tip.style.left = Math.max(0, Math.min(px + 12, el.clientWidth - tip.offsetWidth)) + 'px';
-        tip.style.top = (py + 12) + 'px';
-      })
-      .on('mouseleave', () => { tip.hidden = true; });
-  });
-};
-document.querySelectorAll('.hg-sw[data-sw]').forEach((s) => { const k = s.dataset.sw; s.style.background = k === 'muted' ? 'var(--cds-chart-muted)' : dash.colors[+k]; });
-</script>
-
-<script>
-dash.draw('vib', hgCell((v) => hgF.f1(v)));
-dash.draw('l102', hgCell((v) => hgF.pct0(v)));
-dash.draw('kpi', hgCell((v) => hgF.f0(v)));
-</script>
-
-<script>
-const hgStop = () => { if (hg.timer) { clearInterval(hg.timer); hg.timer = null; } };
-const hgSyncMode = () => document.querySelectorAll('.hg-mode').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === hg.mode)));
-document.querySelectorAll('.hg-mode').forEach((b) => b.addEventListener('click', () => { hg.mode = b.dataset.mode; hgSyncMode(); dash.draw('replay'); }));
-document.querySelectorAll('.hg-prev').forEach((b) => b.addEventListener('click', () => { hgStop(); const t = hg.total || 1; hg.step = Math.max(1, (hg.step ?? t) - 1); dash.draw('replay'); }));
-document.querySelectorAll('.hg-next').forEach((b) => b.addEventListener('click', () => { hgStop(); const t = hg.total || 1; hg.step = Math.min(t, (hg.step ?? t) + 1); dash.draw('replay'); }));
-document.querySelectorAll('.hg-play').forEach((b) => b.addEventListener('click', () => {
-  hgStop(); hg.step = 1; dash.draw('replay');
-  hg.timer = setInterval(() => { if (hg.step >= (hg.total || 1)) { hgStop(); return; } hg.step += 1; dash.draw('replay'); }, 1800);
-}));
-
-dash.draw('replay', (el) => {
-  const g = dash.data('events');
-  if (g.status !== 'ok') { el.textContent = '—'; return; }
-  const ev = [...g.data].sort((a, b) => a.step - b.step);
-  hg.total = ev.length;
-  const cur = Math.min(hg.step ?? ev.length, ev.length);
-  const B = hg.mode === 'B';
-  const tone = B ? ' tone-ok' : ' tone-bad';
-  const chain = hgMk('ol', 'rp-chain');
-  ev.forEach((e) => {
-    const li = hgMk('li', 'rp-node ' + (e.step < cur ? 'is-done' : e.step === cur ? 'is-now' : 'is-future') + (e.step <= cur ? tone : ''));
-    li.tabIndex = 0; li.setAttribute('role', 'button'); li.setAttribute('aria-label', `${e.node} 단계 보기`);
-    li.append(hgMk('span', 'rp-t', e.node), hgMk('span', 'rp-s', e.time));
-    const go = () => { hgStop(); hg.step = e.step; dash.draw('replay'); };
-    li.addEventListener('click', go);
-    li.addEventListener('keydown', (k) => { if (k.key === 'Enter' || k.key === ' ') { k.preventDefault(); go(); } });
-    chain.append(li);
-  });
-  const e = ev.find((x) => x.step === cur) || ev[ev.length - 1];
-  const now = hgMk('div', 'rp-now' + tone);
-  now.append(hgMk('div', 'rp-meta', `${e.step} / ${ev.length} 단계 · ${e.time} · ${e.source}`), hgMk('div', 'rp-fact', e.fact), hgMk('div', 'rp-lab', B ? '키네틱 규칙을 적용하면' : '규칙 없이 흘러가면'), hgMk('div', 'rp-out', B ? e.outcome_b : e.outcome_a));
-  if (B && e.rules_b) { const chips = hgMk('div', 'rp-chips'); e.rules_b.split(',').map((s) => s.trim()).filter(Boolean).forEach((r) => chips.append(hgMk('span', 'hg-chip ok', r))); now.append(chips); }
-  const log = hgMk('div', 'rp-log');
-  log.append(hgMk('div', 'rp-lab', B ? '규칙 발동 로그' : '현장 처리 기록'));
-  const ul = hgMk('ul', 'rp-loglist');
-  ev.filter((x) => x.step <= cur).forEach((x) => { const li = hgMk('li', x.step === cur ? 'is-now' : ''); li.append(hgMk('span', 'rp-lt', x.time), hgMk('span', 'rp-lr', B ? (x.rules_b || '') : ''), hgMk('span', '', B ? x.log_b : x.log_a)); ul.append(li); });
-  log.append(ul);
-  const body = hgMk('div', 'rp-body'); body.append(now, log);
-  el.replaceChildren(chain, body);
-});
-</script>
-
-<script>
-dash.draw('decisions', (el) => {
-  const g = dash.data('decisions');
-  if (g.status !== 'ok') { el.textContent = '—'; return; }
-  const label = { auto: '자동 실행 (안전)', approved: '승인됨', rejected: '반려됨', pending: '승인 대기' };
-  const cls = { auto: 'ok', approved: 'ok', rejected: 'bad', pending: 'warn' };
-  const states = g.data.map((d) => (d.mode === '자동 실행' ? 'auto' : (hg.decide[d.id] || 'pending')));
-  const count = (s) => states.filter((x) => x === s).length;
-  const sum = hgMk('div', 'dc-sum');
-  sum.append(hgMk('span', 'hg-chip ok', `자동 실행 ${count('auto')}`), hgMk('span', 'hg-chip ok', `승인 ${count('approved')}`), hgMk('span', 'hg-chip warn', `대기 ${count('pending')}`), hgMk('span', 'hg-chip bad', `반려 ${count('rejected')}`));
-  const grid = hgMk('div', 'dc-grid');
-  g.data.forEach((d, i) => {
-    const st = states[i];
-    const card = hgMk('article', 'dc-card st-' + st);
-    const head = hgMk('div', 'dc-head'); head.append(hgMk('span', 'dc-id', d.id), hgMk('span', 'hg-chip ' + cls[st], label[st]));
-    const meta = hgMk('dl', 'dc-meta');
-    [['근거', d.rules], ['담당', d.owner], ['기한', d.deadline]].forEach(([k, v]) => meta.append(hgMk('dt', '', k), hgMk('dd', '', v)));
-    card.append(head, hgMk('h3', 'dc-title', d.title), hgMk('p', 'dc-detail', d.detail), meta);
-    if (st !== 'auto') {
-      const acts = hgMk('div', 'dc-acts');
-      const set = (v) => { hg.decide[d.id] = v; dash.draw('decisions'); };
-      if (st === 'pending') {
-        const a = hgMk('button', 'hg-btn', '승인'); a.type = 'button'; a.addEventListener('click', () => set('approved'));
-        const r = hgMk('button', 'hg-btn', '반려'); r.type = 'button'; r.addEventListener('click', () => set('rejected'));
-        acts.append(a, r);
-      } else {
-        const u = hgMk('button', 'hg-btn', '되돌리기'); u.type = 'button'; u.addEventListener('click', () => set('pending'));
-        acts.append(u);
-      }
-      card.append(acts);
-    }
-    grid.append(card);
-  });
-  el.replaceChildren(sum, grid);
-});
-</script>
-
-<script>
-dash.calc('staff_value', {
-  inputs: ['staffing'],
-  title: '인력 1명당 배치 가치',
-  description: '수요 부족량(톤) × 이익률 ÷ 라인 필요 인원. 클수록 먼저 배치한다(R-10).',
-  fn: (staffing) => staffing.map((r) => ({ line: r.line, value_per_staff: r.need ? Math.round((r.shortage_t * r.margin / r.need) * 10) / 10 : 0 })),
-});
-
-dash.draw('staffchart', (el) => {
-  const g = dash.data('staffing');
-  if (g.status !== 'ok') { el.replaceChildren(); return; }
-  hgBars(el, g.data, (r) => `${r.line} ${r.product}`, [
-    { key: 'need', name: '평시 필요', color: 'var(--cds-chart-muted)' },
-    { key: 'before_assign', name: '실험 A 배치', color: dash.colors[1] },
-    { key: 'after_assign', name: '실험 B 배치', color: dash.colors[0] },
-  ], (v) => `${hgF.f0(v)}명`);
-});
-
-dash.draw('stafftable', (tb) => {
-  tb.replaceChildren();
-  const g = dash.data('staffing'), c = dash.data('staff_value');
-  if (g.status !== 'ok') return;
-  const val = new Map((c.status === 'ok' ? c.data : []).map((r) => [r.line, r.value_per_staff]));
-  [...g.data].sort((a, b) => (val.get(b.line) ?? 0) - (val.get(a.line) ?? 0)).forEach((r) => {
-    const tr = hgMk('tr');
-    const v = val.get(r.line);
-    tr.append(hgMk('td', '', r.line), hgMk('td', '', r.product), hgMk('td', 'num', hgF.f0(r.need)), hgMk('td', 'num', hgF.f0(r.shortage_t)), hgMk('td', 'num', hgF.pct0(r.margin)), hgMk('td', 'num', v == null ? '—' : hgF.f1(v)), hgMk('td', 'num', hgF.f0(r.after_assign)));
-    tb.append(tr);
-  });
-});
-</script>
-
-<script>
-dash.draw('pp', (el) => {
-  const g = dash.data('painpoints');
-  if (g.status !== 'ok') { el.textContent = '—'; return; }
-  const rows = [...g.data].sort((a, b) => a.rank - b.rank);
-  const max = d3.max(rows, (r) => r.score) || 1;
-  const list = hgMk('div', 'pp-list');
-  rows.forEach((r) => {
-    const row = hgMk('div', 'pp-row');
-    const main = hgMk('div', 'pp-main');
-    const bar = hgMk('div', 'pp-bar'); const fill = hgMk('span'); fill.style.width = (r.score / max * 100) + '%'; fill.style.background = dash.colors[0]; bar.append(fill);
-    main.append(hgMk('span', 'pp-title', r.title), bar, hgMk('span', 'pp-sub', `${r.alt} · ${r.area} · ${r.rules} · ${r.note}`));
-    const side = hgMk('div', 'pp-side');
-    side.append(hgMk('span', '', hgF.pct2(r.score)), hgMk('span', 'hg-chip ' + (r.status === '해결' ? 'ok' : 'warn'), r.status));
-    row.append(hgMk('span', 'pp-rank', `${r.rank}위`), main, side);
-    list.append(row);
-  });
-  el.replaceChildren(list);
-});
-</script>
-
-<script>
-document.querySelectorAll('.hg-rule-filter').forEach((s) => s.addEventListener('change', () => { hg.ruleFilter = s.value; dash.draw('rules'); }));
-dash.draw('rules', (tb) => {
-  tb.replaceChildren();
-  const g = dash.data('rules');
-  if (g.status !== 'ok') return;
-  g.data.filter((r) => !hg.ruleFilter || r.pp === hg.ruleFilter).forEach((r) => {
-    const tr = hgMk('tr');
-    tr.append(hgMk('td', '', r.id), hgMk('td', '', r.pp), hgMk('td', '', r.if_text), hgMk('td', '', r.then_text));
-    tb.append(tr);
-  });
-});
-</script>
-
-<script>
-const HG_TEMP_MAX = 95;
-const HG_VIB_MAX = 5.0;
-dash.draw('invchart', (el) => {
-  const g = dash.data('inventory');
-  if (g.status !== 'ok') { el.replaceChildren(); return; }
-  hgBars(el, g.data, (r) => r.product, [
-    { key: 'stock_t', name: '현재 재고', color: dash.colors[0] },
-    { key: 'forecast_t', name: '당월 예측수요', color: 'var(--cds-chart-muted)' },
-  ], (v) => `${hgF.f0(v)}t`);
-});
-dash.draw('eqtable', (tb) => {
-  tb.replaceChildren();
-  const g = dash.data('equipment');
-  if (g.status !== 'ok') return;
-  g.data.forEach((r) => {
-    const tr = hgMk('tr');
-    tr.append(hgMk('td', '', r.eq_id), hgMk('td', '', r.name), hgMk('td', '', r.product), hgMk('td', 'num', hgF.f0(r.age_years)),
-      hgMk('td', 'num' + (r.temp_c > HG_TEMP_MAX ? ' is-warn' : ''), hgF.f0(r.temp_c)),
-      hgMk('td', 'num' + (r.vibration > HG_VIB_MAX ? ' is-bad' : ''), hgF.f1(r.vibration)),
-      hgMk('td', 'num', hgF.f0(r.rpm)), hgMk('td', r.alarm === '정상' ? '' : 'is-bad', r.alarm));
-    tb.append(tr);
-  });
-});
-dash.draw('lottable', (tb) => {
-  tb.replaceChildren();
-  const g = dash.data('lots');
-  if (g.status !== 'ok') return;
-  g.data.forEach((r) => {
-    const tr = hgMk('tr');
-    const rawBad = Number.isNaN(Number(r.humidity_raw));
-    tr.append(hgMk('td', '', r.lot), hgMk('td', '', r.line), hgMk('td', 'num', hgF.pct0(r.humidity)), hgMk('td', rawBad ? 'is-warn' : '', r.humidity_raw),
-      hgMk('td', r.defect === '정상' ? '' : 'is-bad', r.defect), hgMk('td', 'num' + (r.defect === '정상' ? '' : ' is-bad'), hgF.pct0(r.final_yield)));
-    tb.append(tr);
-  });
-});
-dash.draw('soptable', (tb) => {
-  tb.replaceChildren();
-  const g = dash.data('sop');
-  if (g.status !== 'ok') return;
-  g.data.forEach((r) => {
-    const tr = hgMk('tr', r.category === '노이즈' ? 'is-mute' : '');
-    tr.append(hgMk('td', '', r.sop_id), hgMk('td', '', r.category), hgMk('td', '', r.slang), hgMk('td', '', r.sensor), hgMk('td', '', r.threshold), hgMk('td', '', r.action));
-    tb.append(tr);
-  });
-});
-</script>
-
 </body>
 </html>
